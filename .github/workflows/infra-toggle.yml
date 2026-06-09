@@ -1,0 +1,72 @@
+name: Infra Toggle
+
+# Turn the WC26 Dashboard infrastructure on or off.
+#
+# off: Stops the Function App (API goes down). SWA continues serving cached
+#      static content. Sets INFRA_ACTIVE=false.
+#
+# on:  Sets INFRA_ACTIVE=true, then triggers deploy.yml which runs CI,
+#      runs terraform apply (which reconciles enabled=true and restarts the
+#      Function App), deploys fresh code, and runs smoke tests.
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "on = start infra + trigger deploy | off = stop API"
+        required: true
+        type: choice
+        options:
+          - "on"
+          - "off"
+
+permissions:
+  id-token: write
+  contents: read
+  actions: write
+
+jobs:
+  toggle-off:
+    if: ${{ inputs.action == 'off' }}
+    name: Stop infra
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Stop Function App
+        run: |
+          az functionapp stop \
+            --name "${{ vars.FUNCTION_APP_NAME }}" \
+            --resource-group "${{ vars.RESOURCE_GROUP_NAME }}"
+          echo "Function App stopped."
+
+      - name: Mark infra inactive
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh variable set INFRA_ACTIVE --body "false" --repo "${{ github.repository }}"
+          echo "INFRA_ACTIVE set to false."
+
+  toggle-on:
+    if: ${{ inputs.action == 'on' }}
+    name: Start infra + deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark infra active
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh variable set INFRA_ACTIVE --body "true" --repo "${{ github.repository }}"
+          echo "INFRA_ACTIVE set to true."
+
+      - name: Trigger CI + Deploy
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run deploy.yml --ref main --repo "${{ github.repository }}"
+          echo "deploy.yml triggered — CI will run, then terraform apply will restart the Function App."
