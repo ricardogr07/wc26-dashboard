@@ -16,9 +16,6 @@ htmlcov/
 .coverage
 coverage.xml
 
-# uv
-uv.lock
-
 # Azure Functions local settings (contains secrets)
 api/local.settings.json
 .python_packages/
