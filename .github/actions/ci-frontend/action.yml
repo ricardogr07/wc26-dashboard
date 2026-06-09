@@ -1,0 +1,31 @@
+name: "CI — Frontend"
+description: "Type-check and lint the Next.js frontend"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      if: hashFiles('web/package.json') != ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+        cache: "npm"
+        cache-dependency-path: web/package-lock.json
+
+    - name: Install dependencies
+      if: hashFiles('web/package.json') != ''
+      run: npm ci
+      shell: bash
+      working-directory: web
+
+    - name: Type check
+      if: hashFiles('web/package.json') != ''
+      run: npm run type-check
+      shell: bash
+      working-directory: web
+
+    - name: Lint
+      if: hashFiles('web/package.json') != ''
+      run: npm run lint
+      shell: bash
+      working-directory: web

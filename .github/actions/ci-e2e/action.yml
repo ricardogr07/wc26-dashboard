@@ -1,0 +1,9 @@
+name: "CI — E2E"
+description: "End-to-end checks (placeholder — wired in Phase 10)"
+
+runs:
+  using: composite
+  steps:
+    - name: No e2e tests yet
+      run: echo "E2E suite not yet implemented"
+      shell: bash

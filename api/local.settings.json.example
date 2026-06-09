@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "COSMOS_CONNECTION_STRING": "AccountEndpoint=https://localhost:8081/;AccountKey=...",
+    "COSMOS_DATABASE_NAME": "wc26db",
+    "COSMOS_CONTAINER_NAME": "items",
+    "THESPORTSDB_API_KEY": "YOUR_API_KEY_HERE",
+    "SYNC_INTERVAL_HOURS": "1"
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "http://localhost:3000",
+    "CORSCredentials": false
+  }
+}

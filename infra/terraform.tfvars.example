@@ -1,0 +1,14 @@
+# Copy to terraform.tfvars and fill in real values.
+# Never commit terraform.tfvars to version control.
+
+location            = "eastus"
+resource_group_name = "wc26-dashboard-rg"
+
+cosmos_account_name  = "wc26-cosmos"        # must be globally unique
+cosmos_database_name = "wc26db"
+cosmos_free_tier     = true                  # set false if free tier already used in subscription
+
+function_app_name   = "wc26-api"            # must be globally unique
+static_web_app_name = "wc26-dashboard"
+
+thesportsdb_api_key = "YOUR_API_KEY_HERE"
