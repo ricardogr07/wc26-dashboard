@@ -1,0 +1,7 @@
+[
+  {"id":"ricardo","type":"participant","displayName":"Ricardo","teamIds":["NED","ESP","FRA","GER","ECU"]},
+  {"id":"chuy","type":"participant","displayName":"Chuy","teamIds":["MEX","COL","ENG","SUI","KOR"]},
+  {"id":"jaime","type":"participant","displayName":"Jaime","teamIds":["JPN","EGY","BEL","CRO","ARG"]},
+  {"id":"arnoldo","type":"participant","displayName":"Arnoldo","teamIds":["POR","USA","SEN","TUR","URU"]},
+  {"id":"jibran","type":"participant","displayName":"Jibran","teamIds":["BRA","MAR","CAN","NOR","AUT"]}
+]
