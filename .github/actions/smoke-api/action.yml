@@ -1,0 +1,29 @@
+name: Smoke test — API
+description: Verifies the Azure Function App is in Running state after deployment.
+
+inputs:
+  function-app-name:
+    description: Name of the Azure Function App
+    required: true
+  resource-group:
+    description: Resource group containing the Function App
+    required: true
+    default: wc26-dashboard-rg
+
+runs:
+  using: composite
+  steps:
+    - name: Check Function App is Running
+      shell: bash
+      run: |
+        echo "Checking state of Function App: ${{ inputs.function-app-name }}"
+        STATE=$(az functionapp show \
+          --name "${{ inputs.function-app-name }}" \
+          --resource-group "${{ inputs.resource-group }}" \
+          --query state \
+          --output tsv)
+        echo "Function App state: $STATE"
+        if [ "$STATE" != "Running" ]; then
+          echo "::error::Function App is not Running (got: $STATE)"
+          exit 1
+        fi

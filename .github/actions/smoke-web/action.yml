@@ -1,0 +1,25 @@
+name: Smoke test — Web
+description: Verifies the Azure Static Web App is reachable after deployment.
+
+inputs:
+  url:
+    description: Full HTTPS URL of the Static Web App to check
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Check Static Web App is reachable
+      shell: bash
+      run: |
+        echo "Checking SWA at: ${{ inputs.url }}"
+        curl \
+          --silent \
+          --fail \
+          --retry 5 \
+          --retry-delay 10 \
+          --retry-connrefused \
+          --max-time 30 \
+          "${{ inputs.url }}" \
+          > /dev/null
+        echo "SWA returned HTTP 200 OK"
