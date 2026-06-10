@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useSyncExternalStore,
+} from "react";
 import { translations, type Locale } from "@/lib/translations";
 
 interface LocaleContextValue {
@@ -13,19 +19,41 @@ const LocaleContext = createContext<LocaleContextValue>({
   setLocale: () => {},
 });
 
+// Module-level store so any number of LocaleProvider instances share state.
+let localeListeners: Array<() => void> = [];
+
+function localeSubscribe(listener: () => void): () => void {
+  localeListeners = [...localeListeners, listener];
+  return () => {
+    localeListeners = localeListeners.filter((l) => l !== listener);
+  };
+}
+
+function getLocaleSnapshot(): Locale {
+  const stored = localStorage.getItem("locale") as Locale | null;
+  return stored === "en" || stored === "es" ? stored : "en";
+}
+
+function getLocaleServerSnapshot(): Locale {
+  return "en";
+}
+
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
+  const locale = useSyncExternalStore(
+    localeSubscribe,
+    getLocaleSnapshot,
+    getLocaleServerSnapshot,
+  );
 
+  // Keep document.lang in sync (safe DOM side-effect, not a setState call).
   useEffect(() => {
-    const stored = localStorage.getItem("locale") as Locale | null;
-    if (stored === "en" || stored === "es") setLocaleState(stored);
-  }, []);
+    document.documentElement.lang = locale;
+  }, [locale]);
 
-  function setLocale(l: Locale) {
-    setLocaleState(l);
+  const setLocale = useCallback((l: Locale) => {
     localStorage.setItem("locale", l);
-    document.documentElement.lang = l;
-  }
+    for (const listener of localeListeners) listener();
+  }, []);
 
   return (
     <LocaleContext.Provider value={{ locale, setLocale }}>
