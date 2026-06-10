@@ -1,5 +1,8 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import type { TeamStatus, MatchStatus } from "@/lib/types";
+import { useT } from "@/lib/locale-context";
 
 const STATUS_STYLES: Record<TeamStatus | MatchStatus, string> = {
   active:     "bg-green-100 text-green-800 border-green-200",
@@ -11,24 +14,15 @@ const STATUS_STYLES: Record<TeamStatus | MatchStatus, string> = {
   completed:  "bg-gray-100 text-gray-600 border-gray-200",
 };
 
-const STATUS_LABELS: Record<TeamStatus | MatchStatus, string> = {
-  active:     "Active",
-  eliminated: "Eliminated",
-  champion:   "Champion",
-  qualified:  "Qualified",
-  scheduled:  "Scheduled",
-  live:       "Live",
-  completed:  "FT",
-};
-
 interface StatusBadgeProps {
   status: TeamStatus | MatchStatus;
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
+  const t = useT();
   return (
     <Badge variant="outline" className={STATUS_STYLES[status]}>
-      {STATUS_LABELS[status]}
+      {t(`status.${status}`)}
     </Badge>
   );
 }

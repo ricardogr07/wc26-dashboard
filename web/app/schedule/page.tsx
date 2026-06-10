@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { getMatches, getStandings, type ApiMatch } from "@/lib/api";
-import { PARTICIPANT_COLORS, ROUND_LABELS } from "@/lib/mock-data";
+import { PARTICIPANT_COLORS } from "@/lib/mock-data";
 import type { StandingsEntry } from "@/lib/types";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,26 +15,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { MatchRound } from "@/lib/types";
+import { useT, useLocale } from "@/lib/locale-context";
 
-const ROUNDS: { value: "all" | MatchRound; label: string }[] = [
-  { value: "all", label: "All Rounds" },
-  { value: "group", label: "Group Stage" },
-  { value: "r32", label: "Round of 32" },
-  { value: "r16", label: "Round of 16" },
-  { value: "qf", label: "Quarterfinal" },
-  { value: "sf", label: "Semifinal" },
-  { value: "final", label: "Final" },
-];
-
-function formatDate(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
-}
-
-function formatTime(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZoneName: "short" });
-}
+const ROUND_VALUES: Array<"all" | MatchRound> = ["all", "group", "r32", "r16", "qf", "sf", "final"];
 
 function groupMatchesByDate(matches: ApiMatch[]) {
   const groups = new Map<string, ApiMatch[]>();
@@ -61,6 +44,9 @@ export default function SchedulePage() {
   const [matches, setMatches] = useState<ApiMatch[] | null>(null);
   const [standings, setStandings] = useState<StandingsEntry[]>([]);
   const [error, setError] = useState(false);
+  const t = useT();
+  const { locale } = useLocale();
+  const dateLocale = locale === "es" ? "es-MX" : "en-US";
 
   useEffect(() => {
     Promise.all([getMatches(), getStandings()])
@@ -70,6 +56,23 @@ export default function SchedulePage() {
       })
       .catch(() => setError(true));
   }, []);
+
+  function formatDate(iso: string) {
+    return new Date(iso).toLocaleDateString(dateLocale, {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
+  function formatTime(iso: string) {
+    return new Date(iso).toLocaleTimeString(dateLocale, {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZoneName: "short",
+    });
+  }
 
   const ownerMap = useMemo(() => buildOwnerMap(standings), [standings]);
 
@@ -81,17 +84,20 @@ export default function SchedulePage() {
 
   const grouped = useMemo(() => groupMatchesByDate(filtered), [filtered]);
 
+  const roundLabel = (r: "all" | MatchRound) =>
+    r === "all" ? t("schedule.allRounds") : t(`rounds.${r}`);
+
   if (!matches && !error) {
-    return <p className="mx-auto max-w-4xl px-4 py-16 text-sm text-gray-500">Loading schedule…</p>;
+    return <p className="mx-auto max-w-4xl px-4 py-16 text-sm text-gray-500">{t("schedule.loading")}</p>;
   }
   if (error) {
-    return <p className="mx-auto max-w-4xl px-4 py-16 text-sm text-red-500">Failed to load schedule.</p>;
+    return <p className="mx-auto max-w-4xl px-4 py-16 text-sm text-red-500">{t("schedule.error")}</p>;
   }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">Schedule</h1>
-      <p className="mt-1 text-sm text-gray-500">Match schedule with participant team highlights.</p>
+      <h1 className="text-2xl font-bold text-gray-900">{t("schedule.title")}</h1>
+      <p className="mt-1 text-sm text-gray-500">{t("schedule.subtitle")}</p>
 
       {/* Desktop filter bar */}
       <div className="mt-6 hidden md:flex items-center gap-3 rounded-lg bg-gray-100 px-4 py-3">
@@ -100,27 +106,27 @@ export default function SchedulePage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {ROUNDS.map((r) => (
-              <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+            {ROUND_VALUES.map((r) => (
+              <SelectItem key={r} value={r}>{roundLabel(r)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Button variant="outline" size="sm" onClick={() => setSelectedRound("all")}>
-          All
+          {t("schedule.allRounds")}
         </Button>
       </div>
 
       {/* Mobile chip row */}
       <div className="mt-4 flex overflow-x-auto gap-2 pb-1 md:hidden">
-        {ROUNDS.map((r) => (
+        {ROUND_VALUES.map((r) => (
           <Button
-            key={r.value}
-            variant={selectedRound === r.value ? "default" : "outline"}
+            key={r}
+            variant={selectedRound === r ? "default" : "outline"}
             size="sm"
             className="whitespace-nowrap shrink-0"
-            onClick={() => setSelectedRound(r.value)}
+            onClick={() => setSelectedRound(r)}
           >
-            {r.label}
+            {roundLabel(r)}
           </Button>
         ))}
       </div>
@@ -170,7 +176,7 @@ export default function SchedulePage() {
                           <StatusBadge status={match.status} />
                         </div>
                         <div className="text-xs text-gray-400 text-right min-w-20">
-                          {ROUND_LABELS[match.round]}
+                          {t(`rounds.${match.round}`)}
                         </div>
                       </div>
 
@@ -204,7 +210,7 @@ export default function SchedulePage() {
         ))}
 
         {filtered.length === 0 && (
-          <p className="text-sm text-gray-400 text-center py-12">No matches found for this filter.</p>
+          <p className="text-sm text-gray-400 text-center py-12">{t("schedule.noMatches")}</p>
         )}
       </div>
     </div>
