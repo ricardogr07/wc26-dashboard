@@ -11,7 +11,8 @@
     "THESPORTSDB_LEAGUE_ID": "4429",
     "THESPORTSDB_SEASON": "2026-2027",
     "TIMER_SCHEDULE": "0 0 * * * *",
-    "SYNC_INTERVAL_HOURS": "1"
+    "SYNC_INTERVAL_HOURS": "1",
+    "CORS_ORIGIN": "http://localhost:3000"
   },
   "Host": {
     "LocalHttpPort": 7071,

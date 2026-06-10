@@ -7,6 +7,7 @@ from typing import cast
 import azure.functions as func
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
+from api.cors import cors_headers
 from api.cosmos import get_container
 from api.models import Match, Participant, Team
 from api.simulation.engine import run_simulation
@@ -46,6 +47,7 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
                         json.dumps(cached),
                         mimetype="application/json",
                         status_code=200,
+                        headers=cors_headers(),
                     )
             except CosmosResourceNotFoundError:
                 pass
@@ -74,7 +76,7 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
         ]
     except Exception:
         logger.exception("Cosmos error in simulate endpoint")
-        return func.HttpResponse("Service unavailable", status_code=500)
+        return func.HttpResponse("Service unavailable", status_code=500, headers=cors_headers())
 
     # Apply overrides to in-memory match list
     if overrides:
@@ -112,4 +114,5 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
         json.dumps(result_doc, default=str),
         mimetype="application/json",
         status_code=200,
+        headers=cors_headers(),
     )

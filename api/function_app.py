@@ -1,5 +1,6 @@
 import azure.functions as func
 
+from api.cors import cors_headers
 from api.handlers.admin_override import handle_admin_override
 from api.handlers.matches import handle_matches
 from api.handlers.simulate import handle_simulate
@@ -7,6 +8,11 @@ from api.handlers.standings import handle_standings
 from api.handlers.sync_matches import handle_sync
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+
+
+@app.route(route="{*path}", methods=["OPTIONS"])
+def options_preflight(req: func.HttpRequest) -> func.HttpResponse:
+    return func.HttpResponse(status_code=200, headers=cors_headers())
 
 
 @app.route(route="health", methods=[func.HttpMethod.GET])
