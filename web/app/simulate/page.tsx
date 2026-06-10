@@ -1,4 +1,9 @@
-import { SIMULATION, PARTICIPANTS, PARTICIPANT_COLORS } from "@/lib/mock-data";
+"use client";
+
+import { useEffect, useState } from "react";
+import { getSimulation } from "@/lib/api";
+import { PARTICIPANT_COLORS } from "@/lib/mock-data";
+import type { SimulationRun } from "@/lib/types";
 import { ProbabilityChart } from "@/components/probability-chart";
 import {
   Table,
@@ -10,8 +15,6 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RefreshCw, Lock } from "lucide-react";
-
-const participantNames = Object.fromEntries(PARTICIPANTS.map((p) => [p.id, p.displayName]));
 
 const POSITIONS = ["1st", "2nd", "3rd", "4th", "5th"] as const;
 
@@ -38,22 +41,40 @@ function formatRunAt(iso: string) {
   });
 }
 
-const sortedEntries = Object.entries(SIMULATION.probabilities).sort(
-  (a, b) => b[1]["1st"] - a[1]["1st"]
-);
-
 export default function SimulatePage() {
+  const [simulation, setSimulation] = useState<SimulationRun | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    getSimulation().then(setSimulation).catch(() => setError(true));
+  }, []);
+
+  if (!simulation && !error) {
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">Loading simulation…</p>;
+  }
+  if (error) {
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">Failed to load simulation.</p>;
+  }
+
+  const sim = simulation!;
+  const participantNames = Object.fromEntries(
+    Object.keys(sim.probabilities).map((id) => [id, id.charAt(0).toUpperCase() + id.slice(1)])
+  );
+  const sortedEntries = Object.entries(sim.probabilities).sort(
+    (a, b) => b[1]["1st"] - a[1]["1st"]
+  );
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
       {/* Metadata bar */}
       <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm text-gray-500">
-        <RefreshCw size={14} className="flex-shrink-0" />
+        <RefreshCw size={14} className="shrink-0" />
         <span>
-          Last run: <span className="font-medium text-gray-700">{formatRunAt(SIMULATION.runAt)}</span>
+          Last run: <span className="font-medium text-gray-700">{formatRunAt(sim.runAt)}</span>
           <span className="mx-2">·</span>
-          <span className="font-medium text-gray-700">{SIMULATION.nRuns.toLocaleString()}</span> simulations
+          <span className="font-medium text-gray-700">{sim.nRuns.toLocaleString()}</span> simulations
           <span className="mx-2">·</span>
-          <span className="font-medium text-gray-700">{SIMULATION.matchesCompletedAtRun}</span> matches completed
+          <span className="font-medium text-gray-700">{sim.matchesCompletedAtRun}</span> matches completed
         </span>
       </div>
 
@@ -64,7 +85,7 @@ export default function SimulatePage() {
 
       {/* Probability chart */}
       <div className="mt-6 rounded-lg border bg-white shadow-sm p-4">
-        <ProbabilityChart simulation={SIMULATION} participantNames={participantNames} />
+        <ProbabilityChart simulation={sim} participantNames={participantNames} />
       </div>
 
       {/* Probability table */}
@@ -91,7 +112,7 @@ export default function SimulatePage() {
                   <TableCell className="font-medium sticky left-0 bg-inherit">
                     <div className="flex items-center gap-2">
                       <span
-                        className="inline-block h-3 w-3 rounded-full flex-shrink-0"
+                        className="inline-block h-3 w-3 rounded-full shrink-0"
                         style={{ backgroundColor: color }}
                       />
                       {name}

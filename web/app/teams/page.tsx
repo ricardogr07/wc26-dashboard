@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { STANDINGS, PARTICIPANT_COLORS, TEAMS } from "@/lib/mock-data";
+import { useState, useMemo, useEffect } from "react";
+import { getStandings } from "@/lib/api";
+import { PARTICIPANT_COLORS } from "@/lib/mock-data";
+import type { StandingsEntry, TeamStatus } from "@/lib/types";
 import { ParticipantBadge } from "@/components/participant-badge";
 import { TeamRow } from "@/components/team-badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -19,9 +21,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import type { TeamStatus } from "@/lib/types";
-
-const teamsById = Object.fromEntries(TEAMS.map((t) => [t.id, t]));
 
 type SortKey = "participant" | "name" | "score";
 type StatusFilter = "all" | TeamStatus;
@@ -37,13 +36,27 @@ const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
 export default function TeamsPage() {
   const [sortKey, setSortKey] = useState<SortKey>("score");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [standings, setStandings] = useState<StandingsEntry[] | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    getStandings().then(setStandings).catch(() => setError(true));
+  }, []);
 
   const sortedStandings = useMemo(() => {
-    const entries = [...STANDINGS];
+    if (!standings) return [];
+    const entries = [...standings];
     if (sortKey === "score") entries.sort((a, b) => b.score - a.score);
     else if (sortKey === "name") entries.sort((a, b) => a.participant.displayName.localeCompare(b.participant.displayName));
     return entries;
-  }, [sortKey]);
+  }, [standings, sortKey]);
+
+  if (!standings && !error) {
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">Loading teams…</p>;
+  }
+  if (error) {
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">Failed to load teams.</p>;
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
@@ -83,7 +96,7 @@ export default function TeamsPage() {
             key={f.value}
             variant={statusFilter === f.value ? "default" : "outline"}
             size="sm"
-            className="whitespace-nowrap flex-shrink-0"
+            className="whitespace-nowrap shrink-0"
             onClick={() => setStatusFilter(f.value)}
           >
             {f.label}
@@ -122,10 +135,9 @@ export default function TeamsPage() {
                 {filteredTeams.length === 0 ? (
                   <p className="text-sm text-gray-400 py-2">No teams match this filter.</p>
                 ) : (
-                  filteredTeams.map((team) => {
-                    const fullTeam = teamsById[team.id] ?? team;
-                    return <TeamRow key={team.id} team={fullTeam} />;
-                  })
+                  filteredTeams.map((team) => (
+                    <TeamRow key={team.id} team={team} />
+                  ))
                 )}
               </CardContent>
             </Card>
@@ -163,10 +175,9 @@ export default function TeamsPage() {
                 {filteredTeams.length === 0 ? (
                   <p className="text-sm text-gray-400 py-2">No teams match this filter.</p>
                 ) : (
-                  filteredTeams.map((team) => {
-                    const fullTeam = teamsById[team.id] ?? team;
-                    return <TeamRow key={team.id} team={fullTeam} />;
-                  })
+                  filteredTeams.map((team) => (
+                    <TeamRow key={team.id} team={team} />
+                  ))
                 )}
               </AccordionContent>
             </AccordionItem>
