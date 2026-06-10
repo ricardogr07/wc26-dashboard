@@ -4,6 +4,7 @@ from api.handlers.admin_override import handle_admin_override
 from api.handlers.matches import handle_matches
 from api.handlers.simulate import handle_simulate
 from api.handlers.standings import handle_standings
+from api.handlers.sync_matches import handle_sync
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -33,3 +34,12 @@ def admin_override(req: func.HttpRequest) -> func.HttpResponse:
 @app.route(route="simulate", methods=[func.HttpMethod.POST])
 def simulate(req: func.HttpRequest) -> func.HttpResponse:
     return handle_simulate(req)
+
+
+@app.timer_trigger(
+    arg_name="timer",
+    schedule="%TIMER_SCHEDULE%",
+    run_on_startup=False,
+)
+def sync_matches(timer: func.TimerRequest) -> None:
+    handle_sync(timer)

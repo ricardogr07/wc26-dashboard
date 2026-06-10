@@ -42,6 +42,9 @@ resource "azurerm_resource_group_template_deployment" "function_app" {
       cosmosConnectionString  = { type = "securestring" }
       cosmosDatabaseName      = { type = "string" }
       thesportsdbApiKey       = { type = "securestring" }
+      thesportsdbLeagueId     = { type = "string" }
+      thesportsdbSeason       = { type = "string" }
+      timerSchedule           = { type = "string" }
       corsOrigin              = { type = "string" }
       location                = { type = "string" }
       functionAppName         = { type = "string" }
@@ -92,6 +95,9 @@ resource "azurerm_resource_group_template_deployment" "function_app" {
               { name = "COSMOS_DATABASE_NAME",                 value = "[parameters('cosmosDatabaseName')]" },
               { name = "COSMOS_CONTAINER_NAME",                value = "items" },
               { name = "THESPORTSDB_API_KEY",                  value = "[parameters('thesportsdbApiKey')]" },
+              { name = "THESPORTSDB_LEAGUE_ID",               value = "[parameters('thesportsdbLeagueId')]" },
+              { name = "THESPORTSDB_SEASON",                   value = "[parameters('thesportsdbSeason')]" },
+              { name = "TIMER_SCHEDULE",                       value = "[parameters('timerSchedule')]" },
               { name = "SYNC_INTERVAL_HOURS",                  value = "1" },
               { name = "AzureWebJobsFeatureFlags",             value = "EnableWorkerIndexing" }
             ]
@@ -117,6 +123,9 @@ resource "azurerm_resource_group_template_deployment" "function_app" {
     cosmosConnectionString  = { value = azurerm_cosmosdb_account.main.primary_sql_connection_string }
     cosmosDatabaseName      = { value = var.cosmos_database_name }
     thesportsdbApiKey       = { value = var.thesportsdb_api_key }
+    thesportsdbLeagueId     = { value = var.thesportsdb_league_id }
+    thesportsdbSeason       = { value = var.thesportsdb_season }
+    timerSchedule           = { value = var.timer_schedule }
     corsOrigin              = { value = "https://${azurerm_static_web_app.frontend.default_host_name}" }
     location                = { value = azurerm_resource_group.main.location }
     functionAppName         = { value = var.function_app_name }
