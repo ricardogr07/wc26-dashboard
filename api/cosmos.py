@@ -20,3 +20,8 @@ def get_container() -> ContainerProxy:
             .get_container_client(ctr)
         )
     return _container
+
+
+def reset_container() -> None:
+    global _container
+    _container = None
