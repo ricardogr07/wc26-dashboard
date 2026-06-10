@@ -21,6 +21,11 @@ runs:
       shell: bash
       working-directory: web
 
+    - name: Install Cypress binary
+      run: pnpm exec cypress install
+      shell: bash
+      working-directory: web
+
     - name: Build
       run: pnpm build
       shell: bash
