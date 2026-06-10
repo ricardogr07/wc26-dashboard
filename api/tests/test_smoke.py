@@ -42,3 +42,33 @@ def test_cosmos_can_query_items() -> None:
         )
     )
     assert isinstance(results, list)
+
+
+@pytest.mark.smoke
+def test_standings_returns_five_participants() -> None:
+    import json
+    import unittest.mock as mock
+
+    _require_real_cosmos()
+    from api.handlers.standings import handle_standings
+
+    req = mock.MagicMock()
+    resp = handle_standings(req)
+    data = json.loads(resp.get_body())
+    assert len(data["standings"]) == 5, f"expected 5 standings entries, got: {data['standings']}"
+
+
+@pytest.mark.smoke
+def test_matches_returns_fixtures() -> None:
+    import json
+    import unittest.mock as mock
+
+    _require_real_cosmos()
+    from api.handlers.matches import handle_matches
+
+    req = mock.MagicMock()
+    req.params = {}
+    resp = handle_matches(req)
+    data = json.loads(resp.get_body())
+    count = len(data["matches"])
+    assert count >= 72, f"expected >= 72 match fixtures, got {count}"
