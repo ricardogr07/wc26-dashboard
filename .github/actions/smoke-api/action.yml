@@ -21,7 +21,7 @@ runs:
           STATE=$(az functionapp show \
             --name "${{ inputs.function-app-name }}" \
             --resource-group "${{ inputs.resource-group }}" \
-            --query state \
+            --query "properties.state" \
             --output tsv 2>/dev/null || true)
           echo "Attempt $i/8: state=$STATE"
           if [ "$STATE" = "Running" ]; then
