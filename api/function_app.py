@@ -2,6 +2,7 @@ import azure.functions as func
 
 from api.handlers.admin_override import handle_admin_override
 from api.handlers.matches import handle_matches
+from api.handlers.simulate import handle_simulate
 from api.handlers.standings import handle_standings
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -27,3 +28,8 @@ def matches(req: func.HttpRequest) -> func.HttpResponse:
 )
 def admin_override(req: func.HttpRequest) -> func.HttpResponse:
     return handle_admin_override(req)
+
+
+@app.route(route="simulate", methods=[func.HttpMethod.POST])
+def simulate(req: func.HttpRequest) -> func.HttpResponse:
+    return handle_simulate(req)
