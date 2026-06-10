@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+from typing import cast
 
 import azure.functions as func
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
@@ -32,7 +33,7 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
                 enable_cross_partition_query=True,
             )
         )
-        completed_count: int = int(count_result[0]) if count_result else 0
+        completed_count: int = cast(int, count_result[0]) if count_result else 0
 
         # Serve cache when no overrides and match state is unchanged
         if not overrides:
