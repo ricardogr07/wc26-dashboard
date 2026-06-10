@@ -1,0 +1,12 @@
+.git/
+.github/
+web/
+infra/
+scripts/
+shared/
+api/tests/
+api/__pycache__/
+*.md
+.gitignore
+.funcignore
+local.settings.json

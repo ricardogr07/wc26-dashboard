@@ -17,6 +17,7 @@ htmlcov/
 coverage.xml
 
 # Azure Functions local settings (contains secrets)
+local.settings.json
 api/local.settings.json
 .python_packages/
 
