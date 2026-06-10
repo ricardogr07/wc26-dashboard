@@ -86,8 +86,7 @@ def test_all_ranks_covered(
     real_teams: list[Team],
 ) -> None:
     result = run_simulation([], real_participants, real_teams, n_runs=500, seed=7)
-    n = len(real_participants)
-    expected_keys = {f"rank_{r}" for r in range(1, n + 1)}
+    expected_keys = {"1st", "2nd", "3rd", "4th", "5th"}
     for pid, dist in result.probabilities.items():
         assert set(dist.keys()) == expected_keys, f"{pid} missing rank keys"
 

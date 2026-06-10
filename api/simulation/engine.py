@@ -250,7 +250,7 @@ def run_simulation(
     # ------------------------------------------------------------------
     # Build probabilities output
     # ------------------------------------------------------------------
-    rank_labels = {1: "rank_1", 2: "rank_2", 3: "rank_3", 4: "rank_4", 5: "rank_5"}
+    rank_labels = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th", 5: "5th"}
     probabilities: dict[str, dict[str, float]] = {}
     for pid in participant_ids:
         probabilities[pid] = {
