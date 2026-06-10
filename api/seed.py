@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from api.models import Participant, Team
+from api.models import Match, Participant, Team
 
 _SEED_DIR = Path(__file__).parent.parent / "shared" / "seed"
 
@@ -14,3 +14,8 @@ def load_teams() -> list[Team]:
 def load_participants() -> list[Participant]:
     data = json.loads((_SEED_DIR / "participants.json").read_text(encoding="utf-8"))
     return [Participant.model_validate(p) for p in data]
+
+
+def load_fixtures() -> list[Match]:
+    data = json.loads((_SEED_DIR / "fixtures.json").read_text(encoding="utf-8"))
+    return [Match.model_validate(f) for f in data]

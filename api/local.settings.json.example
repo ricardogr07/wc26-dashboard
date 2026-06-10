@@ -3,9 +3,10 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "python",
-    "COSMOS_CONNECTION_STRING": "AccountEndpoint=https://localhost:8081/;AccountKey=...",
+    "COSMOS_CONNECTION_STRING": "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b5hG9I/o6xK7xCy5h4HJf/qzl5s3v4sLQ==",
     "COSMOS_DATABASE_NAME": "wc26db",
     "COSMOS_CONTAINER_NAME": "items",
+    "ADMIN_API_KEY": "YOUR_ADMIN_KEY_HERE",
     "THESPORTSDB_API_KEY": "YOUR_API_KEY_HERE",
     "SYNC_INTERVAL_HOURS": "1"
   },
