@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import type { MatchRound } from "@/lib/types";
 import { useT, useLocale } from "@/lib/locale-context";
+import { PageSkeleton } from "@/components/page-skeleton";
 
 const ROUND_VALUES: Array<"all" | MatchRound> = ["all", "group", "r32", "r16", "qf", "sf", "final"];
 
@@ -88,7 +89,7 @@ export default function SchedulePage() {
     r === "all" ? t("schedule.allRounds") : t(`rounds.${r}`);
 
   if (!matches && !error) {
-    return <p className="mx-auto max-w-4xl px-4 py-16 text-sm text-gray-500">{t("schedule.loading")}</p>;
+    return <PageSkeleton />;
   }
   if (error) {
     return <p className="mx-auto max-w-4xl px-4 py-16 text-sm text-red-500">{t("schedule.error")}</p>;

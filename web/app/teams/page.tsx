@@ -22,6 +22,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useT } from "@/lib/locale-context";
+import { PageSkeleton } from "@/components/page-skeleton";
 
 type SortKey = "participant" | "name" | "score";
 type StatusFilter = "all" | TeamStatus;
@@ -51,7 +52,7 @@ export default function TeamsPage() {
     f === "all" ? t("teams.statusAll") : t(`status.${f}`);
 
   if (!standings && !error) {
-    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">{t("teams.loading")}</p>;
+    return <PageSkeleton />;
   }
   if (error) {
     return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">{t("teams.error")}</p>;

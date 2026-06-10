@@ -1,9 +1,53 @@
 name: "CI — E2E"
-description: "End-to-end checks (placeholder — wired in Phase 10)"
+description: "Build the static site, serve it, and run the Cypress smoke suite"
 
 runs:
   using: composite
   steps:
-    - name: No e2e tests yet
-      run: echo "E2E suite not yet implemented"
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+        cache: "pnpm"
+        cache-dependency-path: web/pnpm-lock.yaml
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
       shell: bash
+      working-directory: web
+
+    - name: Build
+      run: pnpm build
+      shell: bash
+      working-directory: web
+      env:
+        NEXT_PUBLIC_API_BASE_URL: ""
+
+    - name: Start static server
+      run: |
+        npx serve out -l 3000 &
+        timeout 30 bash -c 'until curl -sf http://localhost:3000 >/dev/null 2>&1; do sleep 1; done'
+      shell: bash
+      working-directory: web
+
+    - name: Run Cypress
+      run: pnpm e2e
+      shell: bash
+      working-directory: web
+      env:
+        CYPRESS_BASE_URL: "http://localhost:3000"
+
+    - name: Upload Cypress artifacts on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cypress-artifacts
+        path: |
+          web/cypress/screenshots
+          web/cypress/videos
+        if-no-files-found: ignore

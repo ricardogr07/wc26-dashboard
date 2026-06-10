@@ -22,6 +22,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useT } from "@/lib/locale-context";
+import { PageSkeleton } from "@/components/page-skeleton";
 
 const SCORING_MILESTONE_KEYS = [
   { key: "groupQualification", pts: 1 },
@@ -42,7 +43,7 @@ export default function StandingsPage() {
   }, []);
 
   if (!standings && !error) {
-    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">{t("standings.loading")}</p>;
+    return <PageSkeleton />;
   }
   if (error) {
     return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">{t("standings.error")}</p>;
