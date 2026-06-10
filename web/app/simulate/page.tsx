@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RefreshCw, Lock } from "lucide-react";
+import { useT, useLocale } from "@/lib/locale-context";
 
 const POSITIONS = ["1st", "2nd", "3rd", "4th", "5th"] as const;
 
@@ -30,30 +31,32 @@ function pct(val: number) {
   return `${(val * 100).toFixed(1)}%`;
 }
 
-function formatRunAt(iso: string) {
-  return new Date(iso).toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZoneName: "short",
-  });
-}
-
 export default function SimulatePage() {
   const [simulation, setSimulation] = useState<SimulationRun | null>(null);
   const [error, setError] = useState(false);
+  const t = useT();
+  const { locale } = useLocale();
 
   useEffect(() => {
     getSimulation().then(setSimulation).catch(() => setError(true));
   }, []);
 
+  function formatRunAt(iso: string) {
+    return new Date(iso).toLocaleString(locale === "es" ? "es-MX" : "en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZoneName: "short",
+    });
+  }
+
   if (!simulation && !error) {
-    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">Loading simulation…</p>;
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">{t("simulate.loading")}</p>;
   }
   if (error) {
-    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">Failed to load simulation.</p>;
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">{t("simulate.error")}</p>;
   }
 
   const sim = simulation!;
@@ -70,18 +73,16 @@ export default function SimulatePage() {
       <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm text-gray-500">
         <RefreshCw size={14} className="shrink-0" />
         <span>
-          Last run: <span className="font-medium text-gray-700">{formatRunAt(sim.runAt)}</span>
+          {t("simulate.lastRun")} <span className="font-medium text-gray-700">{formatRunAt(sim.runAt)}</span>
           <span className="mx-2">·</span>
-          <span className="font-medium text-gray-700">{sim.nRuns.toLocaleString()}</span> simulations
+          <span className="font-medium text-gray-700">{sim.nRuns.toLocaleString()}</span> {t("simulate.simulations")}
           <span className="mx-2">·</span>
-          <span className="font-medium text-gray-700">{sim.matchesCompletedAtRun}</span> matches completed
+          <span className="font-medium text-gray-700">{sim.matchesCompletedAtRun}</span> {t("simulate.matchesCompleted")}
         </span>
       </div>
 
-      <h1 className="mt-6 text-2xl font-bold text-gray-900">Simulation</h1>
-      <p className="mt-1 text-sm text-gray-500">
-        Monte Carlo win probability by final position for each participant.
-      </p>
+      <h1 className="mt-6 text-2xl font-bold text-gray-900">{t("simulate.title")}</h1>
+      <p className="mt-1 text-sm text-gray-500">{t("simulate.subtitle")}</p>
 
       {/* Probability chart */}
       <div className="mt-6 rounded-lg border bg-white shadow-sm p-4">
@@ -94,11 +95,11 @@ export default function SimulatePage() {
           <TableHeader>
             <TableRow className="bg-[#F3F4F6]">
               <TableHead className="font-semibold text-gray-700 sticky left-0 bg-[#F3F4F6]">
-                PARTICIPANT
+                {t("simulate.participant")}
               </TableHead>
               {POSITIONS.map((pos) => (
                 <TableHead key={pos} className="text-center font-semibold" style={{ color: POSITION_COLORS[pos] }}>
-                  {pos}
+                  {t(`positions.${pos}`)}
                 </TableHead>
               ))}
             </TableRow>
@@ -135,13 +136,11 @@ export default function SimulatePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Lock size={16} />
-            Scenario Builder
+            {t("simulate.scenarioBuilderTitle")}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500">
-            Coming in a future update — select hypothetical winners and see how probabilities shift.
-          </p>
+          <p className="text-sm text-gray-500">{t("simulate.scenarioBuilderDesc")}</p>
         </CardContent>
       </Card>
     </div>

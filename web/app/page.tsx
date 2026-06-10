@@ -21,47 +21,47 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useT } from "@/lib/locale-context";
 
-const SCORING_MILESTONES = [
-  { label: "Group qualification", pts: 1 },
-  { label: "Round of 32 win", pts: 2 },
-  { label: "Round of 16 win", pts: 3 },
-  { label: "Quarterfinal win", pts: 5 },
-  { label: "Semifinal win", pts: 8 },
-  { label: "Championship win", pts: 13 },
-];
+const SCORING_MILESTONE_KEYS = [
+  { key: "groupQualification", pts: 1 },
+  { key: "round32win", pts: 2 },
+  { key: "round16win", pts: 3 },
+  { key: "quarterfinalWin", pts: 5 },
+  { key: "semifinalWin", pts: 8 },
+  { key: "championshipWin", pts: 13 },
+] as const;
 
 export default function StandingsPage() {
   const [standings, setStandings] = useState<StandingsEntry[] | null>(null);
   const [error, setError] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     getStandings().then(setStandings).catch(() => setError(true));
   }, []);
 
   if (!standings && !error) {
-    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">Loading standings…</p>;
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">{t("standings.loading")}</p>;
   }
   if (error) {
-    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">Failed to load standings.</p>;
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">{t("standings.error")}</p>;
   }
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">Standings</h1>
-      <p className="mt-1 text-sm text-gray-500">
-        Rankings based on tournament milestones reached by each participant&apos;s teams.
-      </p>
+      <h1 className="text-2xl font-bold text-gray-900">{t("standings.title")}</h1>
+      <p className="mt-1 text-sm text-gray-500">{t("standings.subtitle")}</p>
 
       {/* Desktop table */}
       <div className="mt-6 hidden md:block rounded-lg border bg-white shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-[#F3F4F6]">
-              <TableHead className="w-12 text-center font-semibold text-gray-700">RANK</TableHead>
-              <TableHead className="font-semibold text-gray-700">PARTICIPANT</TableHead>
-              <TableHead className="w-24 text-center font-semibold text-gray-700">SCORE</TableHead>
-              <TableHead className="font-semibold text-gray-700">TEAMS</TableHead>
+              <TableHead className="w-12 text-center font-semibold text-gray-700">{t("standings.rank")}</TableHead>
+              <TableHead className="font-semibold text-gray-700">{t("standings.participant")}</TableHead>
+              <TableHead className="w-24 text-center font-semibold text-gray-700">{t("standings.score")}</TableHead>
+              <TableHead className="font-semibold text-gray-700">{t("standings.teams")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -150,12 +150,12 @@ export default function StandingsPage() {
 
       {/* Scoring legend */}
       <div className="mt-8 rounded-lg border bg-white px-4 py-4 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">Scoring</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">{t("standings.scoring")}</p>
         <div className="flex flex-wrap gap-x-6 gap-y-1">
-          {SCORING_MILESTONES.map((m) => (
-            <div key={m.label} className="flex items-center gap-1.5 text-sm text-gray-600">
+          {SCORING_MILESTONE_KEYS.map((m) => (
+            <div key={m.key} className="flex items-center gap-1.5 text-sm text-gray-600">
               <span className="font-bold text-gray-900">{m.pts}pt{m.pts > 1 ? "s" : ""}</span>
-              <span>{m.label}</span>
+              <span>{t(`scoringMilestones.${m.key}`)}</span>
             </div>
           ))}
         </div>

@@ -10,6 +10,7 @@ from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from api.cors import cors_headers
 from api.cosmos import get_container
 from api.models import Match, Participant, Team
+from api.seed import load_fixtures, load_participants, load_teams
 from api.simulation.engine import run_simulation
 
 logger = logging.getLogger(__name__)
@@ -77,6 +78,13 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
     except Exception:
         logger.exception("Cosmos error in simulate endpoint")
         return func.HttpResponse("Service unavailable", status_code=500, headers=cors_headers())
+
+    # Fall back to seed data when Cosmos has no data yet (pre-tournament)
+    if not participants or not teams:
+        participants = load_participants()
+        teams = load_teams()
+        if not matches:
+            matches = load_fixtures()
 
     # Apply overrides to in-memory match list
     if overrides:

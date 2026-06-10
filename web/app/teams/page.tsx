@@ -21,23 +21,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useT } from "@/lib/locale-context";
 
 type SortKey = "participant" | "name" | "score";
 type StatusFilter = "all" | TeamStatus;
 
-const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "active", label: "Active" },
-  { value: "qualified", label: "Qualified" },
-  { value: "champion", label: "Champion" },
-  { value: "eliminated", label: "Eliminated" },
-];
+const STATUS_VALUES: StatusFilter[] = ["all", "active", "qualified", "champion", "eliminated"];
 
 export default function TeamsPage() {
   const [sortKey, setSortKey] = useState<SortKey>("score");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [standings, setStandings] = useState<StandingsEntry[] | null>(null);
   const [error, setError] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     getStandings().then(setStandings).catch(() => setError(true));
@@ -51,39 +47,42 @@ export default function TeamsPage() {
     return entries;
   }, [standings, sortKey]);
 
+  const statusLabel = (f: StatusFilter) =>
+    f === "all" ? t("teams.statusAll") : t(`status.${f}`);
+
   if (!standings && !error) {
-    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">Loading teams…</p>;
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">{t("teams.loading")}</p>;
   }
   if (error) {
-    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">Failed to load teams.</p>;
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">{t("teams.error")}</p>;
   }
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">Teams</h1>
-      <p className="mt-1 text-sm text-gray-500">Team ownership and tournament status by participant.</p>
+      <h1 className="text-2xl font-bold text-gray-900">{t("teams.title")}</h1>
+      <p className="mt-1 text-sm text-gray-500">{t("teams.subtitle")}</p>
 
       {/* Desktop filter bar */}
       <div className="mt-6 hidden md:flex items-center gap-3 rounded-lg bg-gray-100 px-4 py-3">
         <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
           <SelectTrigger className="w-44 bg-white">
-            <SelectValue placeholder="Sort by…" />
+            <SelectValue placeholder={t("teams.sortByScore")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="score">Sort by Score</SelectItem>
-            <SelectItem value="participant">Sort by Participant</SelectItem>
-            <SelectItem value="name">Sort by Name</SelectItem>
+            <SelectItem value="score">{t("teams.sortByScore")}</SelectItem>
+            <SelectItem value="participant">{t("teams.sortByParticipant")}</SelectItem>
+            <SelectItem value="name">{t("teams.sortByName")}</SelectItem>
           </SelectContent>
         </Select>
         <div className="flex gap-2">
-          {STATUS_FILTERS.map((f) => (
+          {STATUS_VALUES.map((f) => (
             <Button
-              key={f.value}
-              variant={statusFilter === f.value ? "default" : "outline"}
+              key={f}
+              variant={statusFilter === f ? "default" : "outline"}
               size="sm"
-              onClick={() => setStatusFilter(f.value)}
+              onClick={() => setStatusFilter(f)}
             >
-              {f.label}
+              {statusLabel(f)}
             </Button>
           ))}
         </div>
@@ -91,15 +90,15 @@ export default function TeamsPage() {
 
       {/* Mobile chip row */}
       <div className="mt-4 flex overflow-x-auto gap-2 pb-1 md:hidden">
-        {STATUS_FILTERS.map((f) => (
+        {STATUS_VALUES.map((f) => (
           <Button
-            key={f.value}
-            variant={statusFilter === f.value ? "default" : "outline"}
+            key={f}
+            variant={statusFilter === f ? "default" : "outline"}
             size="sm"
             className="whitespace-nowrap shrink-0"
-            onClick={() => setStatusFilter(f.value)}
+            onClick={() => setStatusFilter(f)}
           >
-            {f.label}
+            {statusLabel(f)}
           </Button>
         ))}
       </div>
@@ -128,12 +127,12 @@ export default function TeamsPage() {
                   className="inline-flex items-center justify-center rounded-full px-3 py-0.5 text-sm font-bold text-white"
                   style={{ backgroundColor: color }}
                 >
-                  {entry.score} pts
+                  {entry.score} {t("teams.pts")}
                 </span>
               </CardHeader>
               <CardContent className="px-4 pb-4 divide-y">
                 {filteredTeams.length === 0 ? (
-                  <p className="text-sm text-gray-400 py-2">No teams match this filter.</p>
+                  <p className="text-sm text-gray-400 py-2">{t("teams.noTeamsFilter")}</p>
                 ) : (
                   filteredTeams.map((team) => (
                     <TeamRow key={team.id} team={team} />
@@ -167,13 +166,13 @@ export default function TeamsPage() {
                     displayName={entry.participant.displayName}
                   />
                   <span className="ml-auto mr-2 text-sm font-semibold text-gray-600">
-                    {entry.score} pts
+                    {entry.score} {t("teams.pts")}
                   </span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-3 divide-y">
                 {filteredTeams.length === 0 ? (
-                  <p className="text-sm text-gray-400 py-2">No teams match this filter.</p>
+                  <p className="text-sm text-gray-400 py-2">{t("teams.noTeamsFilter")}</p>
                 ) : (
                   filteredTeams.map((team) => (
                     <TeamRow key={team.id} team={team} />
