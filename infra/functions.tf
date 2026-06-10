@@ -99,8 +99,7 @@ resource "azurerm_resource_group_template_deployment" "function_app" {
               { name = "THESPORTSDB_SEASON",                   value = "[parameters('thesportsdbSeason')]" },
               { name = "TIMER_SCHEDULE",                       value = "[parameters('timerSchedule')]" },
               { name = "SYNC_INTERVAL_HOURS",                  value = "1" },
-              { name = "AzureWebJobsFeatureFlags",             value = "EnableWorkerIndexing" },
-              { name = "FUNCTIONS_WORKER_RUNTIME",             value = "python" }
+              { name = "AzureWebJobsFeatureFlags",             value = "EnableWorkerIndexing" }
             ]
             cors = {
               allowedOrigins = ["[parameters('corsOrigin')]"]
