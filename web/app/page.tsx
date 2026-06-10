@@ -1,0 +1,146 @@
+import { STANDINGS, PARTICIPANT_COLORS } from "@/lib/mock-data";
+import { ParticipantBadge } from "@/components/participant-badge";
+import { StatusBadge } from "@/components/status-badge";
+import { TeamPill } from "@/components/team-badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+const SCORING_MILESTONES = [
+  { label: "Group qualification", pts: 1 },
+  { label: "Round of 32 win", pts: 2 },
+  { label: "Round of 16 win", pts: 3 },
+  { label: "Quarterfinal win", pts: 5 },
+  { label: "Semifinal win", pts: 8 },
+  { label: "Championship win", pts: 13 },
+];
+
+export default function StandingsPage() {
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <h1 className="text-2xl font-bold text-gray-900">Standings</h1>
+      <p className="mt-1 text-sm text-gray-500">
+        Rankings based on tournament milestones reached by each participant&apos;s teams.
+      </p>
+
+      {/* Desktop table */}
+      <div className="mt-6 hidden md:block rounded-lg border bg-white shadow-sm overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-[#F3F4F6]">
+              <TableHead className="w-12 text-center font-semibold text-gray-700">RANK</TableHead>
+              <TableHead className="font-semibold text-gray-700">PARTICIPANT</TableHead>
+              <TableHead className="w-24 text-center font-semibold text-gray-700">SCORE</TableHead>
+              <TableHead className="font-semibold text-gray-700">TEAMS</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {STANDINGS.map((entry, i) => {
+              const color = PARTICIPANT_COLORS[entry.participant.id] ?? "#6B7280";
+              return (
+                <TableRow key={entry.participant.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                  <TableCell className="text-center text-sm font-semibold text-gray-500">
+                    {i + 1}
+                  </TableCell>
+                  <TableCell>
+                    <ParticipantBadge
+                      participantId={entry.participant.id}
+                      displayName={entry.participant.displayName}
+                    />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span
+                      className="inline-flex items-center justify-center rounded-full px-3 py-0.5 text-sm font-bold text-white"
+                      style={{ backgroundColor: color }}
+                    >
+                      {entry.score}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1.5">
+                      {entry.teams.map((team) => (
+                        <TeamPill key={team.id} team={team} showStatus={false} />
+                      ))}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="mt-6 flex flex-col gap-3 md:hidden">
+        {STANDINGS.map((entry, i) => {
+          const color = PARTICIPANT_COLORS[entry.participant.id] ?? "#6B7280";
+          return (
+            <div
+              key={entry.participant.id}
+              className="rounded-lg border bg-white shadow-sm overflow-hidden"
+              style={{ borderLeft: `4px solid ${color}` }}
+            >
+              <Accordion>
+                <AccordionItem value="teams">
+                  <AccordionTrigger className="px-4 py-3">
+                    <div className="flex items-center gap-3 w-full">
+                      <span className="text-sm font-semibold text-gray-400 w-5 text-center">
+                        #{i + 1}
+                      </span>
+                      <ParticipantBadge
+                        participantId={entry.participant.id}
+                        displayName={entry.participant.displayName}
+                      />
+                      <span
+                        className="ml-auto mr-2 inline-flex items-center justify-center rounded-full px-3 py-0.5 text-sm font-bold text-white"
+                        style={{ backgroundColor: color }}
+                      >
+                        {entry.score}
+                      </span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-3">
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {entry.teams.map((team) => (
+                        <div key={team.id} className="flex items-center gap-1.5">
+                          <span className="font-mono text-[10px] font-bold text-gray-500 w-8">
+                            {team.id}
+                          </span>
+                          <StatusBadge status={team.status} />
+                        </div>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Scoring legend */}
+      <div className="mt-8 rounded-lg border bg-white px-4 py-4 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">Scoring</p>
+        <div className="flex flex-wrap gap-x-6 gap-y-1">
+          {SCORING_MILESTONES.map((m) => (
+            <div key={m.label} className="flex items-center gap-1.5 text-sm text-gray-600">
+              <span className="font-bold text-gray-900">{m.pts}pt{m.pts > 1 ? "s" : ""}</span>
+              <span>{m.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
