@@ -1,4 +1,5 @@
 import os
+from collections.abc import Iterator
 
 import pytest
 
@@ -16,9 +17,9 @@ def _require_real_cosmos() -> str:
 
 
 @pytest.fixture(autouse=True)
-def reset_cosmos() -> None:
+def reset_cosmos() -> Iterator[None]:
     cosmos_module.reset_container()
-    yield  # type: ignore[misc]
+    yield
     cosmos_module.reset_container()
 
 
