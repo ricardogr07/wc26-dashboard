@@ -1,0 +1,69 @@
+{
+  "standings": [
+    {
+      "rank": 1,
+      "participantId": "ricardo",
+      "displayName": "Ricardo",
+      "score": 12,
+      "teams": [
+        { "teamId": "USA", "name": "United States", "group": "A", "status": "active", "eloRating": 1740 },
+        { "teamId": "MEX", "name": "Mexico", "group": "A", "status": "active", "eloRating": 1680 },
+        { "teamId": "BRA", "name": "Brazil", "group": "B", "status": "active", "eloRating": 2050 },
+        { "teamId": "FRA", "name": "France", "group": "C", "status": "active", "eloRating": 2010 },
+        { "teamId": "GER", "name": "Germany", "group": "D", "status": "active", "eloRating": 1960 }
+      ]
+    },
+    {
+      "rank": 2,
+      "participantId": "jibran",
+      "displayName": "Jibran",
+      "score": 8,
+      "teams": [
+        { "teamId": "ARG", "name": "Argentina", "group": "E", "status": "active", "eloRating": 2080 },
+        { "teamId": "ESP", "name": "Spain", "group": "F", "status": "active", "eloRating": 1990 },
+        { "teamId": "ENG", "name": "England", "group": "G", "status": "active", "eloRating": 1970 },
+        { "teamId": "POR", "name": "Portugal", "group": "H", "status": "active", "eloRating": 1930 },
+        { "teamId": "NED", "name": "Netherlands", "group": "A", "status": "active", "eloRating": 1920 }
+      ]
+    },
+    {
+      "rank": 3,
+      "participantId": "chuy",
+      "displayName": "Chuy",
+      "score": 5,
+      "teams": [
+        { "teamId": "JPN", "name": "Japan", "group": "B", "status": "active", "eloRating": 1810 },
+        { "teamId": "MAR", "name": "Morocco", "group": "C", "status": "active", "eloRating": 1840 },
+        { "teamId": "SEN", "name": "Senegal", "group": "D", "status": "active", "eloRating": 1750 },
+        { "teamId": "ECU", "name": "Ecuador", "group": "E", "status": "active", "eloRating": 1680 },
+        { "teamId": "URU", "name": "Uruguay", "group": "F", "status": "active", "eloRating": 1860 }
+      ]
+    },
+    {
+      "rank": 4,
+      "participantId": "jaime",
+      "displayName": "Jaime",
+      "score": 3,
+      "teams": [
+        { "teamId": "CAN", "name": "Canada", "group": "G", "status": "active", "eloRating": 1650 },
+        { "teamId": "KOR", "name": "South Korea", "group": "H", "status": "active", "eloRating": 1720 },
+        { "teamId": "AUS", "name": "Australia", "group": "A", "status": "active", "eloRating": 1650 },
+        { "teamId": "CRO", "name": "Croatia", "group": "B", "status": "active", "eloRating": 1850 },
+        { "teamId": "DEN", "name": "Denmark", "group": "C", "status": "active", "eloRating": 1820 }
+      ]
+    },
+    {
+      "rank": 5,
+      "participantId": "arnoldo",
+      "displayName": "Arnoldo",
+      "score": 0,
+      "teams": [
+        { "teamId": "KSA", "name": "Saudi Arabia", "group": "D", "status": "active", "eloRating": 1590 },
+        { "teamId": "NGA", "name": "Nigeria", "group": "E", "status": "active", "eloRating": 1680 },
+        { "teamId": "GHA", "name": "Ghana", "group": "F", "status": "active", "eloRating": 1590 },
+        { "teamId": "CMR", "name": "Cameroon", "group": "G", "status": "active", "eloRating": 1620 },
+        { "teamId": "TUN", "name": "Tunisia", "group": "H", "status": "active", "eloRating": 1590 }
+      ]
+    }
+  ]
+}

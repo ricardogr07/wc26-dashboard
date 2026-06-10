@@ -5,6 +5,7 @@ import logging
 
 import azure.functions as func
 
+from api.cors import cors_headers
 from api.cosmos import get_container
 from api.models import Match, Participant, Team
 from api.scoring import compute_scores
@@ -38,7 +39,7 @@ def handle_standings(req: func.HttpRequest) -> func.HttpResponse:
         ]
     except Exception:
         logger.exception("Cosmos error in standings endpoint")
-        return func.HttpResponse("Service unavailable", status_code=500)
+        return func.HttpResponse("Service unavailable", status_code=500, headers=cors_headers())
 
     scores = compute_scores(matches, participants, teams)
     team_by_id = {t.id: t for t in teams}
@@ -72,4 +73,5 @@ def handle_standings(req: func.HttpRequest) -> func.HttpResponse:
         json.dumps({"standings": standings}),
         mimetype="application/json",
         status_code=200,
+        headers=cors_headers(),
     )

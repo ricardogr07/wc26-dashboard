@@ -6,6 +6,7 @@ from datetime import date
 
 import azure.functions as func
 
+from api.cors import cors_headers
 from api.cosmos import get_container
 from api.models import Match, Team
 
@@ -22,6 +23,7 @@ def handle_matches(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(
             f"Invalid round '{round_param}', expected one of: {', '.join(sorted(_VALID_ROUNDS))}",
             status_code=400,
+            headers=cors_headers(),
         )
 
     if date_param:
@@ -31,6 +33,7 @@ def handle_matches(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(
                 "Invalid date format, expected YYYY-MM-DD",
                 status_code=400,
+                headers=cors_headers(),
             )
 
     conditions = ["c.type = 'match'"]
@@ -65,7 +68,7 @@ def handle_matches(req: func.HttpRequest) -> func.HttpResponse:
         ]
     except Exception:
         logger.exception("Cosmos error in matches endpoint")
-        return func.HttpResponse("Service unavailable", status_code=500)
+        return func.HttpResponse("Service unavailable", status_code=500, headers=cors_headers())
 
     team_by_id = {t.id: t for t in teams}
     matches.sort(key=lambda m: m.scheduled_at)
@@ -102,4 +105,5 @@ def handle_matches(req: func.HttpRequest) -> func.HttpResponse:
         json.dumps({"matches": result}),
         mimetype="application/json",
         status_code=200,
+        headers=cors_headers(),
     )

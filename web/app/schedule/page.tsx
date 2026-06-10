@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { MATCHES, TEAMS, ROUND_LABELS, getTeamOwner, PARTICIPANT_COLORS } from "@/lib/mock-data";
+import { useState, useMemo, useEffect } from "react";
+import { getMatches, getStandings, type ApiMatch } from "@/lib/api";
+import { PARTICIPANT_COLORS, ROUND_LABELS } from "@/lib/mock-data";
+import type { StandingsEntry } from "@/lib/types";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,8 +26,6 @@ const ROUNDS: { value: "all" | MatchRound; label: string }[] = [
   { value: "final", label: "Final" },
 ];
 
-const teamsById = Object.fromEntries(TEAMS.map((t) => [t.id, t]));
-
 function formatDate(iso: string) {
   const d = new Date(iso);
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
@@ -36,8 +36,8 @@ function formatTime(iso: string) {
   return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZoneName: "short" });
 }
 
-function groupMatchesByDate(matches: typeof MATCHES) {
-  const groups = new Map<string, typeof MATCHES>();
+function groupMatchesByDate(matches: ApiMatch[]) {
+  const groups = new Map<string, ApiMatch[]>();
   for (const match of matches) {
     const dateKey = new Date(match.scheduledAt).toDateString();
     if (!groups.has(dateKey)) groups.set(dateKey, []);
@@ -46,15 +46,47 @@ function groupMatchesByDate(matches: typeof MATCHES) {
   return groups;
 }
 
+function buildOwnerMap(standings: StandingsEntry[]): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const entry of standings) {
+    for (const teamId of entry.participant.teamIds) {
+      map[teamId] = entry.participant.id;
+    }
+  }
+  return map;
+}
+
 export default function SchedulePage() {
   const [selectedRound, setSelectedRound] = useState<"all" | MatchRound>("all");
+  const [matches, setMatches] = useState<ApiMatch[] | null>(null);
+  const [standings, setStandings] = useState<StandingsEntry[]>([]);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    Promise.all([getMatches(), getStandings()])
+      .then(([m, s]) => {
+        setMatches(m);
+        setStandings(s);
+      })
+      .catch(() => setError(true));
+  }, []);
+
+  const ownerMap = useMemo(() => buildOwnerMap(standings), [standings]);
 
   const filtered = useMemo(() => {
-    if (selectedRound === "all") return MATCHES;
-    return MATCHES.filter((m) => m.round === selectedRound);
-  }, [selectedRound]);
+    if (!matches) return [];
+    if (selectedRound === "all") return matches;
+    return matches.filter((m) => m.round === selectedRound);
+  }, [matches, selectedRound]);
 
   const grouped = useMemo(() => groupMatchesByDate(filtered), [filtered]);
+
+  if (!matches && !error) {
+    return <p className="mx-auto max-w-4xl px-4 py-16 text-sm text-gray-500">Loading schedule…</p>;
+  }
+  if (error) {
+    return <p className="mx-auto max-w-4xl px-4 py-16 text-sm text-red-500">Failed to load schedule.</p>;
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
@@ -85,7 +117,7 @@ export default function SchedulePage() {
             key={r.value}
             variant={selectedRound === r.value ? "default" : "outline"}
             size="sm"
-            className="whitespace-nowrap flex-shrink-0"
+            className="whitespace-nowrap shrink-0"
             onClick={() => setSelectedRound(r.value)}
           >
             {r.label}
@@ -95,20 +127,18 @@ export default function SchedulePage() {
 
       {/* Match list */}
       <div className="mt-6 space-y-6">
-        {[...grouped.entries()].map(([dateKey, matches]) => (
+        {[...grouped.entries()].map(([dateKey, dayMatches]) => (
           <div key={dateKey}>
             <p className="text-sm text-gray-500 font-medium mb-2">
-              {formatDate(matches[0].scheduledAt)}
+              {formatDate(dayMatches[0].scheduledAt)}
             </p>
             <div className="space-y-3">
-              {matches.map((match) => {
-                const home = teamsById[match.homeTeamId];
-                const away = teamsById[match.awayTeamId];
-                const homeOwner = getTeamOwner(match.homeTeamId);
-                const awayOwner = getTeamOwner(match.awayTeamId);
+              {dayMatches.map((match) => {
+                const homeOwnerId = ownerMap[match.homeTeam.id];
+                const awayOwnerId = ownerMap[match.awayTeam.id];
                 const ownerColor =
-                  homeOwner ? PARTICIPANT_COLORS[homeOwner.id] :
-                  awayOwner ? PARTICIPANT_COLORS[awayOwner.id] : undefined;
+                  homeOwnerId ? PARTICIPANT_COLORS[homeOwnerId] :
+                  awayOwnerId ? PARTICIPANT_COLORS[awayOwnerId] : undefined;
 
                 return (
                   <Card
@@ -121,11 +151,11 @@ export default function SchedulePage() {
                       <div className="hidden md:flex items-center gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 text-sm font-semibold">
-                            <span className="font-mono bg-gray-100 px-1.5 rounded text-xs">{home?.id}</span>
-                            <span>{home?.name}</span>
+                            <span className="font-mono bg-gray-100 px-1.5 rounded text-xs">{match.homeTeam.id}</span>
+                            <span>{match.homeTeam.name}</span>
                             <span className="text-gray-400 mx-1">vs</span>
-                            <span>{away?.name}</span>
-                            <span className="font-mono bg-gray-100 px-1.5 rounded text-xs">{away?.id}</span>
+                            <span>{match.awayTeam.name}</span>
+                            <span className="font-mono bg-gray-100 px-1.5 rounded text-xs">{match.awayTeam.id}</span>
                           </div>
                           <div className="mt-1 text-xs text-gray-400">
                             {formatDate(match.scheduledAt)} · {formatTime(match.scheduledAt)} · {match.venue}
@@ -139,7 +169,7 @@ export default function SchedulePage() {
                           )}
                           <StatusBadge status={match.status} />
                         </div>
-                        <div className="text-xs text-gray-400 text-right min-w-[80px]">
+                        <div className="text-xs text-gray-400 text-right min-w-20">
                           {ROUND_LABELS[match.round]}
                         </div>
                       </div>
@@ -149,7 +179,7 @@ export default function SchedulePage() {
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="text-sm font-semibold">
-                              {home?.name} <span className="text-gray-400">vs</span> {away?.name}
+                              {match.homeTeam.name} <span className="text-gray-400">vs</span> {match.awayTeam.name}
                             </p>
                             <p className="text-xs text-gray-400 mt-0.5">
                               {formatDate(match.scheduledAt)} · {match.venue}

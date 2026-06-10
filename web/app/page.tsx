@@ -1,4 +1,9 @@
-import { STANDINGS, PARTICIPANT_COLORS } from "@/lib/mock-data";
+"use client";
+
+import { useEffect, useState } from "react";
+import { getStandings } from "@/lib/api";
+import { PARTICIPANT_COLORS } from "@/lib/mock-data";
+import type { StandingsEntry } from "@/lib/types";
 import { ParticipantBadge } from "@/components/participant-badge";
 import { StatusBadge } from "@/components/status-badge";
 import { TeamPill } from "@/components/team-badge";
@@ -27,6 +32,20 @@ const SCORING_MILESTONES = [
 ];
 
 export default function StandingsPage() {
+  const [standings, setStandings] = useState<StandingsEntry[] | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    getStandings().then(setStandings).catch(() => setError(true));
+  }, []);
+
+  if (!standings && !error) {
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-gray-500">Loading standings…</p>;
+  }
+  if (error) {
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">Failed to load standings.</p>;
+  }
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
       <h1 className="text-2xl font-bold text-gray-900">Standings</h1>
@@ -46,7 +65,7 @@ export default function StandingsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {STANDINGS.map((entry, i) => {
+            {standings!.map((entry, i) => {
               const color = PARTICIPANT_COLORS[entry.participant.id] ?? "#6B7280";
               return (
                 <TableRow key={entry.participant.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
@@ -83,7 +102,7 @@ export default function StandingsPage() {
 
       {/* Mobile cards */}
       <div className="mt-6 flex flex-col gap-3 md:hidden">
-        {STANDINGS.map((entry, i) => {
+        {standings!.map((entry, i) => {
           const color = PARTICIPANT_COLORS[entry.participant.id] ?? "#6B7280";
           return (
             <div

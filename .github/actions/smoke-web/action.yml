@@ -1,9 +1,12 @@
 name: Smoke test — Web
-description: Verifies the Azure Static Web App is reachable after deployment.
+description: Verifies the Azure Static Web App is reachable and the API returns real data.
 
 inputs:
   url:
     description: Full HTTPS URL of the Static Web App to check
+    required: true
+  function-app-url:
+    description: Base HTTPS URL of the deployed Function App for API data validation
     required: true
 
 runs:
@@ -23,3 +26,16 @@ runs:
           "${{ inputs.url }}" \
           > /dev/null
         echo "SWA returned HTTP 200 OK"
+
+    - name: Validate API returns real data
+      shell: bash
+      run: |
+        echo "Checking API data at: ${{ inputs.function-app-url }}/api/standings"
+        RESP=$(curl -sf --retry 3 --retry-delay 5 \
+          "${{ inputs.function-app-url }}/api/standings")
+        COUNT=$(echo "$RESP" | jq '.standings | length')
+        if [ "$COUNT" -lt 1 ]; then
+          echo "::error::API returned 0 standings entries — end-to-end data flow broken"
+          exit 1
+        fi
+        echo "API data OK: $COUNT standings entries"
