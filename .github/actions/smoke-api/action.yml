@@ -13,17 +13,22 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Check Function App is Running
+    - name: Wait for Function App to reach Running state
       shell: bash
       run: |
-        echo "Checking state of Function App: ${{ inputs.function-app-name }}"
-        STATE=$(az functionapp show \
-          --name "${{ inputs.function-app-name }}" \
-          --resource-group "${{ inputs.resource-group }}" \
-          --query state \
-          --output tsv)
-        echo "Function App state: $STATE"
-        if [ "$STATE" != "Running" ]; then
-          echo "::error::Function App is not Running (got: $STATE)"
-          exit 1
-        fi
+        echo "Polling state of Function App: ${{ inputs.function-app-name }}"
+        for i in $(seq 1 8); do
+          STATE=$(az functionapp show \
+            --name "${{ inputs.function-app-name }}" \
+            --resource-group "${{ inputs.resource-group }}" \
+            --query state \
+            --output tsv 2>/dev/null || true)
+          echo "Attempt $i/8: state=$STATE"
+          if [ "$STATE" = "Running" ]; then
+            echo "Function App is Running."
+            exit 0
+          fi
+          sleep 15
+        done
+        echo "::error::Function App did not reach Running state after 2 minutes (last state: $STATE)"
+        exit 1

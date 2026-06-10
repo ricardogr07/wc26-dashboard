@@ -56,9 +56,7 @@ jobs:
           echo "function_app_name=$(terraform output -raw function_app_name)" >> "$GITHUB_OUTPUT"
           echo "function_app_url=$(terraform output -raw function_app_url)" >> "$GITHUB_OUTPUT"
           echo "static_web_app_url=$(terraform output -raw static_web_app_url)" >> "$GITHUB_OUTPUT"
-          SWA_TOKEN=$(terraform output -raw static_web_app_deployment_token)
-          echo "::add-mask::$SWA_TOKEN"
-          echo "static_web_app_token=$SWA_TOKEN" >> "$GITHUB_OUTPUT"
+          echo "static_web_app_token=$(terraform output -raw static_web_app_deployment_token)" >> "$GITHUB_OUTPUT"
 
   # ── Deploy API ───────────────────────────────────────────────────────────────
   deploy-api:
