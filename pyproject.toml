@@ -72,6 +72,18 @@ ignore = ["E501"]
 [tool.pyrefly]
 python_version = "3.11"
 
+[tool.tox.env.smoke]
+description = "Smoke tests against the live Azure environment"
+runner = "uv-venv-lock-runner"
+pass_env = ["COSMOS_CONNECTION_STRING", "COSMOS_DATABASE_NAME", "COSMOS_CONTAINER_NAME"]
+deps = [
+    "pytest>=8.3",
+    "azure-cosmos>=4.9",
+    "pydantic>=2.8",
+]
+commands = [["pytest", "-m", "smoke", "api/tests/", "-v"]]
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["api/tests"]
+markers = ["smoke: integration tests against the live Azure environment"]
