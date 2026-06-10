@@ -104,6 +104,7 @@ jobs:
         with:
           function-app-name: ${{ needs.infra.outputs.function_app_name }}
           resource-group: wc26-dashboard-rg
+          function-app-url: ${{ needs.infra.outputs.function_app_url }}
 
   # ── Deploy Web ───────────────────────────────────────────────────────────────
   deploy-web:
@@ -128,6 +129,8 @@ jobs:
           cache-dependency-path: web/pnpm-lock.yaml
 
       - name: Install and build
+        env:
+          NEXT_PUBLIC_API_BASE_URL: ${{ needs.infra.outputs.function_app_url }}
         run: |
           pnpm install --frozen-lockfile
           pnpm build
@@ -151,6 +154,7 @@ jobs:
       - uses: ./.github/actions/smoke-web
         with:
           url: ${{ needs.infra.outputs.static_web_app_url }}
+          function-app-url: ${{ needs.infra.outputs.function_app_url }}
 
   # ── End-to-end smoke ─────────────────────────────────────────────────────────
   e2e-smoke:

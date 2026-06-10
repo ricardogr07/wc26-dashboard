@@ -1,5 +1,5 @@
 name: Smoke test — API
-description: Verifies the Azure Function App is in Running state after deployment.
+description: Verifies the Azure Function App is Running and returns real data after deployment.
 
 inputs:
   function-app-name:
@@ -9,6 +9,9 @@ inputs:
     description: Resource group containing the Function App
     required: true
     default: wc26-dashboard-rg
+  function-app-url:
+    description: Base HTTPS URL of the deployed Function App (e.g. https://my-func.azurewebsites.net)
+    required: true
 
 runs:
   using: composite
@@ -32,3 +35,16 @@ runs:
         done
         echo "::error::Function App did not reach Running state after 2 minutes (last state: $STATE)"
         exit 1
+
+    - name: Validate standings endpoint returns data
+      shell: bash
+      run: |
+        echo "Checking ${{ inputs.function-app-url }}/api/standings"
+        RESP=$(curl -sf --retry 3 --retry-delay 5 \
+          "${{ inputs.function-app-url }}/api/standings")
+        COUNT=$(echo "$RESP" | jq '.standings | length')
+        if [ "$COUNT" -lt 1 ]; then
+          echo "::error::standings returned 0 entries — DB may not be seeded"
+          exit 1
+        fi
+        echo "standings OK: $COUNT entries"
