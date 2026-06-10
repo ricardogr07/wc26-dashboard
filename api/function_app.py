@@ -1,3 +1,18 @@
+# ruff: noqa: E402
+import os as _os
+import sys as _sys
+import types as _types
+
+# When deployed via `package: api`, this file sits at the wwwroot root and
+# there is no `api/` subdirectory, so `from api.X import Y` would fail.
+# Detect that case and register the current directory as the `api` package.
+_here = _os.path.dirname(_os.path.abspath(__file__))
+if not _os.path.isdir(_os.path.join(_os.path.dirname(_here), "api")):
+    _pkg = _types.ModuleType("api")
+    _pkg.__path__ = [_here]
+    _pkg.__package__ = "api"
+    _sys.modules.setdefault("api", _pkg)
+
 import azure.functions as func
 
 from api.cors import cors_headers
