@@ -9,4 +9,5 @@ def cors_headers() -> dict[str, str]:
         "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, x-functions-key",
+        "Access-Control-Expose-Headers": "Cache-Control",
     }

@@ -30,6 +30,13 @@ type Translations = {
     participant: string;
     scenarioBuilderTitle: string;
     scenarioBuilderDesc: string;
+    runScenario: string;
+    resetScenario: string;
+    scenarioVsBaseline: string;
+    scenarioError: string;
+    noFutureMatches: string;
+    homeWins: string;
+    awayWins: string;
     loading: string;
     error: string;
   };
@@ -101,7 +108,14 @@ const en: Translations = {
     participant: "PARTICIPANT",
     scenarioBuilderTitle: "Scenario Builder",
     scenarioBuilderDesc:
-      "Coming in a future update — select hypothetical winners and see how probabilities shift.",
+      "Fix hypothetical match outcomes and see how the final standings probabilities shift.",
+    runScenario: "Run Scenario",
+    resetScenario: "Reset",
+    scenarioVsBaseline: "Scenario vs. Baseline",
+    scenarioError: "Failed to run scenario.",
+    noFutureMatches: "No upcoming matches to override.",
+    homeWins: "Home",
+    awayWins: "Away",
     loading: "Loading simulation…",
     error: "Failed to load simulation.",
   },
@@ -182,7 +196,14 @@ const es: Translations = {
     participant: "PARTICIPANTE",
     scenarioBuilderTitle: "Constructor de Escenarios",
     scenarioBuilderDesc:
-      "Disponible en una futura actualización — elige ganadores hipotéticos y observa cómo cambian las probabilidades.",
+      "Fija resultados hipotéticos y observa cómo cambian las probabilidades de la clasificación final.",
+    runScenario: "Ejecutar Escenario",
+    resetScenario: "Reiniciar",
+    scenarioVsBaseline: "Escenario vs. Base",
+    scenarioError: "Error al ejecutar el escenario.",
+    noFutureMatches: "No hay partidos futuros para modificar.",
+    homeWins: "Local",
+    awayWins: "Visitante",
     loading: "Cargando simulación…",
     error: "Error al cargar la simulación.",
   },

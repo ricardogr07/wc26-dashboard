@@ -1,0 +1,13 @@
+{
+  "id": "simulationRun_scenario",
+  "runAt": "2026-06-10T08:00:00",
+  "matchesCompletedAtRun": 0,
+  "nRuns": 10000,
+  "probabilities": {
+    "ricardo": { "1st": 0.40, "2nd": 0.22, "3rd": 0.18, "4th": 0.12, "5th": 0.08 },
+    "jibran":  { "1st": 0.20, "2nd": 0.25, "3rd": 0.22, "4th": 0.18, "5th": 0.15 },
+    "chuy":    { "1st": 0.18, "2nd": 0.20, "3rd": 0.23, "4th": 0.22, "5th": 0.17 },
+    "jaime":   { "1st": 0.13, "2nd": 0.18, "3rd": 0.20, "4th": 0.27, "5th": 0.22 },
+    "arnoldo": { "1st": 0.09, "2nd": 0.15, "3rd": 0.17, "4th": 0.21, "5th": 0.38 }
+  }
+}
