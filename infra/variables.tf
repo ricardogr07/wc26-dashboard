@@ -40,6 +40,24 @@ variable "thesportsdb_api_key" {
   sensitive   = true
 }
 
+variable "thesportsdb_league_id" {
+  description = "TheSportsDB league ID for the FIFA World Cup 2026"
+  type        = string
+  default     = "4429"
+}
+
+variable "thesportsdb_season" {
+  description = "TheSportsDB season string for WC 2026"
+  type        = string
+  default     = "2026-2027"
+}
+
+variable "timer_schedule" {
+  description = "NCRONTAB schedule for the sync_matches timer trigger (six-field format)"
+  type        = string
+  default     = "0 0 * * * *"
+}
+
 variable "cosmos_free_tier" {
   description = "Enable Cosmos DB free tier (only one per subscription)"
   type        = bool
