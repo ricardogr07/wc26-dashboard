@@ -1,0 +1,178 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import { STANDINGS, PARTICIPANT_COLORS, TEAMS } from "@/lib/mock-data";
+import { ParticipantBadge } from "@/components/participant-badge";
+import { TeamRow } from "@/components/team-badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import type { TeamStatus } from "@/lib/types";
+
+const teamsById = Object.fromEntries(TEAMS.map((t) => [t.id, t]));
+
+type SortKey = "participant" | "name" | "score";
+type StatusFilter = "all" | TeamStatus;
+
+const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "active", label: "Active" },
+  { value: "qualified", label: "Qualified" },
+  { value: "champion", label: "Champion" },
+  { value: "eliminated", label: "Eliminated" },
+];
+
+export default function TeamsPage() {
+  const [sortKey, setSortKey] = useState<SortKey>("score");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+
+  const sortedStandings = useMemo(() => {
+    const entries = [...STANDINGS];
+    if (sortKey === "score") entries.sort((a, b) => b.score - a.score);
+    else if (sortKey === "name") entries.sort((a, b) => a.participant.displayName.localeCompare(b.participant.displayName));
+    return entries;
+  }, [sortKey]);
+
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <h1 className="text-2xl font-bold text-gray-900">Teams</h1>
+      <p className="mt-1 text-sm text-gray-500">Team ownership and tournament status by participant.</p>
+
+      {/* Desktop filter bar */}
+      <div className="mt-6 hidden md:flex items-center gap-3 rounded-lg bg-gray-100 px-4 py-3">
+        <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
+          <SelectTrigger className="w-44 bg-white">
+            <SelectValue placeholder="Sort by…" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="score">Sort by Score</SelectItem>
+            <SelectItem value="participant">Sort by Participant</SelectItem>
+            <SelectItem value="name">Sort by Name</SelectItem>
+          </SelectContent>
+        </Select>
+        <div className="flex gap-2">
+          {STATUS_FILTERS.map((f) => (
+            <Button
+              key={f.value}
+              variant={statusFilter === f.value ? "default" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter(f.value)}
+            >
+              {f.label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile chip row */}
+      <div className="mt-4 flex overflow-x-auto gap-2 pb-1 md:hidden">
+        {STATUS_FILTERS.map((f) => (
+          <Button
+            key={f.value}
+            variant={statusFilter === f.value ? "default" : "outline"}
+            size="sm"
+            className="whitespace-nowrap flex-shrink-0"
+            onClick={() => setStatusFilter(f.value)}
+          >
+            {f.label}
+          </Button>
+        ))}
+      </div>
+
+      {/* Desktop grid */}
+      <div className="mt-6 hidden md:grid grid-cols-2 gap-6">
+        {sortedStandings.map((entry) => {
+          const color = PARTICIPANT_COLORS[entry.participant.id] ?? "#6B7280";
+          const filteredTeams = statusFilter === "all"
+            ? entry.teams
+            : entry.teams.filter((t) => t.status === statusFilter);
+
+          return (
+            <Card
+              key={entry.participant.id}
+              className="overflow-hidden border-t-4"
+              style={{ borderTopColor: color }}
+            >
+              <CardHeader className="pb-2 pt-4 px-4 flex flex-row items-center justify-between">
+                <ParticipantBadge
+                  participantId={entry.participant.id}
+                  displayName={entry.participant.displayName}
+                  className="text-base shrink-0"
+                />
+                <span
+                  className="inline-flex items-center justify-center rounded-full px-3 py-0.5 text-sm font-bold text-white"
+                  style={{ backgroundColor: color }}
+                >
+                  {entry.score} pts
+                </span>
+              </CardHeader>
+              <CardContent className="px-4 pb-4 divide-y">
+                {filteredTeams.length === 0 ? (
+                  <p className="text-sm text-gray-400 py-2">No teams match this filter.</p>
+                ) : (
+                  filteredTeams.map((team) => {
+                    const fullTeam = teamsById[team.id] ?? team;
+                    return <TeamRow key={team.id} team={fullTeam} />;
+                  })
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Mobile accordion */}
+      <Accordion multiple defaultValue={sortedStandings.map((e) => e.participant.id)} className="mt-6 md:hidden space-y-3">
+        {sortedStandings.map((entry) => {
+          const color = PARTICIPANT_COLORS[entry.participant.id] ?? "#6B7280";
+          const filteredTeams = statusFilter === "all"
+            ? entry.teams
+            : entry.teams.filter((t) => t.status === statusFilter);
+
+          return (
+            <AccordionItem
+              key={entry.participant.id}
+              value={entry.participant.id}
+              className="rounded-lg border bg-white shadow-sm overflow-hidden"
+              style={{ borderLeft: `4px solid ${color}` }}
+            >
+              <AccordionTrigger className="px-4 py-3">
+                <div className="flex items-center w-full gap-3">
+                  <ParticipantBadge
+                    participantId={entry.participant.id}
+                    displayName={entry.participant.displayName}
+                  />
+                  <span className="ml-auto mr-2 text-sm font-semibold text-gray-600">
+                    {entry.score} pts
+                  </span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-3 divide-y">
+                {filteredTeams.length === 0 ? (
+                  <p className="text-sm text-gray-400 py-2">No teams match this filter.</p>
+                ) : (
+                  filteredTeams.map((team) => {
+                    const fullTeam = teamsById[team.id] ?? team;
+                    return <TeamRow key={team.id} team={fullTeam} />;
+                  })
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
+    </div>
+  );
+}
