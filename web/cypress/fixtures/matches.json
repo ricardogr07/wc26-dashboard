@@ -1,0 +1,43 @@
+{
+  "matches": [
+    {
+      "id": "match_usa_mex",
+      "round": "group",
+      "group": "A",
+      "homeTeam": { "id": "USA", "name": "United States", "eloRating": 1740 },
+      "awayTeam": { "id": "MEX", "name": "Mexico", "eloRating": 1680 },
+      "scheduledAt": "2026-06-12T20:00:00",
+      "venue": "SoFi Stadium, Los Angeles",
+      "homeScore": null,
+      "awayScore": null,
+      "winnerId": null,
+      "status": "scheduled"
+    },
+    {
+      "id": "match_bra_ger",
+      "round": "group",
+      "group": "B",
+      "homeTeam": { "id": "BRA", "name": "Brazil", "eloRating": 2050 },
+      "awayTeam": { "id": "GER", "name": "Germany", "eloRating": 1960 },
+      "scheduledAt": "2026-06-13T00:00:00",
+      "venue": "MetLife Stadium, New York",
+      "homeScore": null,
+      "awayScore": null,
+      "winnerId": null,
+      "status": "scheduled"
+    },
+    {
+      "id": "match_fra_arg",
+      "round": "group",
+      "group": "C",
+      "homeTeam": { "id": "FRA", "name": "France", "eloRating": 2010 },
+      "awayTeam": { "id": "ARG", "name": "Argentina", "eloRating": 2080 },
+      "scheduledAt": "2026-06-14T18:00:00",
+      "venue": "AT&T Stadium, Dallas",
+      "homeScore": null,
+      "awayScore": null,
+      "winnerId": null,
+      "status": "scheduled"
+    }
+  ]
+}
