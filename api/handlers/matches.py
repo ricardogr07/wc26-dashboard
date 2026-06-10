@@ -101,9 +101,11 @@ def handle_matches(req: func.HttpRequest) -> func.HttpResponse:
             }
         )
 
+    headers = cors_headers()
+    headers["Cache-Control"] = "public, max-age=30, stale-while-revalidate=60"
     return func.HttpResponse(
         json.dumps({"matches": result}),
         mimetype="application/json",
         status_code=200,
-        headers=cors_headers(),
+        headers=headers,
     )

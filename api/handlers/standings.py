@@ -69,9 +69,11 @@ def handle_standings(req: func.HttpRequest) -> func.HttpResponse:
             }
         )
 
+    headers = cors_headers()
+    headers["Cache-Control"] = "public, max-age=60, stale-while-revalidate=120"
     return func.HttpResponse(
         json.dumps({"standings": standings}),
         mimetype="application/json",
         status_code=200,
-        headers=cors_headers(),
+        headers=headers,
     )
