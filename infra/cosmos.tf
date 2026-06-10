@@ -30,7 +30,7 @@ resource "azurerm_cosmosdb_sql_container" "items" {
   resource_group_name = azurerm_resource_group.main.name
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_path  = "/type"
+  partition_key_paths = ["/type"]
 
   indexing_policy {
     indexing_mode = "consistent"

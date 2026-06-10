@@ -1,11 +1,11 @@
 output "function_app_name" {
   description = "Name of the Azure Function App"
-  value       = azurerm_linux_function_app.api.name
+  value       = var.function_app_name
 }
 
 output "function_app_url" {
   description = "Default hostname of the Azure Function App"
-  value       = "https://${azurerm_linux_function_app.api.default_hostname}"
+  value       = try("https://${jsondecode(azurerm_resource_group_template_deployment.function_app.output_content).functionAppHostname.value}", null)
 }
 
 output "static_web_app_url" {
