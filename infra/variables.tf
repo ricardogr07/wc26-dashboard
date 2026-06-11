@@ -55,7 +55,7 @@ variable "thesportsdb_season" {
 variable "timer_schedule" {
   description = "NCRONTAB schedule for the sync_matches timer trigger (six-field format)"
   type        = string
-  default     = "0 0 * * * *"
+  default     = "0 */2 * * * *"
 }
 
 variable "cosmos_free_tier" {

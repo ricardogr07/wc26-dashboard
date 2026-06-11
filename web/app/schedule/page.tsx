@@ -189,7 +189,7 @@ export default function SchedulePage() {
                               {match.homeTeam.name} <span className="text-gray-400">vs</span> {match.awayTeam.name}
                             </p>
                             <p className="text-xs text-gray-400 mt-0.5">
-                              {formatDate(match.scheduledAt)} · {match.venue}
+                              {formatDate(match.scheduledAt)} · {formatTime(match.scheduledAt)} · {match.venue}
                             </p>
                           </div>
                           <div className="flex flex-col items-end gap-1">
