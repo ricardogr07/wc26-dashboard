@@ -11,6 +11,7 @@ from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from api.cosmos import get_container
 from api.sync_matches.elo_updater import compute_elo_update
 from api.sync_matches.thesportsdb import (
+    fetch_live_and_recent_events,
     fetch_season_events,
     parse_round,
     parse_scheduled_at,
@@ -223,7 +224,10 @@ def handle_sync(timer: func.TimerRequest) -> None:
     season = os.environ.get("THESPORTSDB_SEASON", "2026-2027")
     api_key = os.environ.get("THESPORTSDB_API_KEY", "3")
 
-    events = fetch_season_events(league_id, season, api_key)
+    events = fetch_live_and_recent_events(league_id, api_key)
+    if not events:
+        # Fall back to full-season endpoint (works with paid key)
+        events = fetch_season_events(league_id, season, api_key)
     if not events:
         logger.warning("No events returned from TheSportsDB; aborting sync")
         return

@@ -12,6 +12,9 @@ _BASE_URL = "https://www.thesportsdb.com/api/v1/json"
 
 _STATUS_MAP: dict[str, Literal["scheduled", "live", "completed"]] = {
     "match finished": "completed",
+    "ft": "completed",
+    "ap": "completed",   # after penalties
+    "aet": "completed",  # after extra time
     "in progress": "live",
     "1h": "live",
     "2h": "live",
@@ -41,6 +44,29 @@ def fetch_season_events(league_id: str, season: str, api_key: str) -> list[dict]
     except Exception:
         logger.exception("TheSportsDB fetch failed for league=%s season=%s", league_id, season)
         return []
+
+
+def fetch_live_and_recent_events(league_id: str, api_key: str) -> list[dict]:
+    """Fetch current/upcoming and recently completed events for live score sync.
+
+    eventsseason.php is gated behind a paid key for active seasons; these two
+    endpoints work with the free key and cover everything needed for live updates.
+    """
+    seen: set[str] = set()
+    events: list[dict] = []
+    for endpoint in ("eventsnextleague.php", "eventspastleague.php"):
+        url = f"{_BASE_URL}/{api_key}/{endpoint}"
+        try:
+            resp = httpx.get(url, params={"id": league_id}, timeout=30.0)
+            resp.raise_for_status()
+            for e in resp.json().get("events") or []:
+                eid = e.get("idEvent", "")
+                if eid and eid not in seen:
+                    seen.add(eid)
+                    events.append(e)
+        except Exception:
+            logger.exception("TheSportsDB fetch failed for %s league=%s", endpoint, league_id)
+    return events
 
 
 def parse_score(raw: object) -> int | None:
