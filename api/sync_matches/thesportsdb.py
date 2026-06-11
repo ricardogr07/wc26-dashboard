@@ -13,7 +13,7 @@ _BASE_URL = "https://www.thesportsdb.com/api/v1/json"
 _STATUS_MAP: dict[str, Literal["scheduled", "live", "completed"]] = {
     "match finished": "completed",
     "ft": "completed",
-    "ap": "completed",   # after penalties
+    "ap": "completed",  # after penalties
     "aet": "completed",  # after extra time
     "in progress": "live",
     "1h": "live",
