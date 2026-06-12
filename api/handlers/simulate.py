@@ -107,7 +107,12 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
                 patched.append(m)
         matches = patched
 
-    result = run_simulation(matches, participants, teams, n_runs=n_runs)
+    try:
+        result = run_simulation(matches, participants, teams, n_runs=n_runs)
+    except Exception:
+        logger.exception("run_simulation failed")
+        return func.HttpResponse("Simulation error", status_code=500, headers=cors_headers())
+
     result_doc = result.model_dump(by_alias=True)
     result_doc["type"] = "simulationRun"
 

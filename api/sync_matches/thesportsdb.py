@@ -46,12 +46,17 @@ def fetch_season_events(league_id: str, season: str, api_key: str) -> list[dict]
         return []
 
 
-def fetch_live_and_recent_events(league_id: str, api_key: str) -> list[dict]:
+def fetch_live_and_recent_events(
+    league_id: str, api_key: str, season_year: int = 2026
+) -> list[dict]:
     """Fetch current/upcoming and recently completed events for live score sync.
 
     eventsseason.php is gated behind a paid key for active seasons; these two
     endpoints work with the free key and cover everything needed for live updates.
+    The season_year filter discards events from previous tournaments that
+    eventspastleague.php may return when the current season is just starting.
     """
+    year_prefix = str(season_year)
     seen: set[str] = set()
     events: list[dict] = []
     for endpoint in ("eventsnextleague.php", "eventspastleague.php"):
@@ -60,6 +65,15 @@ def fetch_live_and_recent_events(league_id: str, api_key: str) -> list[dict]:
             resp = httpx.get(url, params={"id": league_id}, timeout=30.0)
             resp.raise_for_status()
             for e in resp.json().get("events") or []:
+                date_str = e.get("dateEvent") or ""
+                if date_str and not date_str.startswith(year_prefix):
+                    logger.debug(
+                        "Skipping event %s dated %s (not season %s)",
+                        e.get("idEvent"),
+                        date_str,
+                        season_year,
+                    )
+                    continue
                 eid = e.get("idEvent", "")
                 if eid and eid not in seen:
                     seen.add(eid)

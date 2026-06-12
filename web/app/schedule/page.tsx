@@ -97,11 +97,11 @@ export default function SchedulePage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">{t("schedule.title")}</h1>
+      <h1 className="text-2xl font-bold text-gray-900" data-cy="schedule-heading">{t("schedule.title")}</h1>
       <p className="mt-1 text-sm text-gray-500">{t("schedule.subtitle")}</p>
 
       {/* Desktop filter bar */}
-      <div className="mt-6 hidden md:flex items-center gap-3 rounded-lg bg-gray-100 px-4 py-3">
+      <div className="mt-6 hidden md:flex items-center gap-3 rounded-lg bg-gray-100 px-4 py-3" data-cy="round-filter">
         <Select value={selectedRound} onValueChange={(v) => setSelectedRound(v as "all" | MatchRound)}>
           <SelectTrigger className="w-44 bg-white">
             <SelectValue />
@@ -150,6 +150,7 @@ export default function SchedulePage() {
                 return (
                   <Card
                     key={match.id}
+                    data-cy="match-card"
                     className="overflow-hidden border"
                     style={ownerColor ? { borderLeft: `4px solid ${ownerColor}` } : undefined}
                   >

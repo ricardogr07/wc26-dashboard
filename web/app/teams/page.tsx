@@ -60,7 +60,7 @@ export default function TeamsPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">{t("teams.title")}</h1>
+      <h1 className="text-2xl font-bold text-gray-900" data-cy="teams-heading">{t("teams.title")}</h1>
       <p className="mt-1 text-sm text-gray-500">{t("teams.subtitle")}</p>
 
       {/* Desktop filter bar */}
@@ -115,6 +115,7 @@ export default function TeamsPage() {
           return (
             <Card
               key={entry.participant.id}
+              data-cy="participant-card"
               className="overflow-hidden border-t-4"
               style={{ borderTopColor: color }}
             >
@@ -157,6 +158,7 @@ export default function TeamsPage() {
             <AccordionItem
               key={entry.participant.id}
               value={entry.participant.id}
+              data-cy="participant-card"
               className="rounded-lg border bg-white shadow-sm overflow-hidden"
               style={{ borderLeft: `4px solid ${color}` }}
             >

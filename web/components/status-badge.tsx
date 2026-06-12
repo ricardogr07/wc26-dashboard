@@ -21,7 +21,7 @@ interface StatusBadgeProps {
 export function StatusBadge({ status }: StatusBadgeProps) {
   const t = useT();
   return (
-    <Badge variant="outline" className={STATUS_STYLES[status]}>
+    <Badge variant="outline" className={STATUS_STYLES[status]} data-cy="status-badge">
       {t(`status.${status}`)}
     </Badge>
   );

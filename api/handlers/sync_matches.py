@@ -224,7 +224,8 @@ def handle_sync(timer: func.TimerRequest) -> None:
     season = os.environ.get("THESPORTSDB_SEASON", "2026-2027")
     api_key = os.environ.get("THESPORTSDB_API_KEY", "3")
 
-    events = fetch_live_and_recent_events(league_id, api_key)
+    season_year = int(season.split("-")[0]) if "-" in season else 2026
+    events = fetch_live_and_recent_events(league_id, api_key, season_year=season_year)
     if not events:
         # Fall back to full-season endpoint (works with paid key)
         events = fetch_season_events(league_id, season, api_key)

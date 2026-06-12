@@ -7,6 +7,7 @@ from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
 from api.sync_matches.elo_updater import compute_elo_update
 from api.sync_matches.thesportsdb import (
+    fetch_live_and_recent_events,
     parse_round,
     parse_scheduled_at,
     parse_score,
@@ -493,3 +494,48 @@ def test_sync_aborts_when_no_events_returned(
 
     container.query_items.assert_not_called()
     container.upsert_item.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# fetch_live_and_recent_events — season-year filter
+# ---------------------------------------------------------------------------
+
+
+def _make_mock_response(events: list[dict]) -> MagicMock:
+    resp = MagicMock()
+    resp.raise_for_status = MagicMock()
+    resp.json.return_value = {"events": events}
+    return resp
+
+
+@patch("api.sync_matches.thesportsdb.httpx.get")
+def test_fetch_filters_out_past_season_events(mock_get: MagicMock) -> None:
+    past_event = {**_SCHEDULED_EVENT, "idEvent": "999", "dateEvent": "2022-12-18"}
+    current_event = {**_SCHEDULED_EVENT, "idEvent": "2391728", "dateEvent": "2026-06-11"}
+    mock_get.return_value = _make_mock_response([past_event, current_event])
+
+    events = fetch_live_and_recent_events("4429", "3", season_year=2026)
+
+    ids = [e["idEvent"] for e in events]
+    assert "2391728" in ids
+    assert "999" not in ids, "2022 event should be filtered out"
+
+
+@patch("api.sync_matches.thesportsdb.httpx.get")
+def test_fetch_keeps_events_with_no_date(mock_get: MagicMock) -> None:
+    no_date_event = {**_SCHEDULED_EVENT, "idEvent": "555", "dateEvent": None}
+    mock_get.return_value = _make_mock_response([no_date_event])
+
+    events = fetch_live_and_recent_events("4429", "3", season_year=2026)
+
+    assert any(e["idEvent"] == "555" for e in events), "Events without a date should pass through"
+
+
+@patch("api.sync_matches.thesportsdb.httpx.get")
+def test_fetch_deduplicates_across_endpoints(mock_get: MagicMock) -> None:
+    event = {**_SCHEDULED_EVENT, "idEvent": "2391728", "dateEvent": "2026-06-11"}
+    mock_get.return_value = _make_mock_response([event])
+
+    events = fetch_live_and_recent_events("4429", "3", season_year=2026)
+
+    assert len([e for e in events if e["idEvent"] == "2391728"]) == 1, "Duplicate ids should be deduped"

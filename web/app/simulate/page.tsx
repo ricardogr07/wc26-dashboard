@@ -160,7 +160,7 @@ export default function SimulatePage() {
         </span>
       </div>
 
-      <h1 className="mt-6 text-2xl font-bold text-gray-900">{t("simulate.title")}</h1>
+      <h1 className="mt-6 text-2xl font-bold text-gray-900" data-cy="simulate-heading">{t("simulate.title")}</h1>
       <p className="mt-1 text-sm text-gray-500">{t("simulate.subtitle")}</p>
 
       {/* Probability chart */}
@@ -169,7 +169,7 @@ export default function SimulatePage() {
       </div>
 
       {/* Baseline probability table */}
-      <div className="mt-6 rounded-lg border bg-white shadow-sm overflow-hidden overflow-x-auto">
+      <div className="mt-6 rounded-lg border bg-white shadow-sm overflow-hidden overflow-x-auto" data-cy="prob-table">
         <Table>
           <TableHeader>
             <TableRow className="bg-[#F3F4F6]">
