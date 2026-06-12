@@ -538,4 +538,6 @@ def test_fetch_deduplicates_across_endpoints(mock_get: MagicMock) -> None:
 
     events = fetch_live_and_recent_events("4429", "3", season_year=2026)
 
-    assert len([e for e in events if e["idEvent"] == "2391728"]) == 1, "Duplicate ids should be deduped"
+    assert len([e for e in events if e["idEvent"] == "2391728"]) == 1, (
+        "Duplicate ids should be deduped"
+    )
