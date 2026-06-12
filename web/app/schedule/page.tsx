@@ -20,6 +20,14 @@ import { PageSkeleton } from "@/components/page-skeleton";
 
 const ROUND_VALUES: Array<"all" | MatchRound> = ["all", "group", "r32", "r16", "qf", "sf", "final"];
 
+function teamNameClass(match: ApiMatch, teamId: string): string {
+  if (match.status !== "completed") return "";
+  if (match.winnerId === null) return "underline decoration-gray-400";
+  return match.winnerId === teamId
+    ? "underline decoration-green-500 font-semibold"
+    : "text-gray-400";
+}
+
 function groupMatchesByDate(matches: ApiMatch[]) {
   const groups = new Map<string, ApiMatch[]>();
   for (const match of matches) {
@@ -160,9 +168,9 @@ export default function SchedulePage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 text-sm font-semibold">
                             <span className="font-mono bg-gray-100 px-1.5 rounded text-xs">{match.homeTeam.id}</span>
-                            <span>{match.homeTeam.name}</span>
+                            <span className={teamNameClass(match, match.homeTeam.id)}>{match.homeTeam.name}</span>
                             <span className="text-gray-400 mx-1">vs</span>
-                            <span>{match.awayTeam.name}</span>
+                            <span className={teamNameClass(match, match.awayTeam.id)}>{match.awayTeam.name}</span>
                             <span className="font-mono bg-gray-100 px-1.5 rounded text-xs">{match.awayTeam.id}</span>
                           </div>
                           <div className="mt-1 text-xs text-gray-400">
@@ -187,7 +195,9 @@ export default function SchedulePage() {
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="text-sm font-semibold">
-                              {match.homeTeam.name} <span className="text-gray-400">vs</span> {match.awayTeam.name}
+                              <span className={teamNameClass(match, match.homeTeam.id)}>{match.homeTeam.name}</span>
+                              {" "}<span className="text-gray-400">vs</span>{" "}
+                              <span className={teamNameClass(match, match.awayTeam.id)}>{match.awayTeam.name}</span>
                             </p>
                             <p className="text-xs text-gray-400 mt-0.5">
                               {formatDate(match.scheduledAt)} · {formatTime(match.scheduledAt)} · {match.venue}
