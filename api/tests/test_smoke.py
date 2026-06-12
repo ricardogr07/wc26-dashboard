@@ -100,5 +100,7 @@ def test_simulate_returns_data() -> None:
     resp = handle_simulate(req)
     assert resp.status_code == 200, f"simulate returned {resp.status_code}: {resp.get_body()[:200]}"
     data = json.loads(resp.get_body())
-    assert "probabilities" in data, f"missing 'probabilities' key in simulate response: {list(data.keys())}"
+    assert "probabilities" in data, (
+        f"missing 'probabilities' key in simulate response: {list(data.keys())}"
+    )
     assert len(data["probabilities"]) > 0, "simulate returned empty probabilities"
