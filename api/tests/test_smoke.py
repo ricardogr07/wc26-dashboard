@@ -72,3 +72,33 @@ def test_matches_returns_fixtures() -> None:
     data = json.loads(resp.get_body())
     count = len(data["matches"])
     assert count >= 72, f"expected >= 72 match fixtures, got {count}"
+
+
+@pytest.mark.smoke
+def test_health_returns_ok() -> None:
+    import unittest.mock as mock
+
+    _require_real_cosmos()
+    import function_app
+
+    req = mock.MagicMock()
+    resp = function_app.health(req)
+    assert resp.status_code == 200
+    assert resp.get_body() == b"ok"
+
+
+@pytest.mark.smoke
+def test_simulate_returns_data() -> None:
+    import json
+    import unittest.mock as mock
+
+    _require_real_cosmos()
+    from api.handlers.simulate import handle_simulate
+
+    req = mock.MagicMock()
+    req.get_json.return_value = {}
+    resp = handle_simulate(req)
+    assert resp.status_code == 200, f"simulate returned {resp.status_code}: {resp.get_body()[:200]}"
+    data = json.loads(resp.get_body())
+    assert "probabilities" in data, f"missing 'probabilities' key in simulate response: {list(data.keys())}"
+    assert len(data["probabilities"]) > 0, "simulate returned empty probabilities"

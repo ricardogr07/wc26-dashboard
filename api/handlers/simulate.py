@@ -113,7 +113,7 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
         logger.exception("run_simulation failed")
         return func.HttpResponse("Simulation error", status_code=500, headers=cors_headers())
 
-    result_doc = result.model_dump(by_alias=True)
+    result_doc = result.model_dump(by_alias=True, mode="json")
     result_doc["type"] = "simulationRun"
 
     # Persist to Cosmos only for non-override runs (real-state cache)
@@ -124,7 +124,7 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
             logger.warning("Failed to cache simulationRun to Cosmos", exc_info=True)
 
     return func.HttpResponse(
-        json.dumps(result_doc, default=str),
+        json.dumps(result_doc),
         mimetype="application/json",
         status_code=200,
         headers=cors_headers(),
