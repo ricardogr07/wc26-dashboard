@@ -45,7 +45,7 @@ export default function BracketPage() {
 
   return (
     <div className="mx-auto max-w-screen-2xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">{t("bracket.title")}</h1>
+      <h1 data-cy="bracket-heading" className="text-2xl font-bold text-gray-900">{t("bracket.title")}</h1>
       <p className="mt-1 text-sm text-gray-500">{t("bracket.subtitle")}</p>
       <div className="mt-6 overflow-x-auto rounded-lg border bg-gray-50 p-4">
         <BracketTree matchesByRound={matchesByRound} />

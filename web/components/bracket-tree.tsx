@@ -24,8 +24,8 @@ const ROUND_LABELS: Record<Round, string> = {
   final: "Final",
 };
 
-// Height of one match card slot; 8 slots per side = total bracket height
-const SLOT_HEIGHT = 96;
+// 8 slots per side; height drives vertical spacing only
+const SLOT_HEIGHT = 88;
 const BRACKET_HEIGHT = 8 * SLOT_HEIGHT;
 
 function TeamRow({
@@ -43,25 +43,25 @@ function TeamRow({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 px-2 py-1.5 text-xs",
+        "flex items-center gap-1.5 px-1.5 py-1 text-xs",
         isWinner ? "bg-green-50 font-semibold text-green-900" : "text-gray-700"
       )}
     >
-      <span className="shrink-0 w-6 h-[18px] inline-flex items-center">
+      <span className="shrink-0 inline-flex items-center w-5 h-[15px]">
         {iso2 ? (
           <Image
             src={`https://flagcdn.com/24x18/${iso2}.png`}
-            width={24}
-            height={18}
+            width={20}
+            height={15}
             alt={name ?? ""}
             className="rounded-[2px] object-cover"
             unoptimized
           />
         ) : (
-          <span className="w-6 h-[18px] rounded-[2px] bg-gray-200 inline-block" />
+          <span className="w-5 h-[15px] rounded-[2px] bg-gray-200 inline-block" />
         )}
       </span>
-      <span className="truncate max-w-[80px]">{name ?? tbd}</span>
+      <span className="truncate min-w-0 flex-1">{name ?? tbd}</span>
     </div>
   );
 }
@@ -73,17 +73,17 @@ function MatchCard({ match, tbd }: { match: ApiMatch; tbd: string }) {
   const awayWon = match.winnerId === match.awayTeam?.id;
 
   return (
-    <div className="w-44 rounded-lg border bg-white shadow-sm overflow-hidden shrink-0">
+    <div data-cy="bracket-match-card" className="w-full rounded border bg-white shadow-sm overflow-hidden">
       <TeamRow
         teamId={match.homeTeam?.id ?? null}
         name={match.homeTeam?.name ?? null}
         isWinner={homeWon}
         tbd={tbd}
       />
-      <div className="border-t border-b flex items-center justify-center gap-3 py-0.5 px-2">
+      <div className="border-t border-b flex items-center justify-center py-0.5 px-1">
         {isCompleted && (
-          <span className="text-[11px] font-mono text-gray-500">
-            {match.homeScore} – {match.awayScore}
+          <span className="text-[10px] font-mono text-gray-500">
+            {match.homeScore}–{match.awayScore}
           </span>
         )}
         {isLive && (
@@ -107,16 +107,16 @@ function MatchCard({ match, tbd }: { match: ApiMatch; tbd: string }) {
 
 function PlaceholderCard({ tbd }: { tbd: string }) {
   return (
-    <div className="w-44 rounded-lg border border-dashed border-gray-200 bg-gray-50 overflow-hidden shrink-0">
-      <div className="flex items-center gap-2 px-2 py-1.5">
-        <span className="w-6 h-[18px] rounded-[2px] bg-gray-200 shrink-0 inline-block" />
+    <div data-cy="bracket-placeholder" className="w-full rounded border border-dashed border-gray-200 bg-gray-50 overflow-hidden">
+      <div className="flex items-center gap-1.5 px-1.5 py-1">
+        <span className="w-5 h-[15px] rounded-[2px] bg-gray-200 shrink-0 inline-block" />
         <span className="text-xs text-gray-400">{tbd}</span>
       </div>
-      <div className="border-t border-b py-0.5 px-2">
+      <div className="border-t border-b py-0.5 px-1">
         <span className="text-[10px] text-gray-300">vs</span>
       </div>
-      <div className="flex items-center gap-2 px-2 py-1.5">
-        <span className="w-6 h-[18px] rounded-[2px] bg-gray-200 shrink-0 inline-block" />
+      <div className="flex items-center gap-1.5 px-1.5 py-1">
+        <span className="w-5 h-[15px] rounded-[2px] bg-gray-200 shrink-0 inline-block" />
         <span className="text-xs text-gray-400">{tbd}</span>
       </div>
     </div>
@@ -136,8 +136,8 @@ function BracketColumn({
 }) {
   const slots = Array.from({ length: count }, (_, i) => matches[i] ?? null);
   return (
-    <div className="flex flex-col shrink-0" style={{ height: BRACKET_HEIGHT }}>
-      <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-widest text-gray-400 shrink-0">
+    <div className="flex flex-col flex-1 min-w-0" style={{ height: BRACKET_HEIGHT }}>
+      <p className="mb-1.5 text-center text-[9px] font-semibold uppercase tracking-widest text-gray-400 shrink-0">
         {label}
       </p>
       <div className="flex flex-col flex-1" style={{ justifyContent: "space-around" }}>
@@ -157,31 +157,30 @@ export function BracketTree({ matchesByRound }: { matchesByRound: BracketMatches
   const t = useT();
   const tbd = t("bracket.tbd");
 
-  // Split each round: first half feeds left side, second half feeds right side
   const r32L = matchesByRound.r32.slice(0, 8);
   const r32R = matchesByRound.r32.slice(8, 16);
   const r16L = matchesByRound.r16.slice(0, 4);
   const r16R = matchesByRound.r16.slice(4, 8);
-  const qfL = matchesByRound.qf.slice(0, 2);
-  const qfR = matchesByRound.qf.slice(2, 4);
-  const sfL = matchesByRound.sf.slice(0, 1);
-  const sfR = matchesByRound.sf.slice(1, 2);
+  const qfL  = matchesByRound.qf.slice(0, 2);
+  const qfR  = matchesByRound.qf.slice(2, 4);
+  const sfL  = matchesByRound.sf.slice(0, 1);
+  const sfR  = matchesByRound.sf.slice(1, 2);
   const finalMatch = matchesByRound.final[0] ?? null;
 
   return (
-    <div className="flex gap-4 items-start pb-4" style={{ minHeight: BRACKET_HEIGHT + 32 }}>
-      {/* Left half — converges toward the center Final */}
+    <div data-cy="bracket-tree" className="flex gap-2 w-full pb-2" style={{ minHeight: BRACKET_HEIGHT + 28 }}>
+      {/* Left half — converges toward center */}
       <BracketColumn label={ROUND_LABELS.r32} matches={r32L} count={8} tbd={tbd} />
       <BracketColumn label={ROUND_LABELS.r16} matches={r16L} count={4} tbd={tbd} />
       <BracketColumn label={ROUND_LABELS.qf}  matches={qfL}  count={2} tbd={tbd} />
       <BracketColumn label={ROUND_LABELS.sf}  matches={sfL}  count={1} tbd={tbd} />
 
       {/* Center: Final */}
-      <div className="flex flex-col shrink-0" style={{ height: BRACKET_HEIGHT }}>
-        <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-widest text-gray-400 shrink-0">
+      <div className="flex flex-col flex-1 min-w-0" style={{ height: BRACKET_HEIGHT }}>
+        <p className="mb-1.5 text-center text-[9px] font-semibold uppercase tracking-widest text-gray-400 shrink-0">
           {ROUND_LABELS.final}
         </p>
-        <div className="flex flex-col flex-1 items-center justify-center">
+        <div className="flex flex-col flex-1 justify-center">
           {finalMatch ? (
             <MatchCard match={finalMatch} tbd={tbd} />
           ) : (
@@ -190,7 +189,7 @@ export function BracketTree({ matchesByRound }: { matchesByRound: BracketMatches
         </div>
       </div>
 
-      {/* Right half — diverges from the center Final */}
+      {/* Right half — diverges from center */}
       <BracketColumn label={ROUND_LABELS.sf}  matches={sfR}  count={1} tbd={tbd} />
       <BracketColumn label={ROUND_LABELS.qf}  matches={qfR}  count={2} tbd={tbd} />
       <BracketColumn label={ROUND_LABELS.r16} matches={r16R} count={4} tbd={tbd} />

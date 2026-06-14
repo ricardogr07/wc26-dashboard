@@ -11,12 +11,13 @@ function stubApis() {
 describe("Navigation", () => {
   beforeEach(stubApis);
 
-  it("nav contains links for all four pages", () => {
+  it("nav contains links for all five pages", () => {
     cy.viewport(1280, 800);
     cy.visit("/");
     cy.get("nav").within(() => {
       cy.contains("a", "Standings").should("exist");
       cy.contains("a", "Schedule").should("exist");
+      cy.contains("a", "Bracket").should("exist");
       cy.contains("a", "Teams").should("exist");
       cy.contains("a", "Simulation").should("exist");
     });
@@ -167,6 +168,75 @@ describe("Simulate page (/simulate)", () => {
     cy.contains("button", "Home").first().click();
     cy.contains("button", "Reset").click();
     cy.get("[data-cy=scenario-results-heading]").should("not.exist");
+  });
+});
+
+// ── Bracket (/bracket) ───────────────────────────────────────────────────────
+
+describe("Bracket page (/bracket)", () => {
+  beforeEach(stubApis);
+
+  it("shows heading and bracket tree", () => {
+    cy.viewport(1280, 800);
+    cy.visit("/bracket/");
+    cy.wait("@matches");
+    cy.get("[data-cy=bracket-heading]").should("contain.text", "Knockout Bracket");
+    cy.get("[data-cy=bracket-tree]").should("exist");
+  });
+
+  it("shows 31 placeholder slots when no knockout matches are in the fixture", () => {
+    // matches.json has only group-stage matches → all knockout slots are TBD
+    cy.viewport(1280, 800);
+    cy.visit("/bracket/");
+    cy.wait("@matches");
+    // 16 R32 + 8 R16 + 4 QF + 2 SF + 1 Final = 31 placeholders
+    cy.get("[data-cy=bracket-placeholder]").should("have.length", 31);
+    cy.get("[data-cy=bracket-match-card]").should("have.length", 0);
+  });
+
+  it("renders match cards when R32 data is present", () => {
+    cy.intercept("GET", "/api/matches*", { fixture: "matches-bracket.json" }).as("bracketMatches");
+    cy.viewport(1280, 800);
+    cy.visit("/bracket/");
+    cy.wait("@bracketMatches");
+    cy.get("[data-cy=bracket-match-card]").should("have.length", 16);
+    cy.get("[data-cy=bracket-placeholder]").should("have.length", 15);
+  });
+
+  it("highlights the winner of a completed match", () => {
+    cy.intercept("GET", "/api/matches*", { fixture: "matches-bracket.json" }).as("bracketMatches");
+    cy.viewport(1280, 800);
+    cy.visit("/bracket/");
+    cy.wait("@bracketMatches");
+    // ARG beat KSA 3-0 in r32_01
+    cy.get("[data-cy=bracket-match-card]")
+      .first()
+      .within(() => {
+        cy.contains("Argentina").should("have.class", "bg-green-50");
+      });
+  });
+
+  it("shows Live badge for an in-progress match", () => {
+    cy.intercept("GET", "/api/matches*", { fixture: "matches-bracket.json" }).as("bracketMatches");
+    cy.viewport(1280, 800);
+    cy.visit("/bracket/");
+    cy.wait("@bracketMatches");
+    cy.get("[data-cy=bracket-match-card]").contains(/live/i).should("exist");
+  });
+
+  it("shows score for a completed match", () => {
+    cy.intercept("GET", "/api/matches*", { fixture: "matches-bracket.json" }).as("bracketMatches");
+    cy.viewport(1280, 800);
+    cy.visit("/bracket/");
+    cy.wait("@bracketMatches");
+    cy.get("[data-cy=bracket-match-card]").contains("3–0").should("exist");
+  });
+
+  it("shows error message when matches API fails", () => {
+    cy.intercept("GET", "/api/matches*", { statusCode: 500 }).as("matchesErr");
+    cy.visit("/bracket/");
+    cy.wait("@matchesErr");
+    cy.contains("Failed to load bracket").should("exist");
   });
 });
 
