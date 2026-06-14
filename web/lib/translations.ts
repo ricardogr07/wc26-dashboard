@@ -1,7 +1,7 @@
 export type Locale = "en" | "es";
 
 type Translations = {
-  nav: { standings: string; schedule: string; teams: string; simulation: string };
+  nav: { standings: string; schedule: string; bracket: string; teams: string; simulation: string };
   standings: {
     title: string;
     subtitle: string;
@@ -71,12 +71,14 @@ type Translations = {
     completed: string;
   };
   positions: { "1st": string; "2nd": string; "3rd": string; "4th": string; "5th": string };
+  bracket: { title: string; subtitle: string; tbd: string; loading: string; error: string };
 };
 
 const en: Translations = {
   nav: {
     standings: "Standings",
     schedule: "Schedule",
+    bracket: "Bracket",
     teams: "Teams",
     simulation: "Simulation",
   },
@@ -157,12 +159,20 @@ const en: Translations = {
     completed: "FT",
   },
   positions: { "1st": "1st", "2nd": "2nd", "3rd": "3rd", "4th": "4th", "5th": "5th" },
+  bracket: {
+    title: "Knockout Bracket",
+    subtitle: "Live bracket updated as matches complete.",
+    tbd: "TBD",
+    loading: "Loading bracket…",
+    error: "Failed to load bracket.",
+  },
 };
 
 const es: Translations = {
   nav: {
     standings: "Clasificación",
     schedule: "Calendario",
+    bracket: "Llave",
     teams: "Equipos",
     simulation: "Simulación",
   },
@@ -245,6 +255,13 @@ const es: Translations = {
     completed: "FT",
   },
   positions: { "1st": "1°", "2nd": "2°", "3rd": "3°", "4th": "4°", "5th": "5°" },
+  bracket: {
+    title: "Llave Eliminatoria",
+    subtitle: "Llave en vivo, se actualiza conforme se completan los partidos.",
+    tbd: "Por definir",
+    loading: "Cargando llave…",
+    error: "Error al cargar la llave.",
+  },
 };
 
 export const translations: Record<Locale, Translations> = { en, es };

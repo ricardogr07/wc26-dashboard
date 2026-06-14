@@ -10,6 +10,7 @@ import type { Locale } from "@/lib/translations";
 const NAV_LINKS = [
   { href: "/", tKey: "nav.standings" },
   { href: "/schedule/", tKey: "nav.schedule" },
+  { href: "/bracket/", tKey: "nav.bracket" },
   { href: "/teams/", tKey: "nav.teams" },
   { href: "/simulate/", tKey: "nav.simulation" },
 ] as const;
