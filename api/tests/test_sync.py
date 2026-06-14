@@ -227,8 +227,8 @@ def test_elo_update_heavy_favourite_winning_gains_little() -> None:
 # ---------------------------------------------------------------------------
 
 
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_upserts_new_match(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     mock_fetch.return_value = [_SCHEDULED_EVENT]
     container = _mock_container(
@@ -242,7 +242,7 @@ def test_sync_upserts_new_match(mock_gc: MagicMock, mock_fetch: MagicMock) -> No
     )
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 
@@ -255,8 +255,8 @@ def test_sync_upserts_new_match(mock_gc: MagicMock, mock_fetch: MagicMock) -> No
     assert doc["homeScore"] is None
 
 
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_upserted_new_match_writes_audit_log(
     mock_gc: MagicMock, mock_fetch: MagicMock
 ) -> None:
@@ -267,7 +267,7 @@ def test_sync_upserted_new_match_writes_audit_log(
     )
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 
@@ -283,8 +283,8 @@ def test_sync_upserted_new_match_writes_audit_log(
 # ---------------------------------------------------------------------------
 
 
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_patches_existing_match_on_score_change(
     mock_gc: MagicMock, mock_fetch: MagicMock
 ) -> None:
@@ -297,7 +297,7 @@ def test_sync_patches_existing_match_on_score_change(
     ]
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 
@@ -312,8 +312,8 @@ def test_sync_patches_existing_match_on_score_change(
     assert ops["/winnerId"] == "MEX"
 
 
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_skips_unchanged_match(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     mock_fetch.return_value = [_SCHEDULED_EVENT]
     already_scheduled = {**_EXISTING_SCHEDULED_DOC, "status": "scheduled"}
@@ -323,7 +323,7 @@ def test_sync_skips_unchanged_match(mock_gc: MagicMock, mock_fetch: MagicMock) -
     container.read_item.return_value = already_scheduled
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 
@@ -337,8 +337,8 @@ def test_sync_skips_unchanged_match(mock_gc: MagicMock, mock_fetch: MagicMock) -
 # ---------------------------------------------------------------------------
 
 
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_triggers_elo_update_on_completion(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     mock_fetch.return_value = [_COMPLETED_EVENT]
     winner_doc = {"id": "MEX", "eloRating": 1600.0}
@@ -350,7 +350,7 @@ def test_sync_triggers_elo_update_on_completion(mock_gc: MagicMock, mock_fetch: 
     container.read_item.side_effect = [_EXISTING_SCHEDULED_DOC, winner_doc, loser_doc]
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 
@@ -367,8 +367,8 @@ def test_sync_triggers_elo_update_on_completion(mock_gc: MagicMock, mock_fetch: 
     assert new_loser_elo < 1400.0
 
 
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_no_elo_update_for_draw(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     mock_fetch.return_value = [_DRAW_EVENT]
     container = _mock_container(
@@ -377,7 +377,7 @@ def test_sync_no_elo_update_for_draw(mock_gc: MagicMock, mock_fetch: MagicMock) 
     container.read_item.return_value = _EXISTING_SCHEDULED_DOC
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 
@@ -387,8 +387,8 @@ def test_sync_no_elo_update_for_draw(mock_gc: MagicMock, mock_fetch: MagicMock) 
     assert len(elo_calls) == 0  # no Elo update for draws
 
 
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_no_elo_update_if_already_completed(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     mock_fetch.return_value = [_COMPLETED_EVENT]
     already_completed = {
@@ -404,7 +404,7 @@ def test_sync_no_elo_update_if_already_completed(mock_gc: MagicMock, mock_fetch:
     container.read_item.return_value = already_completed
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 
@@ -419,8 +419,8 @@ def test_sync_no_elo_update_if_already_completed(mock_gc: MagicMock, mock_fetch:
 # ---------------------------------------------------------------------------
 
 
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_idempotent_on_unchanged_data(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     already_completed = {
         **_EXISTING_SCHEDULED_DOC,
@@ -436,7 +436,7 @@ def test_sync_idempotent_on_unchanged_data(mock_gc: MagicMock, mock_fetch: Magic
     container.read_item.return_value = already_completed
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
     handle_sync(_timer())
@@ -451,8 +451,8 @@ def test_sync_idempotent_on_unchanged_data(mock_gc: MagicMock, mock_fetch: Magic
 # ---------------------------------------------------------------------------
 
 
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_skips_event_with_unresolvable_teams(
     mock_gc: MagicMock, mock_fetch: MagicMock
 ) -> None:
@@ -464,7 +464,7 @@ def test_sync_skips_event_with_unresolvable_teams(
     )
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 
@@ -477,9 +477,9 @@ def test_sync_skips_event_with_unresolvable_teams(
 # ---------------------------------------------------------------------------
 
 
-@patch("api.handlers.sync_matches.fetch_season_events")
-@patch("api.handlers.sync_matches.fetch_live_and_recent_events")
-@patch("api.handlers.sync_matches.get_container")
+@patch("api.handlers.sync.fetch_season_events")
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
 def test_sync_aborts_when_no_events_returned(
     mock_gc: MagicMock, mock_live: MagicMock, mock_season: MagicMock
 ) -> None:
@@ -488,7 +488,7 @@ def test_sync_aborts_when_no_events_returned(
     container = MagicMock()
     mock_gc.return_value = container
 
-    from api.handlers.sync_matches import handle_sync
+    from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 

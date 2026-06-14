@@ -1,20 +1,36 @@
 import type { MatchRound, SimulationRun, StandingsEntry, TeamStatus } from "./types";
 
+const VALID_TEAM_STATUSES: ReadonlySet<TeamStatus> = new Set([
+  "active",
+  "eliminated",
+  "qualified",
+  "champion",
+]);
+function toTeamStatus(raw: string): TeamStatus {
+  return VALID_TEAM_STATUSES.has(raw as TeamStatus) ? (raw as TeamStatus) : "active";
+}
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
-// ── In-memory TTL cache ─────────────────────────────────────────────────────
+// ── In-memory TTL cache with in-flight deduplication ────────────────────────
 
 const _cache = new Map<string, { data: unknown; expiresAt: number }>();
+const _inflight = new Map<string, Promise<unknown>>();
 
 function cached<T>(key: string, ttlMs: number, fetcher: () => Promise<T>): Promise<T> {
   const hit = _cache.get(key);
   if (hit && hit.expiresAt > Date.now()) {
     return Promise.resolve(hit.data as T);
   }
-  return fetcher().then((data) => {
+  const existing = _inflight.get(key);
+  if (existing) return existing as Promise<T>;
+  const promise = fetcher().then((data) => {
     _cache.set(key, { data, expiresAt: Date.now() + ttlMs });
+    _inflight.delete(key);
     return data;
   });
+  _inflight.set(key, promise as Promise<unknown>);
+  return promise;
 }
 
 // ── Raw API response shapes ─────────────────────────────────────────────────
@@ -70,7 +86,7 @@ function toStandingsEntry(entry: ApiStandingEntry): StandingsEntry {
       name: t.name,
       group: t.group ?? "",
       eloRating: t.eloRating ?? 0,
-      status: (t.status as TeamStatus) ?? "active",
+      status: toTeamStatus(t.status),
     })),
   };
 }

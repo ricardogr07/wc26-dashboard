@@ -2,33 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { getSimulation, getMatches, type ApiMatch } from "@/lib/api";
-import { PARTICIPANT_COLORS } from "@/lib/mock-data";
+import { PARTICIPANT_COLORS } from "@/lib/constants";
 import type { SimulationRun, MatchRound } from "@/lib/types";
-import { ProbabilityChart } from "@/components/probability-chart";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { WinnerProbabilityChart } from "@/components/winner-probability-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, RotateCcw, Play, Sliders } from "lucide-react";
 import { useT, useLocale } from "@/lib/locale-context";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/page-skeleton";
-
-const POSITIONS = ["1st", "2nd", "3rd", "4th", "5th"] as const;
-
-const POSITION_COLORS = {
-  "1st": "#F59E0B",
-  "2nd": "#9CA3AF",
-  "3rd": "#D97706",
-  "4th": "#3B82F6",
-  "5th": "#6B7280",
-} as const;
 
 const ROUND_ORDER: MatchRound[] = ["group", "r32", "r16", "qf", "sf", "final"];
 
@@ -66,7 +48,7 @@ export default function SimulatePage() {
     getSimulation().then(setSimulation).catch(() => setError(true));
     getMatches()
       .then((ms) => setMatches(ms.filter((m) => m.status !== "completed")))
-      .catch(() => {});
+      .catch(() => setError(true));
   }, []);
 
   function handleOverride(matchId: string, choice: OverrideChoice) {
@@ -128,14 +110,14 @@ export default function SimulatePage() {
 
   const sim = simulation!;
   const participantNames = Object.fromEntries(
-    Object.keys(sim.probabilities).map((id) => [
+    Object.keys(sim.winProbabilities).map((id) => [
       id,
       id.charAt(0).toUpperCase() + id.slice(1),
     ])
   );
-  const sortedEntries = Object.entries(sim.probabilities).sort(
-    (a, b) => b[1]["1st"] - a[1]["1st"]
-  );
+  const sortedIds = Object.entries(sim.winProbabilities)
+    .sort(([, a], [, b]) => b - a)
+    .map(([id]) => id);
 
   const matchesByRound = ROUND_ORDER.reduce<Record<string, ApiMatch[]>>((acc, round) => {
     const ms = matches.filter((m) => m.round === round);
@@ -160,58 +142,38 @@ export default function SimulatePage() {
         </span>
       </div>
 
-      <h1 className="mt-6 text-2xl font-bold text-gray-900" data-cy="simulate-heading">{t("simulate.title")}</h1>
+      <h1 className="mt-6 text-2xl font-bold text-gray-900" data-cy="simulate-heading">
+        {t("simulate.title")}
+      </h1>
       <p className="mt-1 text-sm text-gray-500">{t("simulate.subtitle")}</p>
 
-      {/* Probability chart */}
+      {/* Win probability chart */}
       <div className="mt-6 rounded-lg border bg-white shadow-sm p-4">
-        <ProbabilityChart simulation={sim} participantNames={participantNames} />
+        <WinnerProbabilityChart simulation={sim} participantNames={participantNames} />
       </div>
 
-      {/* Baseline probability table */}
-      <div className="mt-6 rounded-lg border bg-white shadow-sm overflow-hidden overflow-x-auto" data-cy="prob-table">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-[#F3F4F6]">
-              <TableHead className="font-semibold text-gray-700 sticky left-0 bg-[#F3F4F6]">
-                {t("simulate.participant")}
-              </TableHead>
-              {POSITIONS.map((pos) => (
-                <TableHead
-                  key={pos}
-                  className="text-center font-semibold"
-                  style={{ color: POSITION_COLORS[pos] }}
-                >
-                  {t(`positions.${pos}`)}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedEntries.map(([id, probs], i) => {
-              const color = PARTICIPANT_COLORS[id] ?? "#6B7280";
-              const name = participantNames[id] ?? id;
-              return (
-                <TableRow key={id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                  <TableCell className="font-medium sticky left-0 bg-inherit">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="inline-block h-3 w-3 rounded-full shrink-0"
-                        style={{ backgroundColor: color }}
-                      />
-                      {name}
-                    </div>
-                  </TableCell>
-                  {POSITIONS.map((pos) => (
-                    <TableCell key={pos} className="text-center text-sm font-mono">
-                      {pct(probs[pos])}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+      {/* Win probability list */}
+      <div className="mt-4 space-y-2" data-cy="prob-table">
+        {sortedIds.map((id) => {
+          const prob = sim.winProbabilities[id];
+          const color = PARTICIPANT_COLORS[id] ?? "#6B7280";
+          const name = participantNames[id] ?? id;
+          return (
+            <div
+              key={id}
+              className="flex items-center justify-between rounded-lg border bg-white px-4 py-2.5 shadow-sm"
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  className="inline-block h-3 w-3 rounded-full shrink-0"
+                  style={{ backgroundColor: color }}
+                />
+                <span className="font-medium text-gray-800">{name}</span>
+              </div>
+              <span className="font-mono text-sm font-semibold text-gray-700">{pct(prob)}</span>
+            </div>
+          );
+        })}
       </div>
 
       {/* Scenario Builder */}
@@ -312,74 +274,54 @@ export default function SimulatePage() {
       {/* Scenario results */}
       {(scenarioSim || scenarioError) && (
         <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-900" data-cy="scenario-results-heading">
+          <h2
+            className="text-lg font-semibold text-gray-900"
+            data-cy="scenario-results-heading"
+          >
             {t("simulate.scenarioVsBaseline")}
           </h2>
           {scenarioError ? (
             <p className="mt-2 text-sm text-red-500">{t("simulate.scenarioError")}</p>
           ) : (
             scenarioSim && (
-              <div className="mt-3 rounded-lg border bg-white shadow-sm overflow-hidden overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-[#F3F4F6]">
-                      <TableHead className="font-semibold text-gray-700 sticky left-0 bg-[#F3F4F6]">
-                        {t("simulate.participant")}
-                      </TableHead>
-                      {POSITIONS.map((pos) => (
-                        <TableHead
-                          key={pos}
-                          className="text-center font-semibold"
-                          style={{ color: POSITION_COLORS[pos] }}
-                        >
-                          {t(`positions.${pos}`)}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedEntries.map(([id], i) => {
-                      const color = PARTICIPANT_COLORS[id] ?? "#6B7280";
-                      const name = participantNames[id] ?? id;
-                      const scenProbs = scenarioSim.probabilities[id];
-                      const baseProbs = sim.probabilities[id];
-                      return (
-                        <TableRow key={id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                          <TableCell className="font-medium sticky left-0 bg-inherit">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className="inline-block h-3 w-3 rounded-full shrink-0"
-                                style={{ backgroundColor: color }}
-                              />
-                              {name}
-                            </div>
-                          </TableCell>
-                          {POSITIONS.map((pos) => {
-                            const basePct = baseProbs?.[pos] ?? 0;
-                            const scenPct = scenProbs?.[pos] ?? 0;
-                            const delta = scenPct - basePct;
-                            return (
-                              <TableCell key={pos} className="text-center text-sm">
-                                <div className="font-mono">{pct(scenPct)}</div>
-                                {Math.abs(delta) >= 0.001 && (
-                                  <div
-                                    className={cn(
-                                      "text-xs font-medium",
-                                      delta > 0 ? "text-green-600" : "text-red-500"
-                                    )}
-                                  >
-                                    {delta > 0 ? "+" : ""}
-                                    {(delta * 100).toFixed(1)}pp
-                                  </div>
-                                )}
-                              </TableCell>
-                            );
-                          })}
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+              <div className="mt-3 space-y-2">
+                {sortedIds.map((id) => {
+                  const baseProb = sim.winProbabilities[id] ?? 0;
+                  const scenProb = scenarioSim.winProbabilities[id] ?? 0;
+                  const delta = scenProb - baseProb;
+                  const color = PARTICIPANT_COLORS[id] ?? "#6B7280";
+                  const name = participantNames[id] ?? id;
+                  return (
+                    <div
+                      key={id}
+                      className="flex items-center justify-between rounded-lg border bg-white px-4 py-2.5 shadow-sm"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="inline-block h-3 w-3 rounded-full shrink-0"
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className="font-medium text-gray-800">{name}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-sm font-semibold text-gray-700">
+                          {pct(scenProb)}
+                        </span>
+                        {Math.abs(delta) >= 0.001 && (
+                          <span
+                            className={cn(
+                              "text-xs font-semibold font-mono",
+                              delta > 0 ? "text-green-600" : "text-red-500"
+                            )}
+                          >
+                            {delta > 0 ? "+" : ""}
+                            {(delta * 100).toFixed(1)}pp
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )
           )}

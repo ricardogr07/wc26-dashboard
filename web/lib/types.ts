@@ -29,20 +29,12 @@ export interface Match {
   status: MatchStatus;
 }
 
-export interface PositionProbabilities {
-  "1st": number;
-  "2nd": number;
-  "3rd": number;
-  "4th": number;
-  "5th": number;
-}
-
 export interface SimulationRun {
   id: string;
   runAt: string;
   matchesCompletedAtRun: number;
   nRuns: number;
-  probabilities: Record<string, PositionProbabilities>;
+  winProbabilities: Record<string, number>;
 }
 
 export interface StandingsEntry {

@@ -125,8 +125,8 @@ def test_simulation_run_roundtrip(simulation_run: SimulationRun) -> None:
     assert restored == simulation_run
 
 
-def test_simulation_run_probabilities_structure(simulation_run: SimulationRun) -> None:
+def test_simulation_run_win_probabilities_structure(simulation_run: SimulationRun) -> None:
     restored = SimulationRun.model_validate_json(simulation_run.model_dump_json(by_alias=True))
-    assert restored.probabilities["ricardo"]["1st"] == pytest.approx(0.32)
-    assert restored.probabilities["jibran"]["3rd"] == pytest.approx(0.24)
-    assert set(restored.probabilities["ricardo"].keys()) == {"1st", "2nd", "3rd", "4th", "5th"}
+    assert restored.win_probabilities["ricardo"] == pytest.approx(0.32)
+    assert restored.win_probabilities["jibran"] == pytest.approx(0.25)
+    assert set(restored.win_probabilities.keys()) == {"ricardo", "jibran"}

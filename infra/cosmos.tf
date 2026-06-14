@@ -35,12 +35,14 @@ resource "azurerm_cosmosdb_sql_container" "items" {
   indexing_policy {
     indexing_mode = "consistent"
 
-    included_path {
-      path = "/*"
-    }
+    included_path { path = "/type/?" }
+    included_path { path = "/status/?" }
+    included_path { path = "/round/?" }
+    included_path { path = "/group/?" }
+    included_path { path = "/matchesCompletedAtRun/?" }
 
     excluded_path {
-      path = "/\"_etag\"/?"
+      path = "/*"
     }
   }
 }

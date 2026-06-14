@@ -206,12 +206,12 @@ export const SIMULATION: SimulationRun = {
   runAt: "2026-06-09T08:00:00Z",
   matchesCompletedAtRun: 48,
   nRuns: 10000,
-  probabilities: {
-    ricardo: { "1st": 0.412, "2nd": 0.278, "3rd": 0.178, "4th": 0.092, "5th": 0.04 },
-    chuy:    { "1st": 0.231, "2nd": 0.264, "3rd": 0.271, "4th": 0.158, "5th": 0.076 },
-    jibran:  { "1st": 0.178, "2nd": 0.231, "3rd": 0.242, "4th": 0.221, "5th": 0.128 },
-    jaime:   { "1st": 0.132, "2nd": 0.178, "3rd": 0.198, "4th": 0.302, "5th": 0.19 },
-    arnoldo: { "1st": 0.047, "2nd": 0.049, "3rd": 0.111, "4th": 0.227, "5th": 0.566 },
+  winProbabilities: {
+    ricardo: 0.412,
+    chuy: 0.231,
+    jibran: 0.178,
+    jaime: 0.132,
+    arnoldo: 0.047,
   },
 };
 

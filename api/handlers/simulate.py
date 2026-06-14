@@ -23,7 +23,22 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
         body = {}
 
     overrides: list[dict] = body.get("overrides", []) if isinstance(body, dict) else []
-    n_runs: int = int(body.get("nRuns", 10_000)) if isinstance(body, dict) else 10_000
+    if not isinstance(overrides, list):
+        return func.HttpResponse(
+            "overrides must be a list", status_code=400, headers=cors_headers()
+        )
+
+    raw_n_runs = body.get("nRuns", 10_000) if isinstance(body, dict) else 10_000
+    try:
+        n_runs = int(raw_n_runs)
+        if not (1 <= n_runs <= 100_000):
+            raise ValueError
+    except (ValueError, TypeError):
+        return func.HttpResponse(
+            "nRuns must be an integer between 1 and 100000",
+            status_code=400,
+            headers=cors_headers(),
+        )
 
     try:
         container = get_container()
@@ -37,13 +52,16 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
         )
         completed_count: int = cast(int, count_result[0]) if count_result else 0
 
-        # Serve cache when no overrides and match state is unchanged
+        # Serve cache when no overrides, match state is unchanged, and doc uses new schema
         if not overrides:
             try:
                 cached = container.read_item(
                     item="simulationRun_latest", partition_key="simulationRun"
                 )
-                if cached.get("matchesCompletedAtRun") == completed_count:
+                if (
+                    cached.get("matchesCompletedAtRun") == completed_count
+                    and "winProbabilities" in cached
+                ):
                     return func.HttpResponse(
                         json.dumps(cached),
                         mimetype="application/json",

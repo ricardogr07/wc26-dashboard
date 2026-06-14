@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { getMatches, getStandings, type ApiMatch } from "@/lib/api";
-import { PARTICIPANT_COLORS } from "@/lib/mock-data";
+import { PARTICIPANT_COLORS } from "@/lib/constants";
 import type { StandingsEntry } from "@/lib/types";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent } from "@/components/ui/card";

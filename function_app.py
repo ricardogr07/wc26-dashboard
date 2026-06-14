@@ -1,11 +1,10 @@
 import azure.functions as func
-
 from api.cors import cors_headers
 from api.handlers.admin_override import handle_admin_override
 from api.handlers.matches import handle_matches
 from api.handlers.simulate import handle_simulate
 from api.handlers.standings import handle_standings
-from api.handlers.sync_matches import handle_sync
+from api.handlers.sync import handle_sync
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 

@@ -20,12 +20,12 @@ const LocaleContext = createContext<LocaleContextValue>({
 });
 
 // Module-level store so any number of LocaleProvider instances share state.
-let localeListeners: Array<() => void> = [];
+const localeListeners = new Set<() => void>();
 
 function localeSubscribe(listener: () => void): () => void {
-  localeListeners = [...localeListeners, listener];
+  localeListeners.add(listener);
   return () => {
-    localeListeners = localeListeners.filter((l) => l !== listener);
+    localeListeners.delete(listener);
   };
 }
 

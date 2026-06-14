@@ -60,8 +60,8 @@ def simulation_run() -> SimulationRun:
         run_at=datetime(2026, 6, 9, 12, 0, 0, tzinfo=UTC),
         matches_completed_at_run=12,
         n_runs=10000,
-        probabilities={
-            "ricardo": {"1st": 0.32, "2nd": 0.28, "3rd": 0.20, "4th": 0.12, "5th": 0.08},
-            "jibran": {"1st": 0.25, "2nd": 0.22, "3rd": 0.24, "4th": 0.18, "5th": 0.11},
+        win_probabilities={
+            "ricardo": 0.32,
+            "jibran": 0.25,
         },
     )

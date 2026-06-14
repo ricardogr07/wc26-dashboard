@@ -59,6 +59,9 @@ variable "timer_schedule" {
 }
 
 variable "cosmos_free_tier" {
+  # WARNING: Azure allows only ONE free-tier Cosmos account per subscription.
+  # If you already have a free-tier account in this subscription, set this to
+  # false or the deployment will fail with a quota error.
   description = "Enable Cosmos DB free tier (only one per subscription)"
   type        = bool
   default     = true

@@ -15,16 +15,22 @@ services:
     # Bind-mount the repo root so code changes are reflected without rebuilding.
     volumes:
       - .:/home/site/wwwroot
-    # Secrets come from .env.local (gitignored). See .env.local.example.
+    # Secrets and emulator connection strings come from .env.local (gitignored).
+    # Copy .env.local.example to .env.local and fill in your values before starting.
     env_file: .env.local
     environment:
       FUNCTIONS_WORKER_RUNTIME: python
       CORS_ORIGIN: "http://localhost:3000"
-      AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OKMbbaGv+VNFCGFebAb+wGJCCR3Xe3e5V6Ia9qe3v9a==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
     ports:
       - "7071:80"
     depends_on:
       - azurite
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   web:
     build:

@@ -6,6 +6,7 @@ import uuid
 from datetime import UTC, datetime
 
 import azure.functions as func
+from azure.cosmos import ContainerProxy
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
 from api.cosmos import get_container
@@ -22,9 +23,9 @@ from api.sync_matches.thesportsdb import (
 logger = logging.getLogger(__name__)
 
 
-def _build_team_name_map(container: object) -> dict[str, str]:
+def _build_team_name_map(container: ContainerProxy) -> dict[str, str]:
     """Return {team_name: team_id} by querying all team documents."""
-    items = container.query_items(  # type: ignore[union-attr]
+    items = container.query_items(
         query="SELECT c.id, c.name FROM c WHERE c.type = 'team'",
         enable_cross_partition_query=True,
     )
@@ -69,7 +70,7 @@ def _result_changed(
 
 
 def _process_event(
-    container: object,
+    container: ContainerProxy,
     event: dict,
     team_id_by_name: dict[str, str],
     now_iso: str,
@@ -89,7 +90,7 @@ def _process_event(
     just_completed = False
 
     try:
-        existing = container.read_item(item=match_id, partition_key="match")  # type: ignore[union-attr]
+        existing = container.read_item(item=match_id, partition_key="match")
         home_id: str = existing.get("homeTeamId", "")
         away_id: str = existing.get("awayTeamId", "")
         winner_id = _determine_winner(
@@ -100,7 +101,7 @@ def _process_event(
             counts["skipped"] += 1
             return
 
-        container.patch_item(  # type: ignore[union-attr]
+        container.patch_item(
             item=match_id,
             partition_key="match",
             patch_operations=[
@@ -134,7 +135,7 @@ def _process_event(
         )
         scheduled_at = parse_scheduled_at(event.get("dateEvent"), event.get("strTime"))
 
-        container.upsert_item(  # type: ignore[union-attr]
+        container.upsert_item(
             {
                 "id": match_id,
                 "type": "match",
@@ -154,7 +155,7 @@ def _process_event(
         )
         just_completed = status == "completed"
 
-    container.create_item(  # type: ignore[union-attr]
+    container.create_item(
         {
             "id": f"audit_{uuid.uuid4().hex}",
             "type": "audit",
@@ -171,7 +172,7 @@ def _process_event(
 
 
 def _update_elo(
-    container: object,
+    container: ContainerProxy,
     match_id: str,
     winner_id: str,
     home_id: str,
@@ -181,25 +182,24 @@ def _update_elo(
 ) -> None:
     loser_id = away_id if winner_id == home_id else home_id
     try:
-        winner_doc = container.read_item(item=winner_id, partition_key="team")  # type: ignore[union-attr]
-        loser_doc = container.read_item(item=loser_id, partition_key="team")  # type: ignore[union-attr]
-
+        winner_doc = container.read_item(item=winner_id, partition_key="team")
+        loser_doc = container.read_item(item=loser_id, partition_key="team")
         new_winner_elo, new_loser_elo = compute_elo_update(
             float(winner_doc.get("eloRating", 1500.0)),
             float(loser_doc.get("eloRating", 1500.0)),
         )
 
-        container.patch_item(  # type: ignore[union-attr]
+        container.patch_item(
             item=winner_id,
             partition_key="team",
             patch_operations=[{"op": "set", "path": "/eloRating", "value": new_winner_elo}],
         )
-        container.patch_item(  # type: ignore[union-attr]
+        container.patch_item(
             item=loser_id,
             partition_key="team",
             patch_operations=[{"op": "set", "path": "/eloRating", "value": new_loser_elo}],
         )
-        container.create_item(  # type: ignore[union-attr]
+        container.create_item(
             {
                 "id": f"audit_{uuid.uuid4().hex}",
                 "type": "audit",

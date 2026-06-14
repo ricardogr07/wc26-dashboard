@@ -1,4 +1,4 @@
-import { PARTICIPANT_COLORS } from "@/lib/mock-data";
+import { PARTICIPANT_COLORS } from "@/lib/constants";
 
 interface ParticipantBadgeProps {
   participantId: string;

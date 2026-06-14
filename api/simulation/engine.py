@@ -150,7 +150,7 @@ def run_simulation(
     # ------------------------------------------------------------------
     # Aggregate counters
     # ------------------------------------------------------------------
-    rank_counts: dict[str, dict[int, int]] = {p.id: defaultdict(int) for p in participants}
+    champion_counts: dict[str, int] = dict.fromkeys(participant_ids, 0)
 
     # ------------------------------------------------------------------
     # Simulation loop
@@ -229,7 +229,7 @@ def run_simulation(
         sf_winners = _sim_round(
             sf_matchups, "sf", scores, team_owner, team_elo, completed_knockout, rng
         )
-        _sim_round(
+        final_winners = _sim_round(
             [(sf_winners[0], sf_winners[1])],
             "final",
             scores,
@@ -239,28 +239,20 @@ def run_simulation(
             rng,
         )
 
-        # ---- Rank participants this run ----
-        sorted_pids = sorted(participant_ids, key=lambda pid: scores[pid], reverse=True)
-        rank = 1
-        for i, pid in enumerate(sorted_pids):
-            if i > 0 and scores[pid] < scores[sorted_pids[i - 1]]:
-                rank = i + 1
-            rank_counts[pid][rank] += 1
+        # ---- Credit the tournament champion ----
+        champion = final_winners[0] if final_winners else None
+        if champion and champion in team_owner:
+            champion_counts[team_owner[champion]] += 1
 
     # ------------------------------------------------------------------
-    # Build probabilities output
+    # Build win probability output
     # ------------------------------------------------------------------
-    rank_labels = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th", 5: "5th"}
-    probabilities: dict[str, dict[str, float]] = {}
-    for pid in participant_ids:
-        probabilities[pid] = {
-            rank_labels[r]: rank_counts[pid][r] / n_runs for r in range(1, len(participant_ids) + 1)
-        }
+    win_probabilities = {pid: champion_counts[pid] / n_runs for pid in participant_ids}
 
     return SimulationRun(
         id="simulationRun_latest",
         run_at=datetime.now(UTC),
         matches_completed_at_run=completed_match_count,
         n_runs=n_runs,
-        probabilities=probabilities,
+        win_probabilities=win_probabilities,
     )

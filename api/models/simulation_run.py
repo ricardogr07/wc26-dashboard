@@ -13,4 +13,4 @@ class SimulationRun(BaseModel):
     run_at: datetime
     matches_completed_at_run: int
     n_runs: int
-    probabilities: dict[str, dict[str, float]]
+    win_probabilities: dict[str, float]

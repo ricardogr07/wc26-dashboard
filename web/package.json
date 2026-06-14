@@ -9,7 +9,8 @@
     "lint": "eslint",
     "type-check": "tsc --noEmit",
     "e2e": "cypress run",
-    "e2e:open": "cypress open"
+    "e2e:open": "cypress open",
+    "e2e:docker": "docker compose exec web sh -c 'CYPRESS_BASE_URL=http://localhost:3000 xvfb-run --auto-servernum npx cypress run --browser chromium'"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
