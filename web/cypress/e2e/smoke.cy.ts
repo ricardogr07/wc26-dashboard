@@ -208,11 +208,11 @@ describe("Bracket page (/bracket)", () => {
     cy.viewport(1280, 800);
     cy.visit("/bracket/");
     cy.wait("@bracketMatches");
-    // ARG beat KSA 3-0 in r32_01
+    // ARG beat KSA 3-0 in r32_01; bg-green-50 is on the TeamRow div, not the inner span
     cy.get("[data-cy=bracket-match-card]")
       .first()
       .within(() => {
-        cy.contains("Argentina").should("have.class", "bg-green-50");
+        cy.contains("Argentina").parent().should("have.class", "bg-green-50");
       });
   });
 
