@@ -16,8 +16,6 @@ export interface BracketMatchesByRound {
   final: ApiMatch[];
 }
 
-const ROUND_ORDER: Round[] = ["r32", "r16", "qf", "sf", "final"];
-
 const ROUND_LABELS: Record<Round, string> = {
   r32: "Round of 32",
   r16: "Round of 16",
@@ -26,10 +24,9 @@ const ROUND_LABELS: Record<Round, string> = {
   final: "Final",
 };
 
-// Vertical height (px) for one R32 match slot. All other rounds scale from this.
+// Height of one match card slot; 8 slots per side = total bracket height
 const SLOT_HEIGHT = 96;
-// Total bracket height = 16 R32 slots
-const BRACKET_HEIGHT = 16 * SLOT_HEIGHT;
+const BRACKET_HEIGHT = 8 * SLOT_HEIGHT;
 
 function TeamRow({
   teamId,
@@ -126,29 +123,24 @@ function PlaceholderCard({ tbd }: { tbd: string }) {
   );
 }
 
-function RoundColumn({
-  round,
+function BracketColumn({
+  label,
   matches,
-  expectedCount,
+  count,
   tbd,
 }: {
-  round: Round;
+  label: string;
   matches: ApiMatch[];
-  expectedCount: number;
+  count: number;
   tbd: string;
 }) {
-  // Fill to expectedCount with placeholders so spacing stays correct
-  const slots = Array.from({ length: expectedCount }, (_, i) => matches[i] ?? null);
-
+  const slots = Array.from({ length: count }, (_, i) => matches[i] ?? null);
   return (
     <div className="flex flex-col shrink-0" style={{ height: BRACKET_HEIGHT }}>
       <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-widest text-gray-400 shrink-0">
-        {ROUND_LABELS[round]}
+        {label}
       </p>
-      <div
-        className="flex flex-col flex-1"
-        style={{ justifyContent: "space-around" }}
-      >
+      <div className="flex flex-col flex-1" style={{ justifyContent: "space-around" }}>
         {slots.map((match, i) =>
           match ? (
             <MatchCard key={match.id} match={match} tbd={tbd} />
@@ -161,29 +153,48 @@ function RoundColumn({
   );
 }
 
-const EXPECTED_COUNTS: Record<Round, number> = {
-  r32: 16,
-  r16: 8,
-  qf: 4,
-  sf: 2,
-  final: 1,
-};
-
 export function BracketTree({ matchesByRound }: { matchesByRound: BracketMatchesByRound }) {
   const t = useT();
   const tbd = t("bracket.tbd");
 
+  // Split each round: first half feeds left side, second half feeds right side
+  const r32L = matchesByRound.r32.slice(0, 8);
+  const r32R = matchesByRound.r32.slice(8, 16);
+  const r16L = matchesByRound.r16.slice(0, 4);
+  const r16R = matchesByRound.r16.slice(4, 8);
+  const qfL = matchesByRound.qf.slice(0, 2);
+  const qfR = matchesByRound.qf.slice(2, 4);
+  const sfL = matchesByRound.sf.slice(0, 1);
+  const sfR = matchesByRound.sf.slice(1, 2);
+  const finalMatch = matchesByRound.final[0] ?? null;
+
   return (
-    <div className="flex gap-6 items-start pb-4" style={{ minHeight: BRACKET_HEIGHT + 32 }}>
-      {ROUND_ORDER.map((round) => (
-        <RoundColumn
-          key={round}
-          round={round}
-          matches={matchesByRound[round]}
-          expectedCount={EXPECTED_COUNTS[round]}
-          tbd={tbd}
-        />
-      ))}
+    <div className="flex gap-4 items-start pb-4" style={{ minHeight: BRACKET_HEIGHT + 32 }}>
+      {/* Left half — converges toward the center Final */}
+      <BracketColumn label={ROUND_LABELS.r32} matches={r32L} count={8} tbd={tbd} />
+      <BracketColumn label={ROUND_LABELS.r16} matches={r16L} count={4} tbd={tbd} />
+      <BracketColumn label={ROUND_LABELS.qf}  matches={qfL}  count={2} tbd={tbd} />
+      <BracketColumn label={ROUND_LABELS.sf}  matches={sfL}  count={1} tbd={tbd} />
+
+      {/* Center: Final */}
+      <div className="flex flex-col shrink-0" style={{ height: BRACKET_HEIGHT }}>
+        <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-widest text-gray-400 shrink-0">
+          {ROUND_LABELS.final}
+        </p>
+        <div className="flex flex-col flex-1 items-center justify-center">
+          {finalMatch ? (
+            <MatchCard match={finalMatch} tbd={tbd} />
+          ) : (
+            <PlaceholderCard tbd={tbd} />
+          )}
+        </div>
+      </div>
+
+      {/* Right half — diverges from the center Final */}
+      <BracketColumn label={ROUND_LABELS.sf}  matches={sfR}  count={1} tbd={tbd} />
+      <BracketColumn label={ROUND_LABELS.qf}  matches={qfR}  count={2} tbd={tbd} />
+      <BracketColumn label={ROUND_LABELS.r16} matches={r16R} count={4} tbd={tbd} />
+      <BracketColumn label={ROUND_LABELS.r32} matches={r32R} count={8} tbd={tbd} />
     </div>
   );
 }
