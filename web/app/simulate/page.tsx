@@ -7,6 +7,12 @@ import type { SimulationRun, MatchRound } from "@/lib/types";
 import { WinnerProbabilityChart } from "@/components/winner-probability-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 import { RefreshCw, RotateCcw, Play, Sliders } from "lucide-react";
 import { useT, useLocale } from "@/lib/locale-context";
 import { cn } from "@/lib/utils";
@@ -174,6 +180,35 @@ export default function SimulatePage() {
             </div>
           );
         })}
+      </div>
+
+      {/* How it works */}
+      <div className="mt-6 rounded-lg border bg-white px-4 shadow-sm">
+        <Accordion>
+          <AccordionItem value="how-it-works">
+            <AccordionTrigger className="text-sm font-semibold text-gray-700">
+              {t("simulate.howItWorksTitle")}
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-4 text-sm text-gray-600">
+                <div>
+                  <p className="mb-1 font-semibold text-gray-700">{t("simulate.howCalcTitle")}</p>
+                  <p>{t("simulate.howCalcBody")}</p>
+                </div>
+                <div>
+                  <p className="mb-1 font-semibold text-gray-700">{t("simulate.howSumTitle")}</p>
+                  <p>{t("simulate.howSumBody")}</p>
+                </div>
+                <div>
+                  <p className="mb-1 font-semibold text-gray-700">
+                    {t("simulate.howScenarioTitle")}
+                  </p>
+                  <p>{t("simulate.howScenarioBody")}</p>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
 
       {/* Scenario Builder */}
