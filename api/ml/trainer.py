@@ -59,7 +59,7 @@ def train_and_save(matches: list[Match], teams: list[Team], model_path: Path) ->
     model = LogisticRegression(max_iter=1000, random_state=42)
     model.fit(x_train, y)
 
-    proba = model.predict_proba(x_train)[:, 1]
+    proba = model.predict_proba(x_train)[:, 1]  # type: ignore[bad-argument-type]
     ml_ll = float(log_loss(y, proba))
     ml_bs = float(brier_score_loss(y, proba))
     elo_ll = float(log_loss(y, elo_proba))
