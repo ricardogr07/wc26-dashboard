@@ -2,9 +2,11 @@ import azure.functions as func
 from api.cors import cors_headers
 from api.handlers.admin_override import handle_admin_override
 from api.handlers.matches import handle_matches
+from api.handlers.model_metrics import handle_model_metrics
 from api.handlers.simulate import handle_simulate
 from api.handlers.standings import handle_standings
 from api.handlers.sync import handle_sync
+from api.handlers.train import handle_train
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -39,6 +41,16 @@ def admin_override(req: func.HttpRequest) -> func.HttpResponse:
 @app.route(route="simulate", methods=[func.HttpMethod.POST])
 def simulate(req: func.HttpRequest) -> func.HttpResponse:
     return handle_simulate(req)
+
+
+@app.route(route="admin/train", methods=[func.HttpMethod.POST], auth_level=func.AuthLevel.FUNCTION)
+def train(req: func.HttpRequest) -> func.HttpResponse:
+    return handle_train(req)
+
+
+@app.route(route="model/metrics", methods=[func.HttpMethod.GET])
+def model_metrics(req: func.HttpRequest) -> func.HttpResponse:
+    return handle_model_metrics(req)
 
 
 @app.timer_trigger(

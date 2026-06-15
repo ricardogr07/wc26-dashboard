@@ -9,6 +9,7 @@ from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
 from api.cors import cors_headers
 from api.cosmos import get_container
+from api.ml.predictor import load_predictor
 from api.models import Match, Participant, Team
 from api.seed import load_fixtures, load_participants, load_teams
 from api.simulation.engine import run_simulation
@@ -126,7 +127,9 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
         matches = patched
 
     try:
-        result = run_simulation(matches, participants, teams, n_runs=n_runs)
+        result = run_simulation(
+            matches, participants, teams, n_runs=n_runs, predict=load_predictor()
+        )
     except Exception:
         logger.exception("run_simulation failed")
         return func.HttpResponse("Simulation error", status_code=500, headers=cors_headers())
