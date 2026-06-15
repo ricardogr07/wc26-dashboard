@@ -16,6 +16,9 @@ htmlcov/
 .coverage
 coverage.xml
 
+# ML model artifact (trained at runtime, stored in Azure Blob in prod)
+shared/model/
+
 # Azure Functions local settings (contains secrets)
 local.settings.json
 api/local.settings.json

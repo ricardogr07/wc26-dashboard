@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import random
 from collections import defaultdict
+from collections.abc import Callable
 from datetime import UTC, datetime
 
 from api.models import Match, Participant, Team
@@ -22,9 +23,23 @@ from api.simulation.bracket import (
 
 _DRAW_RATE = 0.25
 
+# Predictor signature: (home_elo, away_elo, is_knockout) -> P(home wins)
+_Predict = Callable[[float, float, bool], float]
 
-def _pick_winner(home: str, away: str, home_elo: float, away_elo: float, rng: random.Random) -> str:
-    p = elo_win_prob(home_elo, away_elo)
+
+def _pick_winner(
+    home: str,
+    away: str,
+    home_elo: float,
+    away_elo: float,
+    rng: random.Random,
+    predict: _Predict | None = None,
+    is_knockout: bool = False,
+) -> str:
+    if predict is not None:
+        p = predict(home_elo, away_elo, is_knockout)
+    else:
+        p = elo_win_prob(home_elo, away_elo)
     return home if rng.random() < p else away
 
 
@@ -79,6 +94,7 @@ def _sim_round(
     team_elo: dict[str, float],
     completed_knockout: dict[tuple[str, str], str],
     rng: random.Random,
+    predict: _Predict | None = None,
 ) -> list[str]:
     winners = []
     for home, away in matchups:
@@ -87,7 +103,13 @@ def _sim_round(
             w = completed_knockout[key]
         else:
             w = _pick_winner(
-                home, away, team_elo.get(home, 1500.0), team_elo.get(away, 1500.0), rng
+                home,
+                away,
+                team_elo.get(home, 1500.0),
+                team_elo.get(away, 1500.0),
+                rng,
+                predict=predict,
+                is_knockout=True,
             )
         if w in team_owner:
             scores[team_owner[w]] += ROUND_WIN_POINTS[round_name]
@@ -101,6 +123,7 @@ def run_simulation(
     teams: list[Team],
     n_runs: int = 10_000,
     seed: int | None = None,
+    predict: _Predict | None = None,
 ) -> SimulationRun:
     # ------------------------------------------------------------------
     # One-time setup
@@ -215,19 +238,19 @@ def run_simulation(
 
         # ---- Knockout simulation ----
         r32_winners = _sim_round(
-            r32_matchups, "r32", scores, team_owner, team_elo, completed_knockout, rng
+            r32_matchups, "r32", scores, team_owner, team_elo, completed_knockout, rng, predict
         )
         r16_matchups = [(r32_winners[a - 1], r32_winners[b - 1]) for a, b in R16_BRACKET]
         r16_winners = _sim_round(
-            r16_matchups, "r16", scores, team_owner, team_elo, completed_knockout, rng
+            r16_matchups, "r16", scores, team_owner, team_elo, completed_knockout, rng, predict
         )
         qf_matchups = [(r16_winners[a - 1], r16_winners[b - 1]) for a, b in QF_BRACKET]
         qf_winners = _sim_round(
-            qf_matchups, "qf", scores, team_owner, team_elo, completed_knockout, rng
+            qf_matchups, "qf", scores, team_owner, team_elo, completed_knockout, rng, predict
         )
         sf_matchups = [(qf_winners[a - 1], qf_winners[b - 1]) for a, b in SF_BRACKET]
         sf_winners = _sim_round(
-            sf_matchups, "sf", scores, team_owner, team_elo, completed_knockout, rng
+            sf_matchups, "sf", scores, team_owner, team_elo, completed_knockout, rng, predict
         )
         final_winners = _sim_round(
             [(sf_winners[0], sf_winners[1])],
@@ -237,6 +260,7 @@ def run_simulation(
             team_elo,
             completed_knockout,
             rng,
+            predict,
         )
 
         # ---- Credit the tournament champion ----

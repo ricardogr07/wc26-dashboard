@@ -41,7 +41,9 @@ type Translations = {
     error: string;
     howItWorksTitle: string;
     howCalcTitle: string;
-    howCalcBody: string;
+    howCalcBodyPre: string;
+    howCalcFormula: string;
+    howCalcBodyPost: string;
     howSumTitle: string;
     howSumBody: string;
     howScenarioTitle: string;
@@ -129,8 +131,11 @@ const en: Translations = {
     error: "Failed to load simulation.",
     howItWorksTitle: "How this works",
     howCalcTitle: "How win probabilities are calculated",
-    howCalcBody:
-      "The simulator runs 10,000 full-tournament Monte Carlo simulations. In each run, every remaining match is decided using Elo ratings: P(A wins) = 1 / (1 + 10^((Elo_B − Elo_A) / 400)). Group-stage matches include a 25% draw probability; knockout rounds are winner-only. At the end of each run, the champion team's owner is credited. The final percentage is how often each participant held the winning team.",
+    howCalcBodyPre:
+      "The simulator runs 10,000 full-tournament Monte Carlo simulations. In each run, every remaining match is decided using Elo ratings:",
+    howCalcFormula: "P(A wins) = 1 / (1 + 10^((Elo_B − Elo_A) / 400))",
+    howCalcBodyPost:
+      "Group-stage matches include a 25% draw probability; knockout rounds are winner-only. At the end of each run, the champion team's owner is credited. The final percentage is how often each participant held the winning team.",
     howSumTitle: "Why don't the percentages add up to 100%?",
     howSumBody:
       "23 of the 48 WC2026 teams are unowned — no pool participant drafted them. When one of those teams wins the tournament in a simulation run, nobody gets credit. The missing percentage is the combined probability that an unowned team lifts the trophy.",
@@ -235,8 +240,11 @@ const es: Translations = {
     error: "Error al cargar la simulación.",
     howItWorksTitle: "Cómo funciona",
     howCalcTitle: "Cómo se calculan las probabilidades",
-    howCalcBody:
-      "El simulador ejecuta 10,000 simulaciones completas del torneo (Monte Carlo). En cada ejecución, los partidos pendientes se resuelven con calificaciones Elo: P(A gana) = 1 / (1 + 10^((Elo_B − Elo_A) / 400)). En fase de grupos existe un 25% de probabilidad de empate; en eliminatorias solo hay ganador. Al final de cada ejecución, se acredita al dueño del equipo campeón. El porcentaje final indica con qué frecuencia cada participante tuvo al equipo ganador.",
+    howCalcBodyPre:
+      "El simulador ejecuta 10,000 simulaciones completas del torneo (Monte Carlo). En cada ejecución, los partidos pendientes se resuelven con calificaciones Elo:",
+    howCalcFormula: "P(A gana) = 1 / (1 + 10^((Elo_B − Elo_A) / 400))",
+    howCalcBodyPost:
+      "En fase de grupos existe un 25% de probabilidad de empate; en eliminatorias solo hay ganador. Al final de cada ejecución, se acredita al dueño del equipo campeón. El porcentaje final indica con qué frecuencia cada participante tuvo al equipo ganador.",
     howSumTitle: "¿Por qué los porcentajes no suman 100%?",
     howSumBody:
       "23 de los 48 equipos del Mundial 2026 no tienen dueño en esta quiniela. Cuando uno de esos equipos gana el torneo en una simulación, nadie recibe crédito. El porcentaje faltante es la probabilidad combinada de que un equipo sin dueño se lleve el trofeo.",

@@ -193,7 +193,11 @@ export default function SimulatePage() {
               <div className="space-y-4 text-sm text-gray-600">
                 <div>
                   <p className="mb-1 font-semibold text-gray-700">{t("simulate.howCalcTitle")}</p>
-                  <p>{t("simulate.howCalcBody")}</p>
+                  <p>{t("simulate.howCalcBodyPre")}</p>
+                  <code className="my-2 block rounded bg-gray-100 px-3 py-2 font-mono text-sm text-gray-800">
+                    {t("simulate.howCalcFormula")}
+                  </code>
+                  <p>{t("simulate.howCalcBodyPost")}</p>
                 </div>
                 <div>
                   <p className="mb-1 font-semibold text-gray-700">{t("simulate.howSumTitle")}</p>
