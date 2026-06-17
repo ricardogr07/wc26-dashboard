@@ -18,7 +18,10 @@ import type { MatchRound } from "@/lib/types";
 import { useT, useLocale } from "@/lib/locale-context";
 import { PageSkeleton } from "@/components/page-skeleton";
 
+type MatchStatus = "scheduled" | "live" | "completed";
+
 const ROUND_VALUES: Array<"all" | MatchRound> = ["all", "group", "r32", "r16", "qf", "sf", "final"];
+const STATUS_VALUES: Array<"all" | MatchStatus> = ["all", "scheduled", "live", "completed"];
 
 function teamNameClass(match: ApiMatch, teamId: string): string {
   if (match.status !== "completed") return "";
@@ -50,6 +53,7 @@ function buildOwnerMap(standings: StandingsEntry[]): Record<string, string> {
 
 export default function SchedulePage() {
   const [selectedRound, setSelectedRound] = useState<"all" | MatchRound>("all");
+  const [selectedStatus, setSelectedStatus] = useState<"all" | MatchStatus>("all");
   const [matches, setMatches] = useState<ApiMatch[] | null>(null);
   const [standings, setStandings] = useState<StandingsEntry[]>([]);
   const [error, setError] = useState(false);
@@ -87,14 +91,19 @@ export default function SchedulePage() {
 
   const filtered = useMemo(() => {
     if (!matches) return [];
-    if (selectedRound === "all") return matches;
-    return matches.filter((m) => m.round === selectedRound);
-  }, [matches, selectedRound]);
+    let result = matches;
+    if (selectedRound !== "all") result = result.filter((m) => m.round === selectedRound);
+    if (selectedStatus !== "all") result = result.filter((m) => m.status === selectedStatus);
+    return result;
+  }, [matches, selectedRound, selectedStatus]);
 
   const grouped = useMemo(() => groupMatchesByDate(filtered), [filtered]);
 
   const roundLabel = (r: "all" | MatchRound) =>
     r === "all" ? t("schedule.allRounds") : t(`rounds.${r}`);
+
+  const statusLabel = (s: "all" | MatchStatus) =>
+    s === "all" ? t("schedule.allStatuses") : t(`status.${s}`);
 
   if (!matches && !error) {
     return <PageSkeleton />;
@@ -120,12 +129,20 @@ export default function SchedulePage() {
             ))}
           </SelectContent>
         </Select>
-        <Button variant="outline" size="sm" onClick={() => setSelectedRound("all")}>
-          {t("schedule.allRounds")}
-        </Button>
+        <div className="w-px h-5 bg-gray-300" />
+        <Select value={selectedStatus} onValueChange={(v) => setSelectedStatus(v as "all" | MatchStatus)}>
+          <SelectTrigger className="w-36 bg-white" data-cy="status-filter">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {STATUS_VALUES.map((s) => (
+              <SelectItem key={s} value={s}>{statusLabel(s)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Mobile chip row */}
+      {/* Mobile chip rows */}
       <div className="mt-4 flex overflow-x-auto gap-2 pb-1 md:hidden">
         {ROUND_VALUES.map((r) => (
           <Button
@@ -136,6 +153,19 @@ export default function SchedulePage() {
             onClick={() => setSelectedRound(r)}
           >
             {roundLabel(r)}
+          </Button>
+        ))}
+      </div>
+      <div className="mt-2 flex overflow-x-auto gap-2 pb-1 md:hidden">
+        {STATUS_VALUES.map((s) => (
+          <Button
+            key={s}
+            variant={selectedStatus === s ? "default" : "outline"}
+            size="sm"
+            className="whitespace-nowrap shrink-0"
+            onClick={() => setSelectedStatus(s)}
+          >
+            {statusLabel(s)}
           </Button>
         ))}
       </div>
