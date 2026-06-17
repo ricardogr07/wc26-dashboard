@@ -56,6 +56,8 @@ type Translations = {
     error: string;
     allRounds: string;
     allStatuses: string;
+    filterRound: string;
+    filterStatus: string;
     noMatches: string;
   };
   teams: {
@@ -151,6 +153,8 @@ const en: Translations = {
     error: "Failed to load schedule.",
     allRounds: "All Rounds",
     allStatuses: "All",
+    filterRound: "Round",
+    filterStatus: "Status",
     noMatches: "No matches found for this filter.",
   },
   teams: {
@@ -261,6 +265,8 @@ const es: Translations = {
     error: "Error al cargar el calendario.",
     allRounds: "Todas las Rondas",
     allStatuses: "Todos",
+    filterRound: "Ronda",
+    filterStatus: "Estado",
     noMatches: "No se encontraron partidos para este filtro.",
   },
   teams: {
