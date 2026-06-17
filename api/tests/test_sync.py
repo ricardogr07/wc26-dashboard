@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
 from unittest.mock import MagicMock, patch
 
 import azure.functions as func
@@ -541,3 +542,99 @@ def test_fetch_deduplicates_across_endpoints(mock_get: MagicMock) -> None:
     assert len([e for e in events if e["idEvent"] == "2391728"]) == 1, (
         "Duplicate ids should be deduped"
     )
+
+
+# ---------------------------------------------------------------------------
+# handle_sync — dedup: patch wiki_XXX doc when tsdb_XXX not found
+# ---------------------------------------------------------------------------
+
+_WIKI_SCHEDULED_DOC: dict = {
+    "id": "wiki_A1_1",
+    "type": "match",
+    "round": "group",
+    "group": "A",
+    "homeTeamId": "MEX",
+    "awayTeamId": "RSA",
+    "scheduledAt": "2026-06-11T19:00:00+00:00",
+    "status": "scheduled",
+    "homeScore": None,
+    "awayScore": None,
+    "winnerId": None,
+    "source": "wikipedia",
+    "lastUpdated": "2026-06-09T00:00:00+00:00",
+}
+
+
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
+def test_sync_patches_wiki_doc_instead_of_creating_tsdb_duplicate(
+    mock_gc: MagicMock, mock_fetch: MagicMock
+) -> None:
+    """When tsdb_XXX is not found but a wiki_XXX doc exists for the same team pair,
+    the sync must patch the existing wiki doc rather than inserting a new tsdb doc."""
+    mock_fetch.return_value = [_COMPLETED_EVENT]
+    container = MagicMock()
+    # read_item raises not-found for the tsdb ID
+    container.read_item.side_effect = CosmosResourceNotFoundError(404, "not found")
+    # First query_items call: _build_team_name_map; second: _find_existing_match
+    container.query_items.side_effect = [
+        iter([{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}]),
+        iter([_WIKI_SCHEDULED_DOC]),
+    ]
+    mock_gc.return_value = container
+
+    from api.handlers.sync import handle_sync
+
+    handle_sync(_timer())
+
+    container.upsert_item.assert_not_called()
+    container.patch_item.assert_called()
+    patch_call = container.patch_item.call_args_list[0]
+    assert patch_call.kwargs["item"] == "wiki_A1_1"
+    ops = {op["path"]: op["value"] for op in patch_call.kwargs["patch_operations"]}
+    assert ops["/status"] == "completed"
+    assert ops["/homeScore"] == 2
+    assert ops["/awayScore"] == 1
+
+
+# ---------------------------------------------------------------------------
+# handle_sync — stale "live" with scores promotes to completed
+# ---------------------------------------------------------------------------
+
+
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
+def test_sync_promotes_stale_live_to_completed(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
+    """A match reported as 'live' with scores set but started >3 hours ago must be
+    marked completed — TheSportsDB sometimes keeps returning an in-progress status
+    after the final whistle."""
+    old_date = (datetime.now(UTC) - timedelta(hours=4)).strftime("%Y-%m-%d")
+    stale_event = {
+        **_SCHEDULED_EVENT,
+        "dateEvent": old_date,
+        "strTime": "12:00:00",
+        "strStatus": "1H",
+        "intHomeScore": "1",
+        "intAwayScore": "1",
+        "strWinner": "",
+    }
+    mock_fetch.return_value = [stale_event]
+    container = _mock_container(
+        query_result=[{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}],
+    )
+    container.read_item.return_value = {
+        **_EXISTING_SCHEDULED_DOC,
+        "status": "live",
+        "homeScore": 1,
+        "awayScore": 1,
+        "winnerId": None,
+    }
+    mock_gc.return_value = container
+
+    from api.handlers.sync import handle_sync
+
+    handle_sync(_timer())
+
+    patch_call = container.patch_item.call_args_list[0]
+    ops = {op["path"]: op["value"] for op in patch_call.kwargs["patch_operations"]}
+    assert ops["/status"] == "completed"

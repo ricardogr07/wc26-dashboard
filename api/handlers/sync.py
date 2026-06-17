@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 import azure.functions as func
 from azure.cosmos import ContainerProxy
@@ -69,6 +69,24 @@ def _result_changed(
     )
 
 
+def _find_existing_match(container: ContainerProxy, home_id: str, away_id: str) -> dict | None:
+    """Find a match document by team pair regardless of its ID prefix."""
+    items = list(
+        container.query_items(
+            query=(
+                "SELECT * FROM c WHERE c.type = 'match'"
+                " AND c.homeTeamId = @home AND c.awayTeamId = @away"
+            ),
+            parameters=[
+                {"name": "@home", "value": home_id},
+                {"name": "@away", "value": away_id},
+            ],
+            enable_cross_partition_query=True,
+        )
+    )
+    return items[0] if items else None
+
+
 def _process_event(
     container: ContainerProxy,
     event: dict,
@@ -83,8 +101,15 @@ def _process_event(
     away_score = parse_score(event.get("intAwayScore"))
     raw_status = event.get("strStatus") or event.get("strProgress") or ""
     status = parse_status(raw_status)
-    if home_score is not None and away_score is not None and status == "scheduled":
-        status = "completed"
+    if home_score is not None and away_score is not None:
+        if status == "scheduled":
+            status = "completed"
+        elif status == "live":
+            # TheSportsDB sometimes keeps reporting "live" after a match ends;
+            # if scores are set and the match started >3 hours ago, treat it as done.
+            scheduled_at_dt = parse_scheduled_at(event.get("dateEvent"), event.get("strTime"))
+            if datetime.now(UTC) - scheduled_at_dt > timedelta(hours=3):
+                status = "completed"
     raw_winner_name = event.get("strWinner") or ""
 
     just_completed = False
@@ -133,27 +158,50 @@ def _process_event(
         winner_id = _determine_winner(
             home_score, away_score, home_id, away_id, raw_winner_name, team_id_by_name
         )
-        scheduled_at = parse_scheduled_at(event.get("dateEvent"), event.get("strTime"))
 
-        container.upsert_item(
-            {
-                "id": match_id,
-                "type": "match",
-                "round": parse_round(event.get("strRound")),
-                "group": None,
-                "homeTeamId": home_id,
-                "awayTeamId": away_id,
-                "scheduledAt": scheduled_at.isoformat(),
-                "venue": event.get("strVenue") or None,
-                "homeScore": home_score,
-                "awayScore": away_score,
-                "winnerId": winner_id,
-                "status": status,
-                "source": "thesportsdb",
-                "lastUpdated": now_iso,
-            }
-        )
-        just_completed = status == "completed"
+        # Before creating a new tsdb_XXX document, check whether a seeded match
+        # with a different ID (e.g. wiki_XXX) already exists for this team pair.
+        existing_by_teams = _find_existing_match(container, home_id, away_id)
+        if existing_by_teams:
+            match_id = existing_by_teams["id"]
+            if not _result_changed(existing_by_teams, status, home_score, away_score, winner_id):
+                counts["skipped"] += 1
+                return
+            container.patch_item(
+                item=match_id,
+                partition_key="match",
+                patch_operations=[
+                    {"op": "set", "path": "/status", "value": status},
+                    {"op": "set", "path": "/homeScore", "value": home_score},
+                    {"op": "set", "path": "/awayScore", "value": away_score},
+                    {"op": "set", "path": "/winnerId", "value": winner_id},
+                    {"op": "set", "path": "/lastUpdated", "value": now_iso},
+                ],
+            )
+            just_completed = (
+                existing_by_teams.get("status") != "completed" and status == "completed"
+            )
+        else:
+            scheduled_at = parse_scheduled_at(event.get("dateEvent"), event.get("strTime"))
+            container.upsert_item(
+                {
+                    "id": match_id,
+                    "type": "match",
+                    "round": parse_round(event.get("strRound")),
+                    "group": None,
+                    "homeTeamId": home_id,
+                    "awayTeamId": away_id,
+                    "scheduledAt": scheduled_at.isoformat(),
+                    "venue": event.get("strVenue") or None,
+                    "homeScore": home_score,
+                    "awayScore": away_score,
+                    "winnerId": winner_id,
+                    "status": status,
+                    "source": "thesportsdb",
+                    "lastUpdated": now_iso,
+                }
+            )
+            just_completed = status == "completed"
 
     container.create_item(
         {
