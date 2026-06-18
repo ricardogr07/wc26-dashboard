@@ -118,56 +118,68 @@ export default function SchedulePage() {
       <p className="mt-1 text-sm text-gray-500">{t("schedule.subtitle")}</p>
 
       {/* Desktop filter bar */}
-      <div className="mt-6 hidden md:flex items-center gap-3 rounded-lg bg-gray-100 px-4 py-3" data-cy="round-filter">
-        <Select value={selectedRound} onValueChange={(v) => setSelectedRound(v as "all" | MatchRound)}>
-          <SelectTrigger className="w-44 bg-white">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {ROUND_VALUES.map((r) => (
-              <SelectItem key={r} value={r}>{roundLabel(r)}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="mt-6 hidden md:flex items-center gap-4 rounded-lg bg-gray-100 px-4 py-3" data-cy="round-filter">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t("schedule.filterRound")}</span>
+          <Select value={selectedRound} onValueChange={(v) => setSelectedRound(v as "all" | MatchRound)}>
+            <SelectTrigger className="w-44 bg-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {ROUND_VALUES.map((r) => (
+                <SelectItem key={r} value={r}>{roundLabel(r)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="w-px h-5 bg-gray-300" />
-        <Select value={selectedStatus} onValueChange={(v) => setSelectedStatus(v as "all" | MatchStatus)}>
-          <SelectTrigger className="w-36 bg-white" data-cy="status-filter">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {STATUS_VALUES.map((s) => (
-              <SelectItem key={s} value={s}>{statusLabel(s)}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t("schedule.filterStatus")}</span>
+          <Select value={selectedStatus} onValueChange={(v) => setSelectedStatus(v as "all" | MatchStatus)}>
+            <SelectTrigger className="w-36 bg-white" data-cy="status-filter">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUS_VALUES.map((s) => (
+                <SelectItem key={s} value={s}>{statusLabel(s)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Mobile chip rows */}
-      <div className="mt-4 flex overflow-x-auto gap-2 pb-1 md:hidden">
-        {ROUND_VALUES.map((r) => (
-          <Button
-            key={r}
-            variant={selectedRound === r ? "default" : "outline"}
-            size="sm"
-            className="whitespace-nowrap shrink-0"
-            onClick={() => setSelectedRound(r)}
-          >
-            {roundLabel(r)}
-          </Button>
-        ))}
+      <div className="mt-4 md:hidden">
+        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">{t("schedule.filterRound")}</p>
+        <div className="flex overflow-x-auto gap-2 pb-1">
+          {ROUND_VALUES.map((r) => (
+            <Button
+              key={r}
+              variant={selectedRound === r ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap shrink-0"
+              onClick={() => setSelectedRound(r)}
+            >
+              {roundLabel(r)}
+            </Button>
+          ))}
+        </div>
       </div>
-      <div className="mt-2 flex overflow-x-auto gap-2 pb-1 md:hidden">
-        {STATUS_VALUES.map((s) => (
-          <Button
-            key={s}
-            variant={selectedStatus === s ? "default" : "outline"}
-            size="sm"
-            className="whitespace-nowrap shrink-0"
-            onClick={() => setSelectedStatus(s)}
-          >
-            {statusLabel(s)}
-          </Button>
-        ))}
+      <div className="mt-3 md:hidden">
+        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">{t("schedule.filterStatus")}</p>
+        <div className="flex overflow-x-auto gap-2 pb-1">
+          {STATUS_VALUES.map((s) => (
+            <Button
+              key={s}
+              variant={selectedStatus === s ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap shrink-0"
+              onClick={() => setSelectedStatus(s)}
+            >
+              {statusLabel(s)}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {/* Match list */}
