@@ -580,6 +580,7 @@ def test_sync_patches_wiki_doc_instead_of_creating_tsdb_duplicate(
     container.query_items.side_effect = [
         iter([{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}]),
         iter([_WIKI_SCHEDULED_DOC]),
+        iter([]),  # backfill stale-scheduled sweep — nothing stale after the patch
     ]
     mock_gc.return_value = container
 

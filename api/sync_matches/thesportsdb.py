@@ -34,6 +34,23 @@ _ROUND_MAP: dict[str, Literal["group", "r32", "r16", "qf", "sf", "final"]] = {
 }
 
 
+def fetch_events_on_date(date: str, league_id: str, api_key: str) -> list[dict]:
+    """Fetch all soccer events for a specific date (YYYY-MM-DD) and filter by league.
+
+    Uses the free-tier eventsday.php endpoint, which accepts a date and sport but
+    not a league; we post-filter by idLeague to keep only WC26 events.
+    """
+    url = f"{_BASE_URL}/{api_key}/eventsday.php"
+    try:
+        resp = httpx.get(url, params={"d": date, "s": "Soccer"}, timeout=30.0)
+        resp.raise_for_status()
+        events = resp.json().get("events") or []
+        return [e for e in events if str(e.get("idLeague", "")) == str(league_id)]
+    except Exception:
+        logger.exception("TheSportsDB fetch failed for eventsday date=%s", date)
+        return []
+
+
 def fetch_season_events(league_id: str, season: str, api_key: str) -> list[dict]:
     """Fetch all events for a league season from the TheSportsDB v1 API."""
     url = f"{_BASE_URL}/{api_key}/eventsseason.php"

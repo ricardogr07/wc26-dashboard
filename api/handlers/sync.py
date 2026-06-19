@@ -12,6 +12,7 @@ from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from api.cosmos import get_container
 from api.sync_matches.elo_updater import compute_elo_update
 from api.sync_matches.thesportsdb import (
+    fetch_events_on_date,
     fetch_live_and_recent_events,
     fetch_season_events,
     parse_round,
@@ -267,6 +268,81 @@ def _update_elo(
         )
 
 
+def _backfill_stale_scheduled(
+    container: ContainerProxy,
+    league_id: str,
+    api_key: str,
+    team_id_by_name: dict[str, str],
+    now_iso: str,
+    counts: dict[str, int],
+) -> None:
+    """For matches still 'scheduled' but >3 hours past kick-off, look them up on
+    TheSportsDB by date and patch any that now have results.
+
+    This catches the coverage gap where eventspastleague.php only returns the
+    most recent ~15 events; older completed matches fall out of that window.
+    """
+    now = datetime.now(UTC)
+    cutoff = now - timedelta(hours=3)
+
+    stale: list[dict] = list(
+        container.query_items(
+            query=(
+                "SELECT * FROM c WHERE c.type = 'match'"
+                " AND c.status = 'scheduled'"
+                " AND c.scheduledAt < @cutoff"
+            ),
+            parameters=[{"name": "@cutoff", "value": cutoff.isoformat()}],
+            enable_cross_partition_query=True,
+        )
+    )
+
+    if not stale:
+        return
+
+    # Group by calendar date (UTC) to minimise API calls
+    by_date: dict[str, list[dict]] = {}
+    for m in stale:
+        date_key = (m.get("scheduledAt") or "")[:10]  # "YYYY-MM-DD"
+        if date_key:
+            by_date.setdefault(date_key, []).append(m)
+
+    logger.info(
+        "Backfill: %d stale-scheduled match(es) across %d date(s)", len(stale), len(by_date)
+    )
+
+    for date_key, matches in by_date.items():
+        events = fetch_events_on_date(date_key, league_id, api_key)
+        if not events:
+            logger.debug("Backfill: no TheSportsDB events for %s", date_key)
+            continue
+
+        # Index events by (homeTeamId, awayTeamId) after resolving team names
+        event_by_teams: dict[tuple[str, str], dict] = {}
+        for e in events:
+            h = team_id_by_name.get(e.get("strHomeTeam", ""), "")
+            a = team_id_by_name.get(e.get("strAwayTeam", ""), "")
+            if h and a:
+                event_by_teams[(h, a)] = e
+
+        for match in matches:
+            key = (match.get("homeTeamId", ""), match.get("awayTeamId", ""))
+            event = event_by_teams.get(key)
+            if not event:
+                logger.debug(
+                    "Backfill: no TheSportsDB result for %s vs %s on %s",
+                    key[0],
+                    key[1],
+                    date_key,
+                )
+                continue
+            try:
+                _process_event(container, event, team_id_by_name, now_iso, counts)
+            except Exception:
+                logger.exception("Backfill: error processing event %s", event.get("idEvent"))
+                counts["errors"] += 1
+
+
 def handle_sync(timer: func.TimerRequest) -> None:
     league_id = os.environ.get("THESPORTSDB_LEAGUE_ID", "4429")
     season = os.environ.get("THESPORTSDB_SEASON", "2026-2027")
@@ -296,6 +372,9 @@ def handle_sync(timer: func.TimerRequest) -> None:
         except Exception:
             logger.exception("Unexpected error processing event %s", event_id)
             counts["errors"] += 1
+
+    # Sweep any matches still stuck as 'scheduled' past their kick-off window
+    _backfill_stale_scheduled(container, league_id, api_key, team_id_by_name, now_iso, counts)
 
     logger.info(
         "Sync complete — updated=%d skipped=%d elo_updated=%d errors=%d",
