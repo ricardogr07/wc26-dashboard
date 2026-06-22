@@ -23,6 +23,22 @@ _STATUS_MAP: dict[str, Literal["scheduled", "live", "completed"]] = {
     "pen": "live",
 }
 
+# TheSportsDB uses English team names; map common variants to our DB team IDs.
+# These supplement (but don't override) the names stored in team documents.
+TSDB_TEAM_ALIASES: dict[str, str] = {
+    "Turkey": "TUR",
+    "Ivory Coast": "CIV",
+    "USA": "USA",
+    "South Korea": "KOR",
+    "Czech Republic": "CZE",
+    "Bosnia": "BIH",
+    "Bosnia and Herzegovina": "BIH",
+    "Scotland": "SCO",
+    "Netherlands": "NED",
+    "Republic of Ireland": "IRL",
+    "Wales": "WAL",
+}
+
 _ROUND_MAP: dict[str, Literal["group", "r32", "r16", "qf", "sf", "final"]] = {
     "round of 32": "r32",
     "round of 16": "r16",

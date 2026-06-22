@@ -8,6 +8,7 @@ from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
 from api.sync_matches.elo_updater import compute_elo_update
 from api.sync_matches.thesportsdb import (
+    TSDB_TEAM_ALIASES,
     fetch_live_and_recent_events,
     parse_round,
     parse_scheduled_at,
@@ -609,11 +610,11 @@ def test_sync_promotes_stale_live_to_completed(mock_gc: MagicMock, mock_fetch: M
     """A match reported as 'live' with scores set but started >3 hours ago must be
     marked completed — TheSportsDB sometimes keeps returning an in-progress status
     after the final whistle."""
-    old_date = (datetime.now(UTC) - timedelta(hours=4)).strftime("%Y-%m-%d")
+    old_dt = datetime.now(UTC) - timedelta(hours=4)
     stale_event = {
         **_SCHEDULED_EVENT,
-        "dateEvent": old_date,
-        "strTime": "12:00:00",
+        "dateEvent": old_dt.strftime("%Y-%m-%d"),
+        "strTime": old_dt.strftime("%H:%M:%S"),  # exactly 4 h ago — always passes the >3h gate
         "strStatus": "1H",
         "intHomeScore": "1",
         "intAwayScore": "1",
@@ -639,3 +640,71 @@ def test_sync_promotes_stale_live_to_completed(mock_gc: MagicMock, mock_fetch: M
     patch_call = container.patch_item.call_args_list[0]
     ops = {op["path"]: op["value"] for op in patch_call.kwargs["patch_operations"]}
     assert ops["/status"] == "completed"
+
+
+# ---------------------------------------------------------------------------
+# TSDB team name aliases
+# ---------------------------------------------------------------------------
+
+
+def test_tsdb_aliases_cover_known_english_name_variants() -> None:
+    """TheSportsDB uses English team names; ensure the alias map resolves them."""
+    assert TSDB_TEAM_ALIASES.get("Turkey") == "TUR"
+    assert TSDB_TEAM_ALIASES.get("Ivory Coast") == "CIV"
+
+
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
+def test_sync_resolves_tsdb_alias_team_names(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
+    """When TheSportsDB uses 'Turkey' for a team stored as 'Türkiye' in our DB,
+    the alias map should allow the sync to still resolve the team and update the match."""
+    turkey_event = {
+        **_COMPLETED_EVENT,
+        "idEvent": "9999001",
+        "strHomeTeam": "Turkey",  # TSDB English name
+        "strAwayTeam": "Paraguay",
+        "intHomeScore": "2",
+        "intAwayScore": "0",
+        "strWinner": "Turkey",
+    }
+    mock_fetch.return_value = [turkey_event]
+
+    wiki_tur_par_doc = {
+        "id": "wiki_D2_2",
+        "type": "match",
+        "round": "group",
+        "group": "D",
+        "homeTeamId": "TUR",
+        "awayTeamId": "PAR",
+        "scheduledAt": "2026-06-20T03:00:00+00:00",
+        "status": "scheduled",
+        "homeScore": None,
+        "awayScore": None,
+        "winnerId": None,
+    }
+
+    container = MagicMock()
+    # read_item for tsdb_9999001 not found → falls through to find-by-teams
+    container.read_item.side_effect = CosmosResourceNotFoundError(404, "not found")
+    container.query_items.side_effect = [
+        # _build_team_name_map: DB has "Türkiye" not "Turkey"
+        iter([{"id": "TUR", "name": "Türkiye"}, {"id": "PAR", "name": "Paraguay"}]),
+        # _find_existing_match returns the wiki doc
+        iter([wiki_tur_par_doc]),
+        # backfill stale-scheduled sweep: nothing stale
+        iter([]),
+    ]
+    mock_gc.return_value = container
+
+    from api.handlers.sync import handle_sync
+
+    handle_sync(_timer())
+
+    container.patch_item.assert_called()
+    patch_call = container.patch_item.call_args_list[0]
+    assert patch_call.kwargs["item"] == "wiki_D2_2"
+    ops = {op["path"]: op["value"] for op in patch_call.kwargs["patch_operations"]}
+    assert ops["/status"] == "completed"
+    assert ops["/homeScore"] == 2
+    assert ops["/awayScore"] == 0
+    assert ops["/winnerId"] == "TUR"
