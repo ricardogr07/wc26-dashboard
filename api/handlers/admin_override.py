@@ -25,12 +25,13 @@ def handle_admin_override(req: func.HttpRequest) -> func.HttpResponse:
     except ValueError:
         return func.HttpResponse("Invalid JSON body", status_code=400)
 
+    _missing = object()
     match_id = body.get("matchId")
     home_score = body.get("homeScore")
     away_score = body.get("awayScore")
-    winner_id = body.get("winnerId")
+    winner_id = body.get("winnerId", _missing)
 
-    if any(v is None for v in [match_id, home_score, away_score, winner_id]):
+    if any(v is None for v in [match_id, home_score, away_score]) or winner_id is _missing:
         return func.HttpResponse(
             "Missing required fields: matchId, homeScore, awayScore, winnerId",
             status_code=400,
@@ -48,9 +49,12 @@ def handle_admin_override(req: func.HttpRequest) -> func.HttpResponse:
         except CosmosResourceNotFoundError:
             return func.HttpResponse(f"Match '{match_id}' not found", status_code=404)
 
-        if winner_id not in (match_doc.get("homeTeamId"), match_doc.get("awayTeamId")):
+        if winner_id is not None and winner_id not in (
+            match_doc.get("homeTeamId"),
+            match_doc.get("awayTeamId"),
+        ):
             return func.HttpResponse(
-                "winnerId must be homeTeamId or awayTeamId of the specified match",
+                "winnerId must be homeTeamId or awayTeamId of the specified match (or null for a draw)",
                 status_code=400,
             )
 

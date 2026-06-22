@@ -12,6 +12,7 @@ from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from api.cosmos import get_container
 from api.sync_matches.elo_updater import compute_elo_update
 from api.sync_matches.thesportsdb import (
+    TSDB_TEAM_ALIASES,
     fetch_events_on_date,
     fetch_live_and_recent_events,
     fetch_season_events,
@@ -25,12 +26,19 @@ logger = logging.getLogger(__name__)
 
 
 def _build_team_name_map(container: ContainerProxy) -> dict[str, str]:
-    """Return {team_name: team_id} by querying all team documents."""
+    """Return {team_name: team_id} by querying all team documents.
+
+    Aliases for common TheSportsDB name variations (e.g. "Turkey" vs "Türkiye")
+    are seeded first so that the authoritative DB name always wins on collision.
+    """
     items = container.query_items(
         query="SELECT c.id, c.name FROM c WHERE c.type = 'team'",
         enable_cross_partition_query=True,
     )
-    return {item["name"]: item["id"] for item in items}
+    mapping: dict[str, str] = dict(TSDB_TEAM_ALIASES)
+    for item in items:
+        mapping[item["name"]] = item["id"]
+    return mapping
 
 
 def _determine_winner(
