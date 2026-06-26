@@ -284,11 +284,13 @@ def _backfill_stale_scheduled(
     now_iso: str,
     counts: dict[str, int],
 ) -> None:
-    """For matches still 'scheduled' but >3 hours past kick-off, look them up on
+    """For matches still 'scheduled' or 'live' but >3 hours past kick-off, look them up on
     TheSportsDB by date and patch any that now have results.
 
     This catches the coverage gap where eventspastleague.php only returns the
     most recent ~15 events; older completed matches fall out of that window.
+    Stale 'live' matches (which also fall off that window) are included so they
+    don't stay stuck indefinitely.
     """
     now = datetime.now(UTC)
     cutoff = now - timedelta(hours=3)
@@ -297,7 +299,7 @@ def _backfill_stale_scheduled(
         container.query_items(
             query=(
                 "SELECT * FROM c WHERE c.type = 'match'"
-                " AND c.status = 'scheduled'"
+                " AND (c.status = 'scheduled' OR c.status = 'live')"
                 " AND c.scheduledAt < @cutoff"
             ),
             parameters=[{"name": "@cutoff", "value": cutoff.isoformat()}],
@@ -308,15 +310,62 @@ def _backfill_stale_scheduled(
     if not stale:
         return
 
+    # Fast path: 'live' matches that already have scores in Cosmos can be promoted
+    # to 'completed' immediately without a TheSportsDB round-trip — they simply fell
+    # off the eventspastleague.php window after the match ended.
+    needs_tsdb: list[dict] = []
+    for m in stale:
+        if (
+            m.get("status") == "live"
+            and m.get("homeScore") is not None
+            and m.get("awayScore") is not None
+        ):
+            home_score: int = m["homeScore"]
+            away_score: int = m["awayScore"]
+            home_id: str = m.get("homeTeamId", "")
+            away_id: str = m.get("awayTeamId", "")
+            winner_id = (
+                home_id
+                if home_score > away_score
+                else (away_id if away_score > home_score else None)
+            )
+            container.patch_item(
+                item=m["id"],
+                partition_key="match",
+                patch_operations=[
+                    {"op": "set", "path": "/status", "value": "completed"},
+                    {"op": "set", "path": "/winnerId", "value": winner_id},
+                    {"op": "set", "path": "/lastUpdated", "value": now_iso},
+                ],
+            )
+            logger.info(
+                "Backfill: promoted stale-live %s (%s vs %s, %d-%d) to completed",
+                m["id"],
+                home_id,
+                away_id,
+                home_score,
+                away_score,
+            )
+            counts["updated"] += 1
+            if winner_id:
+                _update_elo(container, m["id"], winner_id, home_id, away_id, now_iso, counts)
+        else:
+            needs_tsdb.append(m)
+
+    if not needs_tsdb:
+        return
+
     # Group by calendar date (UTC) to minimise API calls
     by_date: dict[str, list[dict]] = {}
-    for m in stale:
+    for m in needs_tsdb:
         date_key = (m.get("scheduledAt") or "")[:10]  # "YYYY-MM-DD"
         if date_key:
             by_date.setdefault(date_key, []).append(m)
 
     logger.info(
-        "Backfill: %d stale-scheduled match(es) across %d date(s)", len(stale), len(by_date)
+        "Backfill: %d stale match(es) need TheSportsDB lookup across %d date(s)",
+        len(needs_tsdb),
+        len(by_date),
     )
 
     for date_key, matches in by_date.items():
