@@ -79,12 +79,18 @@ def _timer() -> func.TimerRequest:
     return MagicMock(spec=func.TimerRequest)
 
 
-def _mock_container(read_side_effect=None, query_result=None):
+_TEAM_QI = [{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}]
+
+
+def _mock_container(read_side_effect=None, query_side_effects=None):
+    """query_side_effects: list of lists, one per query_items call in order.
+    handle_sync always starts with two COUNT queries (active, stale) before the
+    team-name-map query, so callers must include those in the sequence."""
     container = MagicMock()
     if read_side_effect is not None:
         container.read_item.side_effect = read_side_effect
-    if query_result is not None:
-        container.query_items.return_value = iter(query_result)
+    if query_side_effects is not None:
+        container.query_items.side_effect = [iter(q) for q in query_side_effects]
     return container
 
 
@@ -234,13 +240,8 @@ def test_elo_update_heavy_favourite_winning_gains_little() -> None:
 def test_sync_upserts_new_match(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     mock_fetch.return_value = [_SCHEDULED_EVENT]
     container = _mock_container(
-        read_side_effect=[
-            CosmosResourceNotFoundError(404, "not found"),  # match lookup
-        ],
-        query_result=[
-            {"id": "MEX", "name": "Mexico"},
-            {"id": "RSA", "name": "South Africa"},
-        ],
+        read_side_effect=[CosmosResourceNotFoundError(404, "not found")],
+        query_side_effects=[[1], [0], _TEAM_QI, []],  # COUNT×2, team_map, _find_existing=none
     )
     mock_gc.return_value = container
 
@@ -265,7 +266,7 @@ def test_sync_upserted_new_match_writes_audit_log(
     mock_fetch.return_value = [_SCHEDULED_EVENT]
     container = _mock_container(
         read_side_effect=[CosmosResourceNotFoundError(404, "not found")],
-        query_result=[{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}],
+        query_side_effects=[[1], [0], _TEAM_QI, []],
     )
     mock_gc.return_value = container
 
@@ -291,12 +292,8 @@ def test_sync_patches_existing_match_on_score_change(
     mock_gc: MagicMock, mock_fetch: MagicMock
 ) -> None:
     mock_fetch.return_value = [_COMPLETED_EVENT]
-    container = _mock_container(
-        query_result=[{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}],
-    )
-    container.read_item.side_effect = [
-        _EXISTING_SCHEDULED_DOC,  # match lookup
-    ]
+    container = _mock_container(query_side_effects=[[1], [0], _TEAM_QI])
+    container.read_item.side_effect = [_EXISTING_SCHEDULED_DOC]
     mock_gc.return_value = container
 
     from api.handlers.sync import handle_sync
@@ -319,9 +316,7 @@ def test_sync_patches_existing_match_on_score_change(
 def test_sync_skips_unchanged_match(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     mock_fetch.return_value = [_SCHEDULED_EVENT]
     already_scheduled = {**_EXISTING_SCHEDULED_DOC, "status": "scheduled"}
-    container = _mock_container(
-        query_result=[{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}],
-    )
+    container = _mock_container(query_side_effects=[[1], [0], _TEAM_QI])
     container.read_item.return_value = already_scheduled
     mock_gc.return_value = container
 
@@ -345,10 +340,7 @@ def test_sync_triggers_elo_update_on_completion(mock_gc: MagicMock, mock_fetch: 
     mock_fetch.return_value = [_COMPLETED_EVENT]
     winner_doc = {"id": "MEX", "eloRating": 1600.0}
     loser_doc = {"id": "RSA", "eloRating": 1400.0}
-    container = _mock_container(
-        query_result=[{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}],
-    )
-    # read_item calls: match lookup, then winner team, then loser team
+    container = _mock_container(query_side_effects=[[1], [0], _TEAM_QI])
     container.read_item.side_effect = [_EXISTING_SCHEDULED_DOC, winner_doc, loser_doc]
     mock_gc.return_value = container
 
@@ -373,9 +365,7 @@ def test_sync_triggers_elo_update_on_completion(mock_gc: MagicMock, mock_fetch: 
 @patch("api.handlers.sync.get_container")
 def test_sync_no_elo_update_for_draw(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     mock_fetch.return_value = [_DRAW_EVENT]
-    container = _mock_container(
-        query_result=[{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}],
-    )
+    container = _mock_container(query_side_effects=[[1], [0], _TEAM_QI])
     container.read_item.return_value = _EXISTING_SCHEDULED_DOC
     mock_gc.return_value = container
 
@@ -400,9 +390,7 @@ def test_sync_no_elo_update_if_already_completed(mock_gc: MagicMock, mock_fetch:
         "awayScore": 1,
         "winnerId": "MEX",
     }
-    container = _mock_container(
-        query_result=[{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}],
-    )
+    container = _mock_container(query_side_effects=[[1], [0], _TEAM_QI])
     container.read_item.return_value = already_completed
     mock_gc.return_value = container
 
@@ -432,9 +420,8 @@ def test_sync_idempotent_on_unchanged_data(mock_gc: MagicMock, mock_fetch: Magic
         "winnerId": "MEX",
     }
     mock_fetch.return_value = [_COMPLETED_EVENT]
-    container = _mock_container(
-        query_result=[{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}],
-    )
+    # Two handle_sync calls → 3 query_items each (COUNT×2 + team_map)
+    container = _mock_container(query_side_effects=[[1], [0], _TEAM_QI, [1], [0], _TEAM_QI])
     container.read_item.return_value = already_completed
     mock_gc.return_value = container
 
@@ -462,7 +449,7 @@ def test_sync_skips_event_with_unresolvable_teams(
     mock_fetch.return_value = [unknown_event]
     container = _mock_container(
         read_side_effect=[CosmosResourceNotFoundError(404, "not found")],
-        query_result=[{"id": "MEX", "name": "Mexico"}],
+        query_side_effects=[[1], [0], [{"id": "MEX", "name": "Mexico"}], []],
     )
     mock_gc.return_value = container
 
@@ -487,14 +474,13 @@ def test_sync_aborts_when_no_events_returned(
 ) -> None:
     mock_live.return_value = []
     mock_season.return_value = []
-    container = MagicMock()
+    container = _mock_container(query_side_effects=[[1], [0], []])  # active=True triggers fetch
     mock_gc.return_value = container
 
     from api.handlers.sync import handle_sync
 
     handle_sync(_timer())
 
-    container.query_items.assert_not_called()
     container.upsert_item.assert_not_called()
 
 
@@ -579,9 +565,10 @@ def test_sync_patches_wiki_doc_instead_of_creating_tsdb_duplicate(
     container.read_item.side_effect = CosmosResourceNotFoundError(404, "not found")
     # First query_items call: _build_team_name_map; second: _find_existing_match
     container.query_items.side_effect = [
+        iter([1]),  # active COUNT
+        iter([0]),  # stale COUNT
         iter([{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}]),
         iter([_WIKI_SCHEDULED_DOC]),
-        iter([]),  # backfill stale-scheduled sweep — nothing stale after the patch
     ]
     mock_gc.return_value = container
 
@@ -621,9 +608,7 @@ def test_sync_promotes_stale_live_to_completed(mock_gc: MagicMock, mock_fetch: M
         "strWinner": "",
     }
     mock_fetch.return_value = [stale_event]
-    container = _mock_container(
-        query_result=[{"id": "MEX", "name": "Mexico"}, {"id": "RSA", "name": "South Africa"}],
-    )
+    container = _mock_container(query_side_effects=[[1], [0], _TEAM_QI])
     container.read_item.return_value = {
         **_EXISTING_SCHEDULED_DOC,
         "status": "live",
@@ -687,12 +672,10 @@ def test_sync_resolves_tsdb_alias_team_names(mock_gc: MagicMock, mock_fetch: Mag
     # read_item for tsdb_9999001 not found → falls through to find-by-teams
     container.read_item.side_effect = CosmosResourceNotFoundError(404, "not found")
     container.query_items.side_effect = [
-        # _build_team_name_map: DB has "Türkiye" not "Turkey"
+        iter([1]),  # active COUNT
+        iter([0]),  # stale COUNT
         iter([{"id": "TUR", "name": "Türkiye"}, {"id": "PAR", "name": "Paraguay"}]),
-        # _find_existing_match returns the wiki doc
         iter([wiki_tur_par_doc]),
-        # backfill stale-scheduled sweep: nothing stale
-        iter([]),
     ]
     mock_gc.return_value = container
 
