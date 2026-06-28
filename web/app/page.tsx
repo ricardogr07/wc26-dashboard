@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getStandings } from "@/lib/api";
 import { PARTICIPANT_COLORS } from "@/lib/constants";
-import type { StandingsEntry } from "@/lib/types";
+import type { StandingsEntry, TeamStatus } from "@/lib/types";
 import { ParticipantBadge } from "@/components/participant-badge";
 import { StatusBadge } from "@/components/status-badge";
 import { TeamPill } from "@/components/team-badge";
@@ -23,6 +23,12 @@ import {
 } from "@/components/ui/accordion";
 import { useT } from "@/lib/locale-context";
 import { PageSkeleton } from "@/components/page-skeleton";
+
+function participantStatus(teams: StandingsEntry["teams"]): TeamStatus {
+  if (teams.some((t) => t.status === "champion")) return "champion";
+  if (teams.every((t) => t.status === "eliminated")) return "eliminated";
+  return "active";
+}
 
 const SCORING_MILESTONE_KEYS = [
   { key: "groupQualification", pts: 1 },
@@ -68,16 +74,23 @@ export default function StandingsPage() {
           <TableBody>
             {standings!.map((entry, i) => {
               const color = PARTICIPANT_COLORS[entry.participant.id] ?? "#6B7280";
+              const ps = participantStatus(entry.teams);
               return (
-                <TableRow key={entry.participant.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                <TableRow
+                  key={entry.participant.id}
+                  className={`${i % 2 === 0 ? "bg-white" : "bg-gray-50"} ${ps === "eliminated" ? "opacity-40" : ""}`}
+                >
                   <TableCell className="text-center text-sm font-semibold text-gray-500">
                     {i + 1}
                   </TableCell>
                   <TableCell>
-                    <ParticipantBadge
-                      participantId={entry.participant.id}
-                      displayName={entry.participant.displayName}
-                    />
+                    <div className="flex items-center gap-2">
+                      <ParticipantBadge
+                        participantId={entry.participant.id}
+                        displayName={entry.participant.displayName}
+                      />
+                      {ps !== "active" && <StatusBadge status={ps} />}
+                    </div>
                   </TableCell>
                   <TableCell className="text-center">
                     <span
@@ -105,10 +118,11 @@ export default function StandingsPage() {
       <div className="mt-6 flex flex-col gap-3 md:hidden">
         {standings!.map((entry, i) => {
           const color = PARTICIPANT_COLORS[entry.participant.id] ?? "#6B7280";
+          const ps = participantStatus(entry.teams);
           return (
             <div
               key={entry.participant.id}
-              className="rounded-lg border bg-white shadow-sm overflow-hidden"
+              className={`rounded-lg border bg-white shadow-sm overflow-hidden ${ps === "eliminated" ? "opacity-40" : ""}`}
               style={{ borderLeft: `4px solid ${color}` }}
             >
               <Accordion>
@@ -122,6 +136,7 @@ export default function StandingsPage() {
                         participantId={entry.participant.id}
                         displayName={entry.participant.displayName}
                       />
+                      {ps !== "active" && <StatusBadge status={ps} />}
                       <span
                         className="ml-auto mr-2 inline-flex items-center justify-center rounded-full px-3 py-0.5 text-sm font-bold text-white"
                         style={{ backgroundColor: color }}

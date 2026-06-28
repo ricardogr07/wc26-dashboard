@@ -16,14 +16,6 @@ export interface BracketMatchesByRound {
   final: ApiMatch[];
 }
 
-const ROUND_LABELS: Record<Round, string> = {
-  r32: "Round of 32",
-  r16: "Round of 16",
-  qf: "Quarterfinals",
-  sf: "Semifinals",
-  final: "Final",
-};
-
 // 8 slots per side; height drives vertical spacing only
 const SLOT_HEIGHT = 88;
 const BRACKET_HEIGHT = 8 * SLOT_HEIGHT;
@@ -156,6 +148,13 @@ function BracketColumn({
 export function BracketTree({ matchesByRound }: { matchesByRound: BracketMatchesByRound }) {
   const t = useT();
   const tbd = t("bracket.tbd");
+  const roundLabels: Record<Round, string> = {
+    r32: t("rounds.r32"),
+    r16: t("rounds.r16"),
+    qf: t("rounds.qf"),
+    sf: t("rounds.sf"),
+    final: t("rounds.final"),
+  };
 
   const r32L = matchesByRound.r32.slice(0, 8);
   const r32R = matchesByRound.r32.slice(8, 16);
@@ -170,15 +169,15 @@ export function BracketTree({ matchesByRound }: { matchesByRound: BracketMatches
   return (
     <div data-cy="bracket-tree" className="flex gap-2 w-full pb-2" style={{ minHeight: BRACKET_HEIGHT + 28 }}>
       {/* Left half — converges toward center */}
-      <BracketColumn label={ROUND_LABELS.r32} matches={r32L} count={8} tbd={tbd} />
-      <BracketColumn label={ROUND_LABELS.r16} matches={r16L} count={4} tbd={tbd} />
-      <BracketColumn label={ROUND_LABELS.qf}  matches={qfL}  count={2} tbd={tbd} />
-      <BracketColumn label={ROUND_LABELS.sf}  matches={sfL}  count={1} tbd={tbd} />
+      <BracketColumn label={roundLabels.r32} matches={r32L} count={8} tbd={tbd} />
+      <BracketColumn label={roundLabels.r16} matches={r16L} count={4} tbd={tbd} />
+      <BracketColumn label={roundLabels.qf}  matches={qfL}  count={2} tbd={tbd} />
+      <BracketColumn label={roundLabels.sf}  matches={sfL}  count={1} tbd={tbd} />
 
       {/* Center: Final */}
       <div className="flex flex-col flex-1 min-w-0" style={{ height: BRACKET_HEIGHT }}>
         <p className="mb-1.5 text-center text-[9px] font-semibold uppercase tracking-widest text-gray-400 shrink-0">
-          {ROUND_LABELS.final}
+          {roundLabels.final}
         </p>
         <div className="flex flex-col flex-1 justify-center">
           {finalMatch ? (
@@ -190,10 +189,10 @@ export function BracketTree({ matchesByRound }: { matchesByRound: BracketMatches
       </div>
 
       {/* Right half — diverges from center */}
-      <BracketColumn label={ROUND_LABELS.sf}  matches={sfR}  count={1} tbd={tbd} />
-      <BracketColumn label={ROUND_LABELS.qf}  matches={qfR}  count={2} tbd={tbd} />
-      <BracketColumn label={ROUND_LABELS.r16} matches={r16R} count={4} tbd={tbd} />
-      <BracketColumn label={ROUND_LABELS.r32} matches={r32R} count={8} tbd={tbd} />
+      <BracketColumn label={roundLabels.sf}  matches={sfR}  count={1} tbd={tbd} />
+      <BracketColumn label={roundLabels.qf}  matches={qfR}  count={2} tbd={tbd} />
+      <BracketColumn label={roundLabels.r16} matches={r16R} count={4} tbd={tbd} />
+      <BracketColumn label={roundLabels.r32} matches={r32R} count={8} tbd={tbd} />
     </div>
   );
 }

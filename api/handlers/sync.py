@@ -401,37 +401,81 @@ def _backfill_stale_scheduled(
 
 
 def handle_sync(timer: func.TimerRequest) -> None:
+    now = datetime.now(UTC)
+    now_iso = now.isoformat()
+    # Active window: kick-off up to 30 min from now, or up to 3 h in the past
+    active_start = (now - timedelta(hours=3)).isoformat()
+    active_end = (now + timedelta(minutes=30)).isoformat()
+
+    container = get_container()
+
+    # Active matches: not yet completed, scheduled within the play window
+    has_active = bool(
+        list(
+            container.query_items(
+                query=(
+                    "SELECT VALUE COUNT(1) FROM c WHERE c.type = 'match'"
+                    " AND (c.status = 'scheduled' OR c.status = 'live')"
+                    " AND c.scheduledAt >= @start AND c.scheduledAt <= @end"
+                ),
+                parameters=[
+                    {"name": "@start", "value": active_start},
+                    {"name": "@end", "value": active_end},
+                ],
+                enable_cross_partition_query=True,
+            )
+            or [0]
+        )[0]
+    )
+
+    # Stale matches: past the 3-hour window but still not completed (end-of-day self-heal)
+    has_stale = bool(
+        list(
+            container.query_items(
+                query=(
+                    "SELECT VALUE COUNT(1) FROM c WHERE c.type = 'match'"
+                    " AND (c.status = 'scheduled' OR c.status = 'live')"
+                    " AND c.scheduledAt < @cutoff"
+                ),
+                parameters=[{"name": "@cutoff", "value": active_start}],
+                enable_cross_partition_query=True,
+            )
+            or [0]
+        )[0]
+    )
+
+    if not has_active and not has_stale:
+        logger.info("No active or stale matches — sync skipped")
+        return
+
     league_id = os.environ.get("THESPORTSDB_LEAGUE_ID", "4429")
     season = os.environ.get("THESPORTSDB_SEASON", "2026-2027")
     api_key = os.environ.get("THESPORTSDB_API_KEY", "3")
-
     season_year = int(season.split("-")[0]) if "-" in season else 2026
-    events = fetch_live_and_recent_events(league_id, api_key, season_year=season_year)
-    if not events:
-        # Fall back to full-season endpoint (works with paid key)
-        events = fetch_season_events(league_id, season, api_key)
-    if not events:
-        logger.warning("No events returned from TheSportsDB; aborting sync")
-        return
 
-    container = get_container()
     team_id_by_name = _build_team_name_map(container)
-    now_iso = datetime.now(UTC).isoformat()
     counts: dict[str, int] = {"updated": 0, "skipped": 0, "elo_updated": 0, "errors": 0}
 
-    for event in events:
-        event_id = event.get("idEvent", "")
-        if not event_id:
-            counts["skipped"] += 1
-            continue
-        try:
-            _process_event(container, event, team_id_by_name, now_iso, counts)
-        except Exception:
-            logger.exception("Unexpected error processing event %s", event_id)
-            counts["errors"] += 1
+    if has_active:
+        events = fetch_live_and_recent_events(league_id, api_key, season_year=season_year)
+        if not events:
+            events = fetch_season_events(league_id, season, api_key)
+        if events:
+            for event in events:
+                event_id = event.get("idEvent", "")
+                if not event_id:
+                    counts["skipped"] += 1
+                    continue
+                try:
+                    _process_event(container, event, team_id_by_name, now_iso, counts)
+                except Exception:
+                    logger.exception("Unexpected error processing event %s", event_id)
+                    counts["errors"] += 1
+        else:
+            logger.warning("No events returned from TheSportsDB")
 
-    # Sweep any matches still stuck as 'scheduled' past their kick-off window
-    _backfill_stale_scheduled(container, league_id, api_key, team_id_by_name, now_iso, counts)
+    if has_stale:
+        _backfill_stale_scheduled(container, league_id, api_key, team_id_by_name, now_iso, counts)
 
     logger.info(
         "Sync complete — updated=%d skipped=%d elo_updated=%d errors=%d",

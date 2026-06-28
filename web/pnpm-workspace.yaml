@@ -1,4 +1,6 @@
 packages:
   - "."
 allowBuilds:
-  cypress: set this to true or false
+  cypress: true
+  sharp: true
+  unrs-resolver: true

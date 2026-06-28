@@ -35,6 +35,7 @@ export interface SimulationRun {
   matchesCompletedAtRun: number;
   nRuns: number;
   winProbabilities: Record<string, number>;
+  teamWinProbabilities?: Record<string, number>;
 }
 
 export interface StandingsEntry {

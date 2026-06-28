@@ -174,6 +174,7 @@ def run_simulation(
     # Aggregate counters
     # ------------------------------------------------------------------
     champion_counts: dict[str, int] = dict.fromkeys(participant_ids, 0)
+    team_champion_counts: dict[str, int] = defaultdict(int)
 
     # ------------------------------------------------------------------
     # Simulation loop
@@ -269,13 +270,18 @@ def run_simulation(
 
         # ---- Credit the tournament champion ----
         champion = final_winners[0] if final_winners else None
-        if champion and champion in team_owner:
-            champion_counts[team_owner[champion]] += 1
+        if champion:
+            team_champion_counts[champion] += 1
+            if champion in team_owner:
+                champion_counts[team_owner[champion]] += 1
 
     # ------------------------------------------------------------------
     # Build win probability output
     # ------------------------------------------------------------------
     win_probabilities = {pid: champion_counts[pid] / n_runs for pid in participant_ids}
+    team_win_probabilities = {
+        tid: team_champion_counts[tid] / n_runs for tid in team_champion_counts
+    }
 
     return SimulationRun(
         id="simulationRun_latest",
@@ -283,4 +289,5 @@ def run_simulation(
         matches_completed_at_run=completed_match_count,
         n_runs=n_runs,
         win_probabilities=win_probabilities,
+        team_win_probabilities=team_win_probabilities,
     )

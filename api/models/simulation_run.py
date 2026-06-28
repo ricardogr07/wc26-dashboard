@@ -14,3 +14,4 @@ class SimulationRun(BaseModel):
     matches_completed_at_run: int
     n_runs: int
     win_probabilities: dict[str, float]
+    team_win_probabilities: dict[str, float] = {}

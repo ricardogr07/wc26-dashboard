@@ -62,6 +62,7 @@ def handle_simulate(req: func.HttpRequest) -> func.HttpResponse:
                 if (
                     cached.get("matchesCompletedAtRun") == completed_count
                     and "winProbabilities" in cached
+                    and "teamWinProbabilities" in cached
                 ):
                     return func.HttpResponse(
                         json.dumps(cached),
