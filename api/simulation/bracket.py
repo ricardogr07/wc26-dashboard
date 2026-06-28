@@ -12,40 +12,44 @@ FIFA defined 8 "pods" for R32. Each pod is a mini-bracket of 4 teams that feeds
 into a shared quarter of the draw. Pods are indexed 1–8, each containing exactly
 2 R32 matches whose winners meet in R16.
 
-R32 slot assignments (FIFA WC2026 official bracket):
+Real WC2026 R32 structure (FIFA official bracket):
+  - 4 matches: group winner vs group runner-up
+  - 8 matches: group winner vs best 3rd-place team
+  - 4 matches: group runner-up vs group runner-up
 
-Slot | Home slot         | Away slot
------|-------------------|------------------
- 1   | Winner Group A    | Runner-up Group B
- 2   | Winner Group C    | Runner-up Group D
- 3   | Winner Group E    | Runner-up Group F
- 4   | Winner Group G    | Runner-up Group H
- 5   | Winner Group I    | Runner-up Group J
- 6   | Winner Group K    | Runner-up Group L
- 7   | Winner Group B    | Runner-up Group A
- 8   | Winner Group D    | Runner-up Group C
- 9   | Winner Group F    | Runner-up Group E
-10   | Winner Group H    | Runner-up Group G
-11   | Winner Group J    | Runner-up Group I
-12   | Winner Group L    | Runner-up Group K
-13   | 3rd best group X  | 3rd best group Y  (TBD post group stage)
-14   | 3rd best group X  | 3rd best group Y
-15   | 3rd best group X  | 3rd best group Y
-16   | 3rd best group X  | 3rd best group Y
+Slot | FIFA match | Home slot         | Away slot
+-----|------------|-------------------|------------------
+ 1   |    73      | Runner-up Group A | Runner-up Group B
+ 2   |    74      | Winner Group E    | Best 3rd (A/B/C/D/F)
+ 3   |    75      | Winner Group F    | Runner-up Group C
+ 4   |    76      | Winner Group C    | Runner-up Group F
+ 5   |    77      | Winner Group I    | Best 3rd (C/D/F/G/H)
+ 6   |    78      | Runner-up Group E | Runner-up Group I
+ 7   |    79      | Winner Group A    | Best 3rd (C/E/F/H/I)
+ 8   |    80      | Winner Group L    | Best 3rd (E/H/I/J/K)
+ 9   |    81      | Winner Group D    | Best 3rd (B/E/F/I/J)
+10   |    82      | Winner Group G    | Best 3rd (A/E/H/I/J)
+11   |    83      | Runner-up Group K | Runner-up Group L
+12   |    84      | Winner Group H    | Runner-up Group J
+13   |    85      | Winner Group B    | Best 3rd (E/F/G/I/J)
+14   |    86      | Winner Group J    | Runner-up Group H
+15   |    87      | Winner Group K    | Best 3rd (D/E/I/J/L)
+16   |    88      | Runner-up Group D | Runner-up Group G
 
-Note: Slots 13–16 involve the 8 best 3rd-place teams. The specific assignments
-depend on which groups produced 3rd-place qualifiers, per the FIFA seeding table.
-The simulation engine uses _THIRD_PLACE_BRACKET to resolve these at runtime.
+Slots with "Best 3rd": a 3rd-place qualifier assigned at runtime by ranking
+the 8 best 3rd-place teams (best→worst) and distributing them sequentially
+across the 8 available slots. The exact FIFA seeding table (495 group-combination
+rows) is approximated by this sequential assignment.
 
-R16 bracket links R32 winners:
-  R16-1: winner(R32-1) vs winner(R32-2)
-  R16-2: winner(R32-3) vs winner(R32-4)
-  R16-3: winner(R32-5) vs winner(R32-6)
-  R16-4: winner(R32-7) vs winner(R32-8)
-  R16-5: winner(R32-9) vs winner(R32-10)
-  R16-6: winner(R32-11) vs winner(R32-12)
-  R16-7: winner(R32-13) vs winner(R32-14)
-  R16-8: winner(R32-15) vs winner(R32-16)
+R16 bracket links adjacent R32 slot winners (pod pairs):
+  R16-1: winner(slot 1) vs winner(slot 2)   [m73 vs m74]
+  R16-2: winner(slot 3) vs winner(slot 4)   [m75 vs m76]
+  R16-3: winner(slot 5) vs winner(slot 6)   [m77 vs m78]
+  R16-4: winner(slot 7) vs winner(slot 8)   [m79 vs m80]
+  R16-5: winner(slot 9) vs winner(slot 10)  [m81 vs m82]
+  R16-6: winner(slot 11) vs winner(slot 12) [m83 vs m84]
+  R16-7: winner(slot 13) vs winner(slot 14) [m85 vs m86]
+  R16-8: winner(slot 15) vs winner(slot 16) [m87 vs m88]
 
 QF / SF / Final follow standard single-elimination.
 """
@@ -54,7 +58,8 @@ from __future__ import annotations
 
 from typing import Literal
 
-# Slot descriptor type
+# Slot descriptor type.
+# group is None for 3rd-place slots (resolved at runtime from ranked pool).
 _Pos = Literal["1st", "2nd", "3rd"]
 
 # ---------------------------------------------------------------------------
@@ -69,49 +74,47 @@ FINAL_MATCHDAY = 3
 
 
 # ---------------------------------------------------------------------------
-# R32 slot definitions
-# group_positions maps slot_index (1-based) to a pair of
-# (group_letter, position) descriptors where position ∈ {"1st","2nd","3rd"}.
-# ---------------------------------------------------------------------------
-
-R32_SLOTS: list[tuple[tuple[str, _Pos], tuple[str, _Pos]]] = [
-    # (home_slot,          away_slot)
-    (("A", "1st"), ("B", "2nd")),  # slot 1
-    (("C", "1st"), ("D", "2nd")),  # slot 2
-    (("E", "1st"), ("F", "2nd")),  # slot 3
-    (("G", "1st"), ("H", "2nd")),  # slot 4
-    (("I", "1st"), ("J", "2nd")),  # slot 5
-    (("K", "1st"), ("L", "2nd")),  # slot 6
-    (("B", "1st"), ("A", "2nd")),  # slot 7
-    (("D", "1st"), ("C", "2nd")),  # slot 8
-    (("F", "1st"), ("E", "2nd")),  # slot 9
-    (("H", "1st"), ("G", "2nd")),  # slot 10
-    (("J", "1st"), ("I", "2nd")),  # slot 11
-    (("L", "1st"), ("K", "2nd")),  # slot 12
-    # Slots 13–16: best 3rd-place teams, resolved at runtime
-    # Placeholders — the engine fills these after group stage simulation.
-    (("?", "3rd"), ("?", "3rd")),  # slot 13
-    (("?", "3rd"), ("?", "3rd")),  # slot 14
-    (("?", "3rd"), ("?", "3rd")),  # slot 15
-    (("?", "3rd"), ("?", "3rd")),  # slot 16
-]
-
-# ---------------------------------------------------------------------------
-# 3rd-place qualification table (FIFA WC2026 official)
-# Maps frozenset of groups that produced 3rd-place qualifiers to a
-# fixed bracket assignment. With 12 groups, exactly 8 3rd-place teams advance.
-# This lookup is used when all 12 group winners/runners-up are known.
+# R32 slot definitions — official FIFA WC2026 bracket
 #
-# FIFA's rule: the 8 best 3rd-place teams qualify. Their R32 placement is
-# determined by a pre-drawn table (FIFA circular no. 1696-equivalent for 2026).
-# The table below reflects the announced bracket structure for WC2026.
+# Each entry is (home_desc, away_desc) where desc = (group | None, position).
+# group=None means "best 3rd-place team", resolved sequentially from the
+# ranked pool in the simulation engine (best 3rd-place → first None slot).
 # ---------------------------------------------------------------------------
 
-# The simulation engine assigns 3rd-place qualifiers to R32 slots 13–16 by
-# ranking all twelve 3rd-place finishers by points → GD → GF → head-to-head.
-# Their bracket placement follows this slot order: best goes to slot 13, etc.
-# (Simplified rule used in simulation; FIFA's actual table is draw-dependent.)
-THIRD_PLACE_SLOTS = [13, 14, 15, 16]
+R32_SLOTS: list[tuple[tuple[str | None, _Pos], tuple[str | None, _Pos]]] = [
+    # slot 1  — m73
+    (("A", "2nd"), ("B", "2nd")),
+    # slot 2  — m74
+    (("E", "1st"), (None, "3rd")),
+    # slot 3  — m75
+    (("F", "1st"), ("C", "2nd")),
+    # slot 4  — m76
+    (("C", "1st"), ("F", "2nd")),
+    # slot 5  — m77
+    (("I", "1st"), (None, "3rd")),
+    # slot 6  — m78
+    (("E", "2nd"), ("I", "2nd")),
+    # slot 7  — m79
+    (("A", "1st"), (None, "3rd")),
+    # slot 8  — m80
+    (("L", "1st"), (None, "3rd")),
+    # slot 9  — m81
+    (("D", "1st"), (None, "3rd")),
+    # slot 10 — m82
+    (("G", "1st"), (None, "3rd")),
+    # slot 11 — m83
+    (("K", "2nd"), ("L", "2nd")),
+    # slot 12 — m84
+    (("H", "1st"), ("J", "2nd")),
+    # slot 13 — m85
+    (("B", "1st"), (None, "3rd")),
+    # slot 14 — m86
+    (("J", "1st"), ("H", "2nd")),
+    # slot 15 — m87
+    (("K", "1st"), (None, "3rd")),
+    # slot 16 — m88
+    (("D", "2nd"), ("G", "2nd")),
+]
 
 # ---------------------------------------------------------------------------
 # R16 bracket: pairs of R32 slot indices (1-based) whose winners meet in R16

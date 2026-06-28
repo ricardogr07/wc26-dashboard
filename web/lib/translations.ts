@@ -218,8 +218,8 @@ const es: Translations = {
   },
   scoringMilestones: {
     groupQualification: "Clasificación de grupo",
-    round32win: "Victoria en octavos",
-    round16win: "Victoria en dieciseisavos",
+    round32win: "Victoria en 16avos",
+    round16win: "Victoria en octavos",
     quarterfinalWin: "Victoria en cuartos de final",
     semifinalWin: "Victoria en semifinales",
     championshipWin: "Victoria en la final",
@@ -283,8 +283,8 @@ const es: Translations = {
   },
   rounds: {
     group: "Fase de Grupos",
-    r32: "Octavos de Final",
-    r16: "Dieciseisavos",
+    r32: "16avos de Final",
+    r16: "Octavos de Final",
     qf: "Cuartos de Final",
     sf: "Semifinales",
     final: "Final",

@@ -284,11 +284,13 @@ def _backfill_stale_scheduled(
     now_iso: str,
     counts: dict[str, int],
 ) -> None:
-    """For matches still 'scheduled' but >3 hours past kick-off, look them up on
+    """For matches still 'scheduled' or 'live' but >3 hours past kick-off, look them up on
     TheSportsDB by date and patch any that now have results.
 
     This catches the coverage gap where eventspastleague.php only returns the
     most recent ~15 events; older completed matches fall out of that window.
+    Stale 'live' matches (which also fall off that window) are included so they
+    don't stay stuck indefinitely.
     """
     now = datetime.now(UTC)
     cutoff = now - timedelta(hours=3)
@@ -297,7 +299,7 @@ def _backfill_stale_scheduled(
         container.query_items(
             query=(
                 "SELECT * FROM c WHERE c.type = 'match'"
-                " AND c.status = 'scheduled'"
+                " AND (c.status = 'scheduled' OR c.status = 'live')"
                 " AND c.scheduledAt < @cutoff"
             ),
             parameters=[{"name": "@cutoff", "value": cutoff.isoformat()}],
@@ -308,15 +310,62 @@ def _backfill_stale_scheduled(
     if not stale:
         return
 
+    # Fast path: 'live' matches that already have scores in Cosmos can be promoted
+    # to 'completed' immediately without a TheSportsDB round-trip — they simply fell
+    # off the eventspastleague.php window after the match ended.
+    needs_tsdb: list[dict] = []
+    for m in stale:
+        if (
+            m.get("status") == "live"
+            and m.get("homeScore") is not None
+            and m.get("awayScore") is not None
+        ):
+            home_score: int = m["homeScore"]
+            away_score: int = m["awayScore"]
+            home_id: str = m.get("homeTeamId", "")
+            away_id: str = m.get("awayTeamId", "")
+            winner_id = (
+                home_id
+                if home_score > away_score
+                else (away_id if away_score > home_score else None)
+            )
+            container.patch_item(
+                item=m["id"],
+                partition_key="match",
+                patch_operations=[
+                    {"op": "set", "path": "/status", "value": "completed"},
+                    {"op": "set", "path": "/winnerId", "value": winner_id},
+                    {"op": "set", "path": "/lastUpdated", "value": now_iso},
+                ],
+            )
+            logger.info(
+                "Backfill: promoted stale-live %s (%s vs %s, %d-%d) to completed",
+                m["id"],
+                home_id,
+                away_id,
+                home_score,
+                away_score,
+            )
+            counts["updated"] += 1
+            if winner_id:
+                _update_elo(container, m["id"], winner_id, home_id, away_id, now_iso, counts)
+        else:
+            needs_tsdb.append(m)
+
+    if not needs_tsdb:
+        return
+
     # Group by calendar date (UTC) to minimise API calls
     by_date: dict[str, list[dict]] = {}
-    for m in stale:
+    for m in needs_tsdb:
         date_key = (m.get("scheduledAt") or "")[:10]  # "YYYY-MM-DD"
         if date_key:
             by_date.setdefault(date_key, []).append(m)
 
     logger.info(
-        "Backfill: %d stale-scheduled match(es) across %d date(s)", len(stale), len(by_date)
+        "Backfill: %d stale match(es) need TheSportsDB lookup across %d date(s)",
+        len(needs_tsdb),
+        len(by_date),
     )
 
     for date_key, matches in by_date.items():
@@ -352,37 +401,81 @@ def _backfill_stale_scheduled(
 
 
 def handle_sync(timer: func.TimerRequest) -> None:
+    now = datetime.now(UTC)
+    now_iso = now.isoformat()
+    # Active window: kick-off up to 30 min from now, or up to 3 h in the past
+    active_start = (now - timedelta(hours=3)).isoformat()
+    active_end = (now + timedelta(minutes=30)).isoformat()
+
+    container = get_container()
+
+    # Active matches: not yet completed, scheduled within the play window
+    has_active = bool(
+        list(
+            container.query_items(
+                query=(
+                    "SELECT VALUE COUNT(1) FROM c WHERE c.type = 'match'"
+                    " AND (c.status = 'scheduled' OR c.status = 'live')"
+                    " AND c.scheduledAt >= @start AND c.scheduledAt <= @end"
+                ),
+                parameters=[
+                    {"name": "@start", "value": active_start},
+                    {"name": "@end", "value": active_end},
+                ],
+                enable_cross_partition_query=True,
+            )
+            or [0]
+        )[0]
+    )
+
+    # Stale matches: past the 3-hour window but still not completed (end-of-day self-heal)
+    has_stale = bool(
+        list(
+            container.query_items(
+                query=(
+                    "SELECT VALUE COUNT(1) FROM c WHERE c.type = 'match'"
+                    " AND (c.status = 'scheduled' OR c.status = 'live')"
+                    " AND c.scheduledAt < @cutoff"
+                ),
+                parameters=[{"name": "@cutoff", "value": active_start}],
+                enable_cross_partition_query=True,
+            )
+            or [0]
+        )[0]
+    )
+
+    if not has_active and not has_stale:
+        logger.info("No active or stale matches — sync skipped")
+        return
+
     league_id = os.environ.get("THESPORTSDB_LEAGUE_ID", "4429")
     season = os.environ.get("THESPORTSDB_SEASON", "2026-2027")
     api_key = os.environ.get("THESPORTSDB_API_KEY", "3")
-
     season_year = int(season.split("-")[0]) if "-" in season else 2026
-    events = fetch_live_and_recent_events(league_id, api_key, season_year=season_year)
-    if not events:
-        # Fall back to full-season endpoint (works with paid key)
-        events = fetch_season_events(league_id, season, api_key)
-    if not events:
-        logger.warning("No events returned from TheSportsDB; aborting sync")
-        return
 
-    container = get_container()
     team_id_by_name = _build_team_name_map(container)
-    now_iso = datetime.now(UTC).isoformat()
     counts: dict[str, int] = {"updated": 0, "skipped": 0, "elo_updated": 0, "errors": 0}
 
-    for event in events:
-        event_id = event.get("idEvent", "")
-        if not event_id:
-            counts["skipped"] += 1
-            continue
-        try:
-            _process_event(container, event, team_id_by_name, now_iso, counts)
-        except Exception:
-            logger.exception("Unexpected error processing event %s", event_id)
-            counts["errors"] += 1
+    if has_active:
+        events = fetch_live_and_recent_events(league_id, api_key, season_year=season_year)
+        if not events:
+            events = fetch_season_events(league_id, season, api_key)
+        if events:
+            for event in events:
+                event_id = event.get("idEvent", "")
+                if not event_id:
+                    counts["skipped"] += 1
+                    continue
+                try:
+                    _process_event(container, event, team_id_by_name, now_iso, counts)
+                except Exception:
+                    logger.exception("Unexpected error processing event %s", event_id)
+                    counts["errors"] += 1
+        else:
+            logger.warning("No events returned from TheSportsDB")
 
-    # Sweep any matches still stuck as 'scheduled' past their kick-off window
-    _backfill_stale_scheduled(container, league_id, api_key, team_id_by_name, now_iso, counts)
+    if has_stale:
+        _backfill_stale_scheduled(container, league_id, api_key, team_id_by_name, now_iso, counts)
 
     logger.info(
         "Sync complete — updated=%d skipped=%d elo_updated=%d errors=%d",

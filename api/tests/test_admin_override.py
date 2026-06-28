@@ -170,6 +170,19 @@ def test_override_draw_with_null_winner_succeeds(mock_gc: MagicMock) -> None:
 
 
 @patch("api.handlers.admin_override.get_container")
+def test_override_null_winner_with_unequal_scores_returns_400(mock_gc: MagicMock) -> None:
+    mock_container = MagicMock()
+    mock_container.read_item.return_value = _MATCH_DOC
+    mock_gc.return_value = mock_container
+
+    body = {"matchId": "match_001", "homeScore": 2, "awayScore": 1, "winnerId": None}
+    resp = handle_admin_override(_req(body=body))
+
+    assert resp.status_code == 400
+    mock_container.patch_item.assert_not_called()
+
+
+@patch("api.handlers.admin_override.get_container")
 def test_override_missing_winner_id_field_returns_400(mock_gc: MagicMock) -> None:
     body = {"matchId": "match_001", "homeScore": 1, "awayScore": 1}  # winnerId omitted
     resp = handle_admin_override(_req(body=body))

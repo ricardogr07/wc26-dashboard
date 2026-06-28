@@ -182,6 +182,30 @@ export default function SimulatePage() {
         })}
       </div>
 
+      {/* Top 5 country contenders */}
+      {sim.teamWinProbabilities && Object.keys(sim.teamWinProbabilities).length > 0 && (
+        <div className="mt-6">
+          <p className="mb-3 text-sm font-semibold text-gray-700">
+            {locale === "es" ? "Favoritos para ganar el Mundial" : "Top contenders to win the World Cup"}
+          </p>
+          <div className="grid grid-cols-5 gap-2">
+            {Object.entries(sim.teamWinProbabilities)
+              .sort(([, a], [, b]) => b - a)
+              .slice(0, 5)
+              .map(([teamId, prob], i) => (
+                <div
+                  key={teamId}
+                  className="flex flex-col items-center rounded-lg border bg-white shadow-sm px-2 py-3 text-center"
+                >
+                  <span className="text-xs font-semibold text-gray-400">#{i + 1}</span>
+                  <span className="mt-1 font-mono text-sm font-bold text-gray-900 uppercase">{teamId}</span>
+                  <span className="mt-0.5 text-sm font-semibold text-blue-600">{pct(prob)}</span>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
       {/* How it works */}
       <div className="mt-6 rounded-lg border bg-white px-4 shadow-sm">
         <Accordion>

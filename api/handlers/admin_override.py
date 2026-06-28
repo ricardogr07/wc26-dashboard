@@ -49,6 +49,11 @@ def handle_admin_override(req: func.HttpRequest) -> func.HttpResponse:
         except CosmosResourceNotFoundError:
             return func.HttpResponse(f"Match '{match_id}' not found", status_code=404)
 
+        if winner_id is None and home_score != away_score:
+            return func.HttpResponse(
+                "winnerId may only be null when scores are equal (draw)",
+                status_code=400,
+            )
         if winner_id is not None and winner_id not in (
             match_doc.get("homeTeamId"),
             match_doc.get("awayTeamId"),

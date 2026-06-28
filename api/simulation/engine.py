@@ -174,6 +174,7 @@ def run_simulation(
     # Aggregate counters
     # ------------------------------------------------------------------
     champion_counts: dict[str, int] = dict.fromkeys(participant_ids, 0)
+    team_champion_counts: dict[str, int] = defaultdict(int)
 
     # ------------------------------------------------------------------
     # Simulation loop
@@ -218,22 +219,26 @@ def run_simulation(
                 scores[team_owner[tid]] += GROUP_QUALIFICATION_POINTS
 
         # ---- Build R32 bracket ----
-        # slots 0–11 (1-based slots 1–12): group winner/runner-up
-        # slots 12–15 (1-based 13–16): best 3rd-place teams
+        # Named-group slots resolve from group_standings; None-group slots
+        # (3rd-place) draw sequentially from the ranked best_thirds pool
+        # (best → worst), approximating the FIFA seeding table.
         r32_matchups: list[tuple[str, str]] = []
+        _pos_idx = {"1st": 0, "2nd": 1, "3rd": 2}
+        thirds_iter = iter(best_thirds)
 
-        for i, (home_desc, away_desc) in enumerate(R32_SLOTS):
-            if i < 12:
-                h_grp, h_pos = home_desc
-                a_grp, a_pos = away_desc
-                pos_idx = {"1st": 0, "2nd": 1, "3rd": 2}
-                home_team = group_standings.get(h_grp, ["?"] * 4)[pos_idx[h_pos]]
-                away_team = group_standings.get(a_grp, ["?"] * 4)[pos_idx[a_pos]]
-            else:
-                # Slots 13–16: pair up best 3rd-place teams
-                pair_idx = (i - 12) * 2
-                home_team = best_thirds[pair_idx] if pair_idx < len(best_thirds) else "?"
-                away_team = best_thirds[pair_idx + 1] if pair_idx + 1 < len(best_thirds) else "?"
+        for home_desc, away_desc in R32_SLOTS:
+            h_grp, h_pos = home_desc
+            a_grp, a_pos = away_desc
+            home_team = (
+                group_standings.get(h_grp, ["?"] * 4)[_pos_idx[h_pos]]
+                if h_grp is not None
+                else next(thirds_iter, "?")
+            )
+            away_team = (
+                group_standings.get(a_grp, ["?"] * 4)[_pos_idx[a_pos]]
+                if a_grp is not None
+                else next(thirds_iter, "?")
+            )
             r32_matchups.append((home_team, away_team))
 
         # ---- Knockout simulation ----
@@ -265,13 +270,18 @@ def run_simulation(
 
         # ---- Credit the tournament champion ----
         champion = final_winners[0] if final_winners else None
-        if champion and champion in team_owner:
-            champion_counts[team_owner[champion]] += 1
+        if champion:
+            team_champion_counts[champion] += 1
+            if champion in team_owner:
+                champion_counts[team_owner[champion]] += 1
 
     # ------------------------------------------------------------------
     # Build win probability output
     # ------------------------------------------------------------------
     win_probabilities = {pid: champion_counts[pid] / n_runs for pid in participant_ids}
+    team_win_probabilities = {
+        tid: team_champion_counts[tid] / n_runs for tid in team_champion_counts
+    }
 
     return SimulationRun(
         id="simulationRun_latest",
@@ -279,4 +289,5 @@ def run_simulation(
         matches_completed_at_run=completed_match_count,
         n_runs=n_runs,
         win_probabilities=win_probabilities,
+        team_win_probabilities=team_win_probabilities,
     )
