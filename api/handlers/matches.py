@@ -84,12 +84,16 @@ def handle_matches(req: func.HttpRequest) -> func.HttpResponse:
                 "group": m.group,
                 "homeTeam": {
                     "id": m.home_team_id,
-                    "name": home.name if home else m.home_team_id,
+                    "name": home.name
+                    if home
+                    else ("TBD" if m.home_team_id.startswith("TBD_") else m.home_team_id),
                     "eloRating": home.elo_rating if home else None,
                 },
                 "awayTeam": {
                     "id": m.away_team_id,
-                    "name": away.name if away else m.away_team_id,
+                    "name": away.name
+                    if away
+                    else ("TBD" if m.away_team_id.startswith("TBD_") else m.away_team_id),
                     "eloRating": away.elo_rating if away else None,
                 },
                 "scheduledAt": m.scheduled_at.isoformat(),

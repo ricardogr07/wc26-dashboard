@@ -9,6 +9,23 @@ import { useT } from "@/lib/locale-context";
 type KnockoutRound = "r32" | "r16" | "qf" | "sf" | "final";
 const KNOCKOUT_ROUNDS: KnockoutRound[] = ["r32", "r16", "qf", "sf", "final"];
 
+// Explicit bracket slot order so that visual positions match actual connections:
+// left[2N-1] and left[2N] both feed into the match at the next round's position N.
+// R32 left: slots 1-8 feed R16 left; R32 right: slots 9-16 feed R16 right.
+// QF order is [qf_97, qf_99, qf_98, qf_100] so each adjacent R16 pair feeds the correct QF.
+const BRACKET_SLOT_ORDER: Partial<Record<KnockoutRound, string[]>> = {
+  r32: [
+    "r32_73","r32_75","r32_74","r32_77","r32_76","r32_78","r32_79","r32_80", // left → r16_90,89,91,92
+    "r32_83","r32_84","r32_81","r32_82","r32_86","r32_88","r32_85","r32_87", // right → r16_93,94,95,96
+  ],
+  r16: [
+    "r16_90","r16_89","r16_91","r16_92", // left → qf_97, qf_99
+    "r16_93","r16_94","r16_95","r16_96", // right → qf_98, qf_100
+  ],
+  qf: ["qf_97","qf_99","qf_98","qf_100"],
+  sf: ["sf_101","sf_102"],
+};
+
 function groupByRound(matches: ApiMatch[]): BracketMatchesByRound {
   const byRound: BracketMatchesByRound = { r32: [], r16: [], qf: [], sf: [], final: [] };
   for (const m of matches) {
@@ -16,9 +33,14 @@ function groupByRound(matches: ApiMatch[]): BracketMatchesByRound {
       byRound[m.round as KnockoutRound].push(m);
     }
   }
-  // Sort each round by scheduledAt so bracket order is preserved
   for (const round of KNOCKOUT_ROUNDS) {
-    byRound[round].sort((a, b) => a.scheduledAt.localeCompare(b.scheduledAt));
+    const order = BRACKET_SLOT_ORDER[round];
+    if (order) {
+      const idx = new Map(order.map((id, i) => [id, i]));
+      byRound[round].sort((a, b) => (idx.get(a.id) ?? 999) - (idx.get(b.id) ?? 999));
+    } else {
+      byRound[round].sort((a, b) => a.scheduledAt.localeCompare(b.scheduledAt));
+    }
   }
   return byRound;
 }
