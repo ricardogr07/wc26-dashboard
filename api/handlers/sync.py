@@ -4,6 +4,7 @@ import logging
 import os
 import uuid
 from datetime import UTC, datetime, timedelta
+from typing import cast
 
 import azure.functions as func
 from azure.cosmos import ContainerProxy
@@ -391,8 +392,8 @@ def _backfill_stale_scheduled(
             and away_s is not None
             and not is_knockout_draw
         ):
-            home_score: int = home_s
-            away_score: int = away_s
+            home_score = cast(int, home_s)
+            away_score = cast(int, away_s)
             home_id: str = m.get("homeTeamId", "")
             away_id: str = m.get("awayTeamId", "")
             winner_id = (
