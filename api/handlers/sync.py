@@ -122,11 +122,13 @@ def _process_event(
     raw_winner_name = event.get("strWinner") or ""
 
     just_completed = False
+    current_round = "group"
 
     try:
         existing = container.read_item(item=match_id, partition_key="match")
         home_id: str = existing.get("homeTeamId", "")
         away_id: str = existing.get("awayTeamId", "")
+        current_round = existing.get("round", "group")
         winner_id = _determine_winner(
             home_score, away_score, home_id, away_id, raw_winner_name, team_id_by_name
         )
@@ -173,6 +175,7 @@ def _process_event(
         existing_by_teams = _find_existing_match(container, home_id, away_id)
         if existing_by_teams:
             match_id = existing_by_teams["id"]
+            current_round = existing_by_teams.get("round", "group")
             if not _result_changed(existing_by_teams, status, home_score, away_score, winner_id):
                 counts["skipped"] += 1
                 return
@@ -191,6 +194,7 @@ def _process_event(
                 existing_by_teams.get("status") != "completed" and status == "completed"
             )
         else:
+            current_round = parse_round(event.get("strRound"))
             scheduled_at = parse_scheduled_at(event.get("dateEvent"), event.get("strTime"))
             container.upsert_item(
                 {
@@ -226,6 +230,63 @@ def _process_event(
 
     if just_completed and winner_id:
         _update_elo(container, match_id, winner_id, home_id, away_id, now_iso, counts)
+        if current_round != "group":
+            _mark_loser_eliminated(container, winner_id, home_id, away_id, now_iso)
+            _resolve_tbd_slot(container, match_id, current_round, winner_id, now_iso)
+
+
+_ROUND_TBD_PREFIX: dict[str, str] = {
+    "r32": "TBD_R32",
+    "r16": "TBD_R16",
+    "qf": "TBD_QF",
+    "sf": "TBD_SF",
+}
+
+
+def _resolve_tbd_slot(
+    container: ContainerProxy,
+    match_id: str,
+    current_round: str,
+    winner_id: str,
+    now_iso: str,
+) -> None:
+    prefix = _ROUND_TBD_PREFIX.get(current_round)
+    if not prefix:
+        return
+    tbd_id = f"{prefix}_{match_id}"
+    for field in ("homeTeamId", "awayTeamId"):
+        for doc in container.query_items(
+            query=f"SELECT c.id FROM c WHERE c.type = 'match' AND c.{field} = @tbd",
+            parameters=[{"name": "@tbd", "value": tbd_id}],
+            enable_cross_partition_query=True,
+        ):
+            container.patch_item(
+                item=doc["id"],
+                partition_key="match",
+                patch_operations=[
+                    {"op": "set", "path": f"/{field}", "value": winner_id},
+                    {"op": "set", "path": "/lastUpdated", "value": now_iso},
+                ],
+            )
+            logger.info("TBD resolved: %s.%s %s -> %s", doc["id"], field, tbd_id, winner_id)
+
+
+def _mark_loser_eliminated(
+    container: ContainerProxy,
+    winner_id: str,
+    home_id: str,
+    away_id: str,
+    now_iso: str,
+) -> None:
+    loser_id = away_id if winner_id == home_id else home_id
+    container.patch_item(
+        item=loser_id,
+        partition_key="team",
+        patch_operations=[
+            {"op": "set", "path": "/status", "value": "eliminated"},
+            {"op": "set", "path": "/lastUpdated", "value": now_iso},
+        ],
+    )
 
 
 def _update_elo(
@@ -313,15 +374,25 @@ def _backfill_stale_scheduled(
     # Fast path: 'live' matches that already have scores in Cosmos can be promoted
     # to 'completed' immediately without a TheSportsDB round-trip — they simply fell
     # off the eventspastleague.php window after the match ended.
+    # ponytail: knockout draws (score tied) must go through TSDB to get strWinner from penalties
     needs_tsdb: list[dict] = []
     for m in stale:
+        home_s = m.get("homeScore")
+        away_s = m.get("awayScore")
+        is_knockout_draw = (
+            home_s is not None
+            and away_s is not None
+            and home_s == away_s
+            and m.get("round", "group") != "group"
+        )
         if (
             m.get("status") == "live"
-            and m.get("homeScore") is not None
-            and m.get("awayScore") is not None
+            and home_s is not None
+            and away_s is not None
+            and not is_knockout_draw
         ):
-            home_score: int = m["homeScore"]
-            away_score: int = m["awayScore"]
+            home_score: int = home_s
+            away_score: int = away_s
             home_id: str = m.get("homeTeamId", "")
             away_id: str = m.get("awayTeamId", "")
             winner_id = (
@@ -349,6 +420,11 @@ def _backfill_stale_scheduled(
             counts["updated"] += 1
             if winner_id:
                 _update_elo(container, m["id"], winner_id, home_id, away_id, now_iso, counts)
+                if m.get("round", "group") != "group":
+                    _mark_loser_eliminated(container, winner_id, home_id, away_id, now_iso)
+                    _resolve_tbd_slot(
+                        container, m["id"], m.get("round", "group"), winner_id, now_iso
+                    )
         else:
             needs_tsdb.append(m)
 

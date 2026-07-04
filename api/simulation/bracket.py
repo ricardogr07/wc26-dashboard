@@ -121,22 +121,22 @@ R32_SLOTS: list[tuple[tuple[str | None, _Pos], tuple[str | None, _Pos]]] = [
 # ---------------------------------------------------------------------------
 
 R16_BRACKET: list[tuple[int, int]] = [
-    (1, 2),  # R16-1
-    (3, 4),  # R16-2
-    (5, 6),  # R16-3
-    (7, 8),  # R16-4
-    (9, 10),  # R16-5
-    (11, 12),  # R16-6
-    (13, 14),  # R16-7
-    (15, 16),  # R16-8
+    (1, 3),  # r16_90: r32_73 vs r32_75  (NRG Stadium, Houston, Jul 4)
+    (2, 5),  # r16_89: r32_74 vs r32_77  (Philadelphia, Jul 4)
+    (4, 6),  # r16_91: r32_76 vs r32_78  (MetLife, Jul 5)
+    (7, 8),  # r16_92: r32_79 vs r32_80  (Azteca, Jul 5)
+    (9, 10),  # r16_94: r32_81 vs r32_82  (Seattle, Jul 6)
+    (11, 12),  # r16_93: r32_83 vs r32_84  (Dallas, Jul 6)
+    (13, 15),  # r16_96: r32_85 vs r32_87  (Vancouver, Jul 7)
+    (14, 16),  # r16_95: r32_86 vs r32_88  (Atlanta, Jul 7)
 ]
 
 # QF: pairs of R16 match indices (1-based)
 QF_BRACKET: list[tuple[int, int]] = [
-    (1, 2),  # QF-1
-    (3, 4),  # QF-2
-    (5, 6),  # QF-3
-    (7, 8),  # QF-4
+    (2, 1),  # qf_97: r16_89 winner vs r16_90 winner (Foxborough, Jul 9)
+    (6, 5),  # qf_98: r16_93 winner vs r16_94 winner (SoFi, Jul 10)
+    (3, 4),  # qf_99: r16_91 winner vs r16_92 winner (Miami, Jul 11)
+    (8, 7),  # qf_100: r16_95 winner vs r16_96 winner (KC, Jul 11)
 ]
 
 # SF: pairs of QF match indices (1-based)
