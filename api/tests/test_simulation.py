@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from typing import Any
 
 import pytest
 
@@ -92,6 +93,61 @@ def test_win_probabilities_non_negative(
     result = run_simulation(real_fixtures, real_participants, real_teams, n_runs=200, seed=3)
     for pid, prob in result.win_probabilities.items():
         assert prob >= 0.0, f"Negative win probability for {pid}"
+
+
+# ---------------------------------------------------------------------------
+# Real-bracket mode (post-group stage)
+# ---------------------------------------------------------------------------
+
+
+def _bracket_matches() -> list[Match]:
+    """Full knockout docs: R32 completed (odd team wins), later rounds pending."""
+    common: dict[str, Any] = {
+        "scheduled_at": "2026-07-01T00:00:00Z",
+        "source": "test",
+        "last_updated": "2026-07-01T00:00:00Z",
+    }
+    matches = [
+        Match(
+            id=f"r32_{73 + i}",
+            round="r32",
+            home_team_id=f"t{2 * i + 1}",
+            away_team_id=f"t{2 * i + 2}",
+            status="completed",
+            winner_id=f"t{2 * i + 1}",
+            **common,
+        )
+        for i in range(16)
+    ]
+    for rnd, first, prev_rnd, prev_first, n in (
+        ("r16", 89, "R32", 73, 8),
+        ("qf", 97, "R16", 89, 4),
+        ("sf", 101, "QF", 97, 2),
+        ("final", 104, "SF", 101, 1),
+    ):
+        matches += [
+            Match(
+                id=f"{rnd}_{first + i}",
+                round=rnd,  # type: ignore[arg-type]
+                home_team_id=f"TBD_{prev_rnd}_{prev_rnd.lower()}_{prev_first + 2 * i}",
+                away_team_id=f"TBD_{prev_rnd}_{prev_rnd.lower()}_{prev_first + 2 * i + 1}",
+                **common,
+            )
+            for i in range(n)
+        ]
+    return matches
+
+
+def test_eliminated_participant_has_zero_probability() -> None:
+    teams = [Team(id=f"t{i}", name=f"T{i}", group="A", elo_rating=1500.0) for i in range(1, 33)]
+    participants = [
+        Participant(id="p_alive", display_name="Alive", team_ids=["t1"]),
+        Participant(id="p_out", display_name="Out", team_ids=["t2"]),  # t2 lost its R32 match
+    ]
+    result = run_simulation(_bracket_matches(), participants, teams, n_runs=500, seed=7)
+    assert result.win_probabilities["p_out"] == 0.0
+    assert result.win_probabilities["p_alive"] > 0.0
+    assert all(result.team_win_probabilities.get(f"t{i}", 0.0) == 0.0 for i in range(2, 33, 2))
 
 
 # ---------------------------------------------------------------------------
