@@ -26,6 +26,8 @@ _DRAW_RATE = 0.25
 # Predictor signature: (home_elo, away_elo, is_knockout) -> P(home wins)
 _Predict = Callable[[float, float, bool], float]
 
+_KO_ROUND_SIZES: dict[str, int] = {"r32": 16, "r16": 8, "qf": 4, "sf": 2, "final": 1}
+
 
 def _pick_winner(
     home: str,
@@ -117,6 +119,54 @@ def _sim_round(
     return winners
 
 
+def _sim_real_bracket(
+    ko_by_round: dict[str, list[Match]],
+    scores: dict[str, int],
+    team_owner: dict[str, str],
+    team_elo: dict[str, float],
+    rng: random.Random,
+    predict: _Predict | None = None,
+) -> str | None:
+    """Simulate one run of the knockout stage from the real bracket docs.
+
+    Only teams present in the actual R32 field can advance, so participants
+    whose teams are all eliminated get exactly 0% win probability.
+    """
+    winner_by_match: dict[str, str] = {}
+
+    def _team(tid: str) -> str:
+        # "TBD_R32_r32_73" → winner of match "r32_73"
+        return winner_by_match.get(tid.split("_", 2)[2], "?") if tid.startswith("TBD_") else tid
+
+    for m in ko_by_round["r32"]:
+        for tid in (m.home_team_id, m.away_team_id):
+            if tid in team_owner:
+                scores[team_owner[tid]] += GROUP_QUALIFICATION_POINTS
+
+    champion: str | None = None
+    for rnd in _KO_ROUND_SIZES:
+        for m in ko_by_round[rnd]:
+            home, away = _team(m.home_team_id), _team(m.away_team_id)
+            if m.status == "completed" and m.winner_id is not None and m.winner_id in (home, away):
+                w = m.winner_id
+            else:
+                w = _pick_winner(
+                    home,
+                    away,
+                    team_elo.get(home, 1500.0),
+                    team_elo.get(away, 1500.0),
+                    rng,
+                    predict=predict,
+                    is_knockout=True,
+                )
+            if w in team_owner:
+                scores[team_owner[w]] += ROUND_WIN_POINTS[rnd]
+            winner_by_match[m.id] = w
+            if rnd == "final":
+                champion = w
+    return champion
+
+
 def run_simulation(
     matches: list[Match],
     participants: list[Participant],
@@ -163,6 +213,20 @@ def run_simulation(
             completed_match_count += 1
             completed_knockout[(m.home_team_id, m.away_team_id)] = m.winner_id
 
+    # Once the real R32 field is set, simulate from the actual bracket docs —
+    # re-simulating the group stage lets eliminated teams re-qualify via random
+    # tiebreaks and hands their owners phantom win probability.
+    ko_by_round: dict[str, list[Match]] = defaultdict(list)
+    for m in matches:
+        if m.round != "group":
+            ko_by_round[m.round].append(m)
+    for ms in ko_by_round.values():
+        ms.sort(key=lambda m: m.id)
+    use_real_bracket = all(len(ko_by_round[r]) == n for r, n in _KO_ROUND_SIZES.items()) and all(
+        not m.home_team_id.startswith("TBD") and not m.away_team_id.startswith("TBD")
+        for m in ko_by_round["r32"]
+    )
+
     # Pre-compute Elo win probabilities for pending group matches (constant per run)
     pending_group_probs: dict[str, list[tuple[str, str, float]]] = {}
     for grp, pairs in pending_by_group.items():
@@ -181,6 +245,14 @@ def run_simulation(
     # ------------------------------------------------------------------
     for _ in range(n_runs):
         scores: dict[str, int] = dict.fromkeys(participant_ids, 0)
+
+        if use_real_bracket:
+            champion = _sim_real_bracket(ko_by_round, scores, team_owner, team_elo, rng, predict)
+            if champion:
+                team_champion_counts[champion] += 1
+                if champion in team_owner:
+                    champion_counts[team_owner[champion]] += 1
+            continue
 
         # ---- Group stage ----
         group_standings: dict[str, list[str]] = {}  # group → [1st,2nd,3rd,4th]
