@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/bracket/", tKey: "nav.bracket" },
   { href: "/teams/", tKey: "nav.teams" },
   { href: "/simulate/", tKey: "nav.simulation" },
+  { href: "/faq/", tKey: "nav.faq" },
 ] as const;
 
 function NavLink({ href, label }: { href: string; label: string }) {

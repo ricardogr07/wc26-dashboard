@@ -1,10 +1,19 @@
 export type Locale = "en" | "es";
 
 type Translations = {
-  nav: { standings: string; schedule: string; bracket: string; teams: string; simulation: string };
+  nav: {
+    standings: string;
+    schedule: string;
+    bracket: string;
+    teams: string;
+    simulation: string;
+    faq: string;
+  };
   standings: {
     title: string;
     subtitle: string;
+    championBanner: string;
+    worldChampion: string;
     rank: string;
     participant: string;
     score: string;
@@ -93,10 +102,14 @@ const en: Translations = {
     bracket: "Bracket",
     teams: "Teams",
     simulation: "Simulation",
+    faq: "FAQ",
   },
   standings: {
     title: "Standings",
-    subtitle: "Rankings based on tournament milestones reached by each participant's teams.",
+    subtitle:
+      "Final standings after all matches — scored on tournament milestones reached by each participant's teams.",
+    championBanner: "Quiniela Champion",
+    worldChampion: "World Cup 2026 Champion",
     rank: "RANK",
     participant: "PARTICIPANT",
     score: "SCORE",
@@ -189,7 +202,7 @@ const en: Translations = {
   positions: { "1st": "1st", "2nd": "2nd", "3rd": "3rd", "4th": "4th", "5th": "5th" },
   bracket: {
     title: "Knockout Bracket",
-    subtitle: "Live bracket updated as matches complete.",
+    subtitle: "Final knockout bracket of the 2026 World Cup.",
     tbd: "TBD",
     loading: "Loading bracket…",
     error: "Failed to load bracket.",
@@ -203,11 +216,14 @@ const es: Translations = {
     bracket: "Llave",
     teams: "Equipos",
     simulation: "Simulación",
+    faq: "FAQ",
   },
   standings: {
     title: "Clasificación",
     subtitle:
-      "Clasificación basada en los hitos del torneo alcanzados por los equipos de cada participante.",
+      "Clasificación final tras todos los partidos — puntuada según los hitos del torneo alcanzados por los equipos de cada participante.",
+    championBanner: "Campeón de la Quiniela",
+    worldChampion: "Campeón del Mundial 2026",
     rank: "POS.",
     participant: "PARTICIPANTE",
     score: "PUNTOS",
@@ -301,7 +317,7 @@ const es: Translations = {
   positions: { "1st": "1°", "2nd": "2°", "3rd": "3°", "4th": "4°", "5th": "5°" },
   bracket: {
     title: "Llave Eliminatoria",
-    subtitle: "Llave en vivo, se actualiza conforme se completan los partidos.",
+    subtitle: "Llave final del Mundial 2026.",
     tbd: "Por definir",
     loading: "Cargando llave…",
     error: "Error al cargar la llave.",

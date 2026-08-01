@@ -1,9 +1,10 @@
-// Per-page smoke tests. All API calls are intercepted — no live backend required.
+// Per-page smoke tests. Data comes from static JSON snapshots; all fetches are
+// intercepted so fixtures stay in control.
 
 function stubApis() {
-  cy.intercept("GET", "/api/standings", { fixture: "standings.json" }).as("standings");
-  cy.intercept("GET", "/api/matches*", { fixture: "matches.json" }).as("matches");
-  cy.intercept("POST", "/api/simulate", { fixture: "simulation.json" }).as("simulate");
+  cy.intercept("GET", "/data/standings.json", { fixture: "standings.json" }).as("standings");
+  cy.intercept("GET", "/data/matches.json", { fixture: "matches.json" }).as("matches");
+  cy.intercept("GET", "/data/simulation.json", { fixture: "simulation.json" }).as("simulate");
 }
 
 // ── Navigation ──────────────────────────────────────────────────────────────
@@ -11,7 +12,7 @@ function stubApis() {
 describe("Navigation", () => {
   beforeEach(stubApis);
 
-  it("nav contains links for all five pages", () => {
+  it("nav contains links for all six pages", () => {
     cy.viewport(1280, 800);
     cy.visit("/");
     cy.get("nav").within(() => {
@@ -20,7 +21,20 @@ describe("Navigation", () => {
       cy.contains("a", "Bracket").should("exist");
       cy.contains("a", "Teams").should("exist");
       cy.contains("a", "Simulation").should("exist");
+      cy.contains("a", "FAQ").should("exist");
     });
+  });
+});
+
+// ── FAQ (/faq) ───────────────────────────────────────────────────────────────
+
+describe("FAQ page (/faq)", () => {
+  beforeEach(stubApis);
+
+  it("shows heading and question items", () => {
+    cy.visit("/faq/");
+    cy.get("[data-cy=faq-heading]").should("contain.text", "FAQ");
+    cy.contains("Who won?").should("exist");
   });
 });
 
@@ -55,7 +69,7 @@ describe("Standings page (/)", () => {
   });
 
   it("shows error message when standings API fails", () => {
-    cy.intercept("GET", "/api/standings", { statusCode: 500 }).as("standingsErr");
+    cy.intercept("GET", "/data/standings.json", { statusCode: 500 }).as("standingsErr");
     cy.visit("/");
     cy.wait("@standingsErr");
     cy.contains("Failed to load standings").should("exist");
@@ -103,7 +117,7 @@ describe("Schedule page (/schedule)", () => {
   });
 
   it("shows error message when matches API fails", () => {
-    cy.intercept("GET", "/api/matches*", { statusCode: 500 }).as("matchesErr");
+    cy.intercept("GET", "/data/matches.json", { statusCode: 500 }).as("matchesErr");
     cy.visit("/schedule/");
     cy.wait("@matchesErr");
     cy.contains("Failed to load schedule").should("exist");
@@ -123,7 +137,7 @@ describe("Simulate page (/simulate)", () => {
   });
 
   it("regression: shows error message when simulate API returns 500", () => {
-    cy.intercept("POST", "/api/simulate", { statusCode: 500 }).as("simulateErr");
+    cy.intercept("GET", "/data/simulation.json", { statusCode: 500 }).as("simulateErr");
     cy.visit("/simulate/");
     cy.wait("@simulateErr");
     cy.contains("Failed to load simulation").should("exist");
@@ -132,11 +146,11 @@ describe("Simulate page (/simulate)", () => {
   it("scenario builder runs and shows probability deltas", () => {
     // Cypress uses LIFO intercept ordering: last-registered wins.
     // Register fallback first (scenario), then baseline (consumed once) on top.
-    cy.intercept("POST", "/api/simulate", { fixture: "simulation-scenario.json" }).as(
+    cy.intercept("GET", "/data/simulation.json", { fixture: "simulation-scenario.json" }).as(
       "simulateScenario"
     );
     cy.intercept(
-      { method: "POST", url: "/api/simulate", times: 1 },
+      { method: "GET", url: "/data/simulation.json", times: 1 },
       { fixture: "simulation.json" }
     ).as("simulateBaseline");
 
@@ -153,11 +167,11 @@ describe("Simulate page (/simulate)", () => {
   });
 
   it("Reset button clears scenario selections", () => {
-    cy.intercept("POST", "/api/simulate", { fixture: "simulation-scenario.json" }).as(
+    cy.intercept("GET", "/data/simulation.json", { fixture: "simulation-scenario.json" }).as(
       "simulateScenario"
     );
     cy.intercept(
-      { method: "POST", url: "/api/simulate", times: 1 },
+      { method: "GET", url: "/data/simulation.json", times: 1 },
       { fixture: "simulation.json" }
     ).as("simulateBaseline");
 
@@ -195,7 +209,7 @@ describe("Bracket page (/bracket)", () => {
   });
 
   it("renders match cards when R32 data is present", () => {
-    cy.intercept("GET", "/api/matches*", { fixture: "matches-bracket.json" }).as("bracketMatches");
+    cy.intercept("GET", "/data/matches.json", { fixture: "matches-bracket.json" }).as("bracketMatches");
     cy.viewport(1280, 800);
     cy.visit("/bracket/");
     cy.wait("@bracketMatches");
@@ -204,7 +218,7 @@ describe("Bracket page (/bracket)", () => {
   });
 
   it("highlights the winner of a completed match", () => {
-    cy.intercept("GET", "/api/matches*", { fixture: "matches-bracket.json" }).as("bracketMatches");
+    cy.intercept("GET", "/data/matches.json", { fixture: "matches-bracket.json" }).as("bracketMatches");
     cy.viewport(1280, 800);
     cy.visit("/bracket/");
     cy.wait("@bracketMatches");
@@ -217,7 +231,7 @@ describe("Bracket page (/bracket)", () => {
   });
 
   it("shows Live badge for an in-progress match", () => {
-    cy.intercept("GET", "/api/matches*", { fixture: "matches-bracket.json" }).as("bracketMatches");
+    cy.intercept("GET", "/data/matches.json", { fixture: "matches-bracket.json" }).as("bracketMatches");
     cy.viewport(1280, 800);
     cy.visit("/bracket/");
     cy.wait("@bracketMatches");
@@ -225,7 +239,7 @@ describe("Bracket page (/bracket)", () => {
   });
 
   it("shows score for a completed match", () => {
-    cy.intercept("GET", "/api/matches*", { fixture: "matches-bracket.json" }).as("bracketMatches");
+    cy.intercept("GET", "/data/matches.json", { fixture: "matches-bracket.json" }).as("bracketMatches");
     cy.viewport(1280, 800);
     cy.visit("/bracket/");
     cy.wait("@bracketMatches");
@@ -233,7 +247,7 @@ describe("Bracket page (/bracket)", () => {
   });
 
   it("shows error message when matches API fails", () => {
-    cy.intercept("GET", "/api/matches*", { statusCode: 500 }).as("matchesErr");
+    cy.intercept("GET", "/data/matches.json", { statusCode: 500 }).as("matchesErr");
     cy.visit("/bracket/");
     cy.wait("@matchesErr");
     cy.contains("Failed to load bracket").should("exist");
@@ -268,7 +282,7 @@ describe("Teams page (/teams)", () => {
   });
 
   it("shows error message when standings API fails", () => {
-    cy.intercept("GET", "/api/standings", { statusCode: 500 }).as("standingsErr");
+    cy.intercept("GET", "/data/standings.json", { statusCode: 500 }).as("standingsErr");
     cy.visit("/teams/");
     cy.wait("@standingsErr");
     cy.contains("Failed to load teams").should("exist");

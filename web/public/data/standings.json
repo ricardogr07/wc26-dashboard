@@ -1,0 +1,219 @@
+{
+ "standings": [
+  {
+   "rank": 1,
+   "participantId": "ricardo",
+   "displayName": "Ricardo",
+   "score": 46,
+   "teams": [
+    {
+     "teamId": "NED",
+     "name": "Netherlands",
+     "group": "F",
+     "status": "eliminated",
+     "eloRating": 1969.167276277276
+    },
+    {
+     "teamId": "ESP",
+     "name": "Spain",
+     "group": "H",
+     "status": "champion",
+     "eloRating": 2206.302487129975
+    },
+    {
+     "teamId": "FRA",
+     "name": "France",
+     "group": "I",
+     "status": "eliminated",
+     "eloRating": 2067.831513494851
+    },
+    {
+     "teamId": "GER",
+     "name": "Germany",
+     "group": "E",
+     "status": "eliminated",
+     "eloRating": 1905.1842582283057
+    },
+    {
+     "teamId": "ECU",
+     "name": "Ecuador",
+     "group": "E",
+     "status": "eliminated",
+     "eloRating": 1905.1352247208517
+    }
+   ]
+  },
+  {
+   "rank": 2,
+   "participantId": "jaime",
+   "displayName": "Jaime",
+   "score": 30,
+   "teams": [
+    {
+     "teamId": "JPN",
+     "name": "Japan",
+     "group": "F",
+     "status": "eliminated",
+     "eloRating": 1872.292396740045
+    },
+    {
+     "teamId": "EGY",
+     "name": "Egypt",
+     "group": "G",
+     "status": "eliminated",
+     "eloRating": 1665.9894817813422
+    },
+    {
+     "teamId": "BEL",
+     "name": "Belgium",
+     "group": "G",
+     "status": "eliminated",
+     "eloRating": 1861.6050867572494
+    },
+    {
+     "teamId": "CRO",
+     "name": "Croatia",
+     "group": "L",
+     "status": "eliminated",
+     "eloRating": 1914.7499392063985
+    },
+    {
+     "teamId": "ARG",
+     "name": "Argentina",
+     "group": "J",
+     "status": "eliminated",
+     "eloRating": 2147.9153121447384
+    }
+   ]
+  },
+  {
+   "rank": 3,
+   "participantId": "chuy",
+   "displayName": "Chuy",
+   "score": 20,
+   "teams": [
+    {
+     "teamId": "MEX",
+     "name": "Mexico",
+     "group": "A",
+     "status": "eliminated",
+     "eloRating": 1891.5819757800175
+    },
+    {
+     "teamId": "COL",
+     "name": "Colombia",
+     "group": "K",
+     "status": "eliminated",
+     "eloRating": 1987.0919399832474
+    },
+    {
+     "teamId": "ENG",
+     "name": "England",
+     "group": "L",
+     "status": "eliminated",
+     "eloRating": 2080.880834115544
+    },
+    {
+     "teamId": "SUI",
+     "name": "Switzerland",
+     "group": "B",
+     "status": "eliminated",
+     "eloRating": 1929.7900289314853
+    },
+    {
+     "teamId": "KOR",
+     "name": "South Korea",
+     "group": "A",
+     "status": "eliminated",
+     "eloRating": 1757.56986109966
+    }
+   ]
+  },
+  {
+   "rank": 4,
+   "participantId": "jibran",
+   "displayName": "Jibran",
+   "score": 19,
+   "teams": [
+    {
+     "teamId": "BRA",
+     "name": "Brazil",
+     "group": "C",
+     "status": "eliminated",
+     "eloRating": 1977.348151460816
+    },
+    {
+     "teamId": "MAR",
+     "name": "Morocco",
+     "group": "C",
+     "status": "eliminated",
+     "eloRating": 1830.078625261493
+    },
+    {
+     "teamId": "CAN",
+     "name": "Canada",
+     "group": "B",
+     "status": "eliminated",
+     "eloRating": 1789.0709162562375
+    },
+    {
+     "teamId": "NOR",
+     "name": "Norway",
+     "group": "I",
+     "status": "eliminated",
+     "eloRating": 1946.4496775282155
+    },
+    {
+     "teamId": "AUT",
+     "name": "Austria",
+     "group": "J",
+     "status": "eliminated",
+     "eloRating": 1819.529750897177
+    }
+   ]
+  },
+  {
+   "rank": 5,
+   "participantId": "arnoldo",
+   "displayName": "Arnoldo",
+   "score": 7,
+   "teams": [
+    {
+     "teamId": "POR",
+     "name": "Portugal",
+     "group": "K",
+     "status": "eliminated",
+     "eloRating": 1987.4333871801325
+    },
+    {
+     "teamId": "USA",
+     "name": "United States",
+     "group": "D",
+     "status": "eliminated",
+     "eloRating": 1759.2760234772973
+    },
+    {
+     "teamId": "SEN",
+     "name": "Senegal",
+     "group": "I",
+     "status": "eliminated",
+     "eloRating": 1854.1200263131739
+    },
+    {
+     "teamId": "TUR",
+     "name": "T\u00fcrkiye",
+     "group": "D",
+     "status": "eliminated",
+     "eloRating": 1871.8588015641576
+    },
+    {
+     "teamId": "URU",
+     "name": "Uruguay",
+     "group": "H",
+     "status": "eliminated",
+     "eloRating": 1884.7632566463503
+    }
+   ]
+  }
+ ]
+}
