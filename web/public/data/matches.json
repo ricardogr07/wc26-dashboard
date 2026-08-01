@@ -1,0 +1,2188 @@
+{
+ "matches": [
+  {
+   "id": "tsdb_2391728",
+   "round": "group",
+   "group": "A",
+   "homeTeam": {
+    "id": "MEX",
+    "name": "Mexico",
+    "eloRating": 1891.5819757800175
+   },
+   "awayTeam": {
+    "id": "RSA",
+    "name": "South Africa",
+    "eloRating": 1517.8116965637078
+   },
+   "scheduledAt": "2026-06-11T19:00:00+00:00",
+   "venue": "Estadio Azteca",
+   "homeScore": 2,
+   "awayScore": 0,
+   "winnerId": "MEX",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2461103",
+   "round": "group",
+   "group": "A",
+   "homeTeam": {
+    "id": "KOR",
+    "name": "South Korea",
+    "eloRating": 1757.56986109966
+   },
+   "awayTeam": {
+    "id": "CZE",
+    "name": "Czechia",
+    "eloRating": 1708.1721023938833
+   },
+   "scheduledAt": "2026-06-12T02:00:00+00:00",
+   "venue": "Estadio Akron",
+   "homeScore": 2,
+   "awayScore": 1,
+   "winnerId": "KOR",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2461104",
+   "round": "group",
+   "group": "B",
+   "homeTeam": {
+    "id": "CAN",
+    "name": "Canada",
+    "eloRating": 1789.0709162562375
+   },
+   "awayTeam": {
+    "id": "BIH",
+    "name": "Bosnia & Herzegovina",
+    "eloRating": 1580.0
+   },
+   "scheduledAt": "2026-06-12T19:00:00+00:00",
+   "venue": "BMO Field",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391729",
+   "round": "group",
+   "group": "D",
+   "homeTeam": {
+    "id": "USA",
+    "name": "United States",
+    "eloRating": 1759.2760234772973
+   },
+   "awayTeam": {
+    "id": "PAR",
+    "name": "Paraguay",
+    "eloRating": 1807.580589318884
+   },
+   "scheduledAt": "2026-06-13T01:00:00+00:00",
+   "venue": "SoFi Stadium",
+   "homeScore": 4,
+   "awayScore": 1,
+   "winnerId": "USA",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391732",
+   "round": "group",
+   "group": "B",
+   "homeTeam": {
+    "id": "QAT",
+    "name": "Qatar",
+    "eloRating": 1544.007605812369
+   },
+   "awayTeam": {
+    "id": "SUI",
+    "name": "Switzerland",
+    "eloRating": 1929.7900289314853
+   },
+   "scheduledAt": "2026-06-13T19:00:00+00:00",
+   "venue": "Levi's Stadium",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391730",
+   "round": "group",
+   "group": "C",
+   "homeTeam": {
+    "id": "BRA",
+    "name": "Brazil",
+    "eloRating": 1977.348151460816
+   },
+   "awayTeam": {
+    "id": "MAR",
+    "name": "Morocco",
+    "eloRating": 1830.078625261493
+   },
+   "scheduledAt": "2026-06-13T22:00:00+00:00",
+   "venue": "MetLife Stadium",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391731",
+   "round": "group",
+   "group": "C",
+   "homeTeam": {
+    "id": "HAI",
+    "name": "Haiti",
+    "eloRating": 1530.5780658704373
+   },
+   "awayTeam": {
+    "id": "SCO",
+    "name": "Scotland",
+    "eloRating": 1643.111546369643
+   },
+   "scheduledAt": "2026-06-14T01:00:00+00:00",
+   "venue": "Gillette Stadium",
+   "homeScore": 0,
+   "awayScore": 1,
+   "winnerId": "SCO",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2461105",
+   "round": "group",
+   "group": "D",
+   "homeTeam": {
+    "id": "AUS",
+    "name": "Australia",
+    "eloRating": 1777.4554751831097
+   },
+   "awayTeam": {
+    "id": "TUR",
+    "name": "T\u00fcrkiye",
+    "eloRating": 1871.8588015641576
+   },
+   "scheduledAt": "2026-06-14T04:00:00+00:00",
+   "venue": "BC Place",
+   "homeScore": 2,
+   "awayScore": 0,
+   "winnerId": "AUS",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391733",
+   "round": "group",
+   "group": "E",
+   "homeTeam": {
+    "id": "GER",
+    "name": "Germany",
+    "eloRating": 1905.1842582283057
+   },
+   "awayTeam": {
+    "id": "CUW",
+    "name": "Cura\u00e7ao",
+    "eloRating": 1486.0249425989641
+   },
+   "scheduledAt": "2026-06-14T17:00:00+00:00",
+   "venue": "NRG Stadium",
+   "homeScore": 7,
+   "awayScore": 1,
+   "winnerId": "GER",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391735",
+   "round": "group",
+   "group": "F",
+   "homeTeam": {
+    "id": "NED",
+    "name": "Netherlands",
+    "eloRating": 1969.167276277276
+   },
+   "awayTeam": {
+    "id": "JPN",
+    "name": "Japan",
+    "eloRating": 1872.292396740045
+   },
+   "scheduledAt": "2026-06-14T20:00:00+00:00",
+   "venue": "AT&T Stadium",
+   "homeScore": 2,
+   "awayScore": 2,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391734",
+   "round": "group",
+   "group": "E",
+   "homeTeam": {
+    "id": "CIV",
+    "name": "C\u00f4te d'Ivoire",
+    "eloRating": 1672.8078716058858
+   },
+   "awayTeam": {
+    "id": "ECU",
+    "name": "Ecuador",
+    "eloRating": 1905.1352247208517
+   },
+   "scheduledAt": "2026-06-14T23:00:00+00:00",
+   "venue": "Lincoln Financial Field",
+   "homeScore": 1,
+   "awayScore": 0,
+   "winnerId": "CIV",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2461106",
+   "round": "group",
+   "group": "F",
+   "homeTeam": {
+    "id": "SWE",
+    "name": "Sweden",
+    "eloRating": 1661.8043136634994
+   },
+   "awayTeam": {
+    "id": "TUN",
+    "name": "Tunisia",
+    "eloRating": 1609.5964899764697
+   },
+   "scheduledAt": "2026-06-15T02:00:00+00:00",
+   "venue": "Estadio BBVA",
+   "homeScore": 5,
+   "awayScore": 1,
+   "winnerId": "SWE",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391739",
+   "round": "group",
+   "group": "H",
+   "homeTeam": {
+    "id": "ESP",
+    "name": "Spain",
+    "eloRating": 2206.302487129975
+   },
+   "awayTeam": {
+    "id": "CPV",
+    "name": "Cape Verde",
+    "eloRating": 1499.1395158520756
+   },
+   "scheduledAt": "2026-06-15T16:00:00+00:00",
+   "venue": "Mercedes-Benz Stadium",
+   "homeScore": 0,
+   "awayScore": 0,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391736",
+   "round": "group",
+   "group": "G",
+   "homeTeam": {
+    "id": "BEL",
+    "name": "Belgium",
+    "eloRating": 1861.6050867572494
+   },
+   "awayTeam": {
+    "id": "EGY",
+    "name": "Egypt",
+    "eloRating": 1665.9894817813422
+   },
+   "scheduledAt": "2026-06-15T19:00:00+00:00",
+   "venue": "Lumen Field",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391738",
+   "round": "group",
+   "group": "H",
+   "homeTeam": {
+    "id": "KSA",
+    "name": "Saudi Arabia",
+    "eloRating": 1633.6089325628354
+   },
+   "awayTeam": {
+    "id": "URU",
+    "name": "Uruguay",
+    "eloRating": 1884.7632566463503
+   },
+   "scheduledAt": "2026-06-15T22:00:00+00:00",
+   "venue": "Hard Rock Stadium",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391737",
+   "round": "group",
+   "group": null,
+   "homeTeam": {
+    "id": "IRN",
+    "name": "Iran",
+    "eloRating": 1755.0
+   },
+   "awayTeam": {
+    "id": "NZL",
+    "name": "New Zealand",
+    "eloRating": 1487.2568310389338
+   },
+   "scheduledAt": "2026-06-16T01:00:00+00:00",
+   "venue": "SoFi Stadium",
+   "homeScore": 2,
+   "awayScore": 2,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391742",
+   "round": "group",
+   "group": null,
+   "homeTeam": {
+    "id": "FRA",
+    "name": "France",
+    "eloRating": 2067.831513494851
+   },
+   "awayTeam": {
+    "id": "SEN",
+    "name": "Senegal",
+    "eloRating": 1854.1200263131739
+   },
+   "scheduledAt": "2026-06-16T19:00:00+00:00",
+   "venue": "MetLife Stadium",
+   "homeScore": 3,
+   "awayScore": 1,
+   "winnerId": "FRA",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2461107",
+   "round": "group",
+   "group": null,
+   "homeTeam": {
+    "id": "IRQ",
+    "name": "Iraq",
+    "eloRating": 1583.707701896733
+   },
+   "awayTeam": {
+    "id": "NOR",
+    "name": "Norway",
+    "eloRating": 1946.4496775282155
+   },
+   "scheduledAt": "2026-06-16T22:00:00+00:00",
+   "venue": "Gillette Stadium",
+   "homeScore": 1,
+   "awayScore": 4,
+   "winnerId": "NOR",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391740",
+   "round": "group",
+   "group": null,
+   "homeTeam": {
+    "id": "ARG",
+    "name": "Argentina",
+    "eloRating": 2147.9153121447384
+   },
+   "awayTeam": {
+    "id": "ALG",
+    "name": "Algeria",
+    "eloRating": 1730.0128263163313
+   },
+   "scheduledAt": "2026-06-17T01:00:00+00:00",
+   "venue": "GEHA Field at Arrowhead Stadium",
+   "homeScore": 3,
+   "awayScore": 0,
+   "winnerId": "ARG",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391741",
+   "round": "group",
+   "group": null,
+   "homeTeam": {
+    "id": "AUT",
+    "name": "Austria",
+    "eloRating": 1819.529750897177
+   },
+   "awayTeam": {
+    "id": "JOR",
+    "name": "Jordan",
+    "eloRating": 1662.6397382152786
+   },
+   "scheduledAt": "2026-06-17T04:00:00+00:00",
+   "venue": "Levi's Stadium",
+   "homeScore": 3,
+   "awayScore": 1,
+   "winnerId": "AUT",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_K1_1",
+   "round": "group",
+   "group": "K",
+   "homeTeam": {
+    "id": "POR",
+    "name": "Portugal",
+    "eloRating": 1987.4333871801325
+   },
+   "awayTeam": {
+    "id": "COD",
+    "name": "Congo DR",
+    "eloRating": 1550.0
+   },
+   "scheduledAt": "2026-06-17T17:00:00+00:00",
+   "venue": "NRG Stadium",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391743",
+   "round": "group",
+   "group": null,
+   "homeTeam": {
+    "id": "ENG",
+    "name": "England",
+    "eloRating": 2080.880834115544
+   },
+   "awayTeam": {
+    "id": "CRO",
+    "name": "Croatia",
+    "eloRating": 1914.7499392063985
+   },
+   "scheduledAt": "2026-06-17T20:00:00+00:00",
+   "venue": "AT&T Stadium",
+   "homeScore": 4,
+   "awayScore": 2,
+   "winnerId": "ENG",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2391744",
+   "round": "group",
+   "group": null,
+   "homeTeam": {
+    "id": "GHA",
+    "name": "Ghana",
+    "eloRating": 1637.496175359522
+   },
+   "awayTeam": {
+    "id": "PAN",
+    "name": "Panama",
+    "eloRating": 1700.7867317854586
+   },
+   "scheduledAt": "2026-06-17T23:00:00+00:00",
+   "venue": "BMO Field",
+   "homeScore": 1,
+   "awayScore": 0,
+   "winnerId": "GHA",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_K1_2",
+   "round": "group",
+   "group": "K",
+   "homeTeam": {
+    "id": "UZB",
+    "name": "Uzbekistan",
+    "eloRating": 1716.38461463994
+   },
+   "awayTeam": {
+    "id": "COL",
+    "name": "Colombia",
+    "eloRating": 1987.0919399832474
+   },
+   "scheduledAt": "2026-06-18T02:00:00+00:00",
+   "venue": "Estadio Azteca",
+   "homeScore": 1,
+   "awayScore": 3,
+   "winnerId": "COL",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_A2_1",
+   "round": "group",
+   "group": "A",
+   "homeTeam": {
+    "id": "CZE",
+    "name": "Czechia",
+    "eloRating": 1708.1721023938833
+   },
+   "awayTeam": {
+    "id": "RSA",
+    "name": "South Africa",
+    "eloRating": 1517.8116965637078
+   },
+   "scheduledAt": "2026-06-18T16:00:00+00:00",
+   "venue": "Mercedes-Benz Stadium",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_B2_1",
+   "round": "group",
+   "group": "B",
+   "homeTeam": {
+    "id": "SUI",
+    "name": "Switzerland",
+    "eloRating": 1929.7900289314853
+   },
+   "awayTeam": {
+    "id": "BIH",
+    "name": "Bosnia & Herzegovina",
+    "eloRating": 1580.0
+   },
+   "scheduledAt": "2026-06-18T19:00:00+00:00",
+   "venue": "SoFi Stadium",
+   "homeScore": 4,
+   "awayScore": 1,
+   "winnerId": "SUI",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_B2_2",
+   "round": "group",
+   "group": "B",
+   "homeTeam": {
+    "id": "CAN",
+    "name": "Canada",
+    "eloRating": 1789.0709162562375
+   },
+   "awayTeam": {
+    "id": "QAT",
+    "name": "Qatar",
+    "eloRating": 1544.007605812369
+   },
+   "scheduledAt": "2026-06-18T22:00:00+00:00",
+   "venue": "BC Place",
+   "homeScore": 6,
+   "awayScore": 0,
+   "winnerId": "CAN",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_A2_2",
+   "round": "group",
+   "group": "A",
+   "homeTeam": {
+    "id": "MEX",
+    "name": "Mexico",
+    "eloRating": 1891.5819757800175
+   },
+   "awayTeam": {
+    "id": "KOR",
+    "name": "South Korea",
+    "eloRating": 1757.56986109966
+   },
+   "scheduledAt": "2026-06-19T01:00:00+00:00",
+   "venue": "Estadio Akron",
+   "homeScore": 1,
+   "awayScore": 0,
+   "winnerId": "MEX",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_D2_1",
+   "round": "group",
+   "group": "D",
+   "homeTeam": {
+    "id": "USA",
+    "name": "United States",
+    "eloRating": 1759.2760234772973
+   },
+   "awayTeam": {
+    "id": "AUS",
+    "name": "Australia",
+    "eloRating": 1777.4554751831097
+   },
+   "scheduledAt": "2026-06-19T19:00:00+00:00",
+   "venue": "Lumen Field",
+   "homeScore": 2,
+   "awayScore": 0,
+   "winnerId": "USA",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_C2_1",
+   "round": "group",
+   "group": "C",
+   "homeTeam": {
+    "id": "SCO",
+    "name": "Scotland",
+    "eloRating": 1643.111546369643
+   },
+   "awayTeam": {
+    "id": "MAR",
+    "name": "Morocco",
+    "eloRating": 1830.078625261493
+   },
+   "scheduledAt": "2026-06-19T22:00:00+00:00",
+   "venue": "Gillette Stadium",
+   "homeScore": 0,
+   "awayScore": 1,
+   "winnerId": "MAR",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_C2_2",
+   "round": "group",
+   "group": "C",
+   "homeTeam": {
+    "id": "BRA",
+    "name": "Brazil",
+    "eloRating": 1977.348151460816
+   },
+   "awayTeam": {
+    "id": "HAI",
+    "name": "Haiti",
+    "eloRating": 1530.5780658704373
+   },
+   "scheduledAt": "2026-06-20T00:30:00+00:00",
+   "venue": "Lincoln Financial Field",
+   "homeScore": 3,
+   "awayScore": 0,
+   "winnerId": "BRA",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_D2_2",
+   "round": "group",
+   "group": "D",
+   "homeTeam": {
+    "id": "TUR",
+    "name": "T\u00fcrkiye",
+    "eloRating": 1871.8588015641576
+   },
+   "awayTeam": {
+    "id": "PAR",
+    "name": "Paraguay",
+    "eloRating": 1807.580589318884
+   },
+   "scheduledAt": "2026-06-20T03:00:00+00:00",
+   "venue": "Levi's Stadium",
+   "homeScore": 0,
+   "awayScore": 1,
+   "winnerId": "PAR",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_F2_1",
+   "round": "group",
+   "group": "F",
+   "homeTeam": {
+    "id": "NED",
+    "name": "Netherlands",
+    "eloRating": 1969.167276277276
+   },
+   "awayTeam": {
+    "id": "SWE",
+    "name": "Sweden",
+    "eloRating": 1661.8043136634994
+   },
+   "scheduledAt": "2026-06-20T17:00:00+00:00",
+   "venue": "NRG Stadium",
+   "homeScore": 5,
+   "awayScore": 1,
+   "winnerId": "NED",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_E2_1",
+   "round": "group",
+   "group": "E",
+   "homeTeam": {
+    "id": "GER",
+    "name": "Germany",
+    "eloRating": 1905.1842582283057
+   },
+   "awayTeam": {
+    "id": "CIV",
+    "name": "C\u00f4te d'Ivoire",
+    "eloRating": 1672.8078716058858
+   },
+   "scheduledAt": "2026-06-20T20:00:00+00:00",
+   "venue": "BMO Field",
+   "homeScore": 2,
+   "awayScore": 1,
+   "winnerId": "GER",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_E2_2",
+   "round": "group",
+   "group": "E",
+   "homeTeam": {
+    "id": "ECU",
+    "name": "Ecuador",
+    "eloRating": 1905.1352247208517
+   },
+   "awayTeam": {
+    "id": "CUW",
+    "name": "Cura\u00e7ao",
+    "eloRating": 1486.0249425989641
+   },
+   "scheduledAt": "2026-06-21T00:00:00+00:00",
+   "venue": "Arrowhead Stadium",
+   "homeScore": 0,
+   "awayScore": 0,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_F2_2",
+   "round": "group",
+   "group": "F",
+   "homeTeam": {
+    "id": "TUN",
+    "name": "Tunisia",
+    "eloRating": 1609.5964899764697
+   },
+   "awayTeam": {
+    "id": "JPN",
+    "name": "Japan",
+    "eloRating": 1872.292396740045
+   },
+   "scheduledAt": "2026-06-21T04:00:00+00:00",
+   "venue": "Estadio BBVA",
+   "homeScore": 0,
+   "awayScore": 4,
+   "winnerId": "JPN",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_H2_1",
+   "round": "group",
+   "group": "H",
+   "homeTeam": {
+    "id": "ESP",
+    "name": "Spain",
+    "eloRating": 2206.302487129975
+   },
+   "awayTeam": {
+    "id": "KSA",
+    "name": "Saudi Arabia",
+    "eloRating": 1633.6089325628354
+   },
+   "scheduledAt": "2026-06-21T16:00:00+00:00",
+   "venue": "Mercedes-Benz Stadium",
+   "homeScore": 4,
+   "awayScore": 0,
+   "winnerId": "ESP",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_G2_1",
+   "round": "group",
+   "group": "G",
+   "homeTeam": {
+    "id": "BEL",
+    "name": "Belgium",
+    "eloRating": 1861.6050867572494
+   },
+   "awayTeam": {
+    "id": "IRN",
+    "name": "Iran",
+    "eloRating": 1755.0
+   },
+   "scheduledAt": "2026-06-21T19:00:00+00:00",
+   "venue": "SoFi Stadium",
+   "homeScore": 0,
+   "awayScore": 0,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_H2_2",
+   "round": "group",
+   "group": "H",
+   "homeTeam": {
+    "id": "URU",
+    "name": "Uruguay",
+    "eloRating": 1884.7632566463503
+   },
+   "awayTeam": {
+    "id": "CPV",
+    "name": "Cape Verde",
+    "eloRating": 1499.1395158520756
+   },
+   "scheduledAt": "2026-06-21T22:00:00+00:00",
+   "venue": "Hard Rock Stadium",
+   "homeScore": 2,
+   "awayScore": 2,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_G2_2",
+   "round": "group",
+   "group": "G",
+   "homeTeam": {
+    "id": "NZL",
+    "name": "New Zealand",
+    "eloRating": 1487.2568310389338
+   },
+   "awayTeam": {
+    "id": "EGY",
+    "name": "Egypt",
+    "eloRating": 1665.9894817813422
+   },
+   "scheduledAt": "2026-06-22T01:00:00+00:00",
+   "venue": "BC Place",
+   "homeScore": 1,
+   "awayScore": 3,
+   "winnerId": "EGY",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_J2_1",
+   "round": "group",
+   "group": "J",
+   "homeTeam": {
+    "id": "ARG",
+    "name": "Argentina",
+    "eloRating": 2147.9153121447384
+   },
+   "awayTeam": {
+    "id": "AUT",
+    "name": "Austria",
+    "eloRating": 1819.529750897177
+   },
+   "scheduledAt": "2026-06-22T17:00:00+00:00",
+   "venue": "AT&T Stadium",
+   "homeScore": 2,
+   "awayScore": 0,
+   "winnerId": "ARG",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_I2_1",
+   "round": "group",
+   "group": "I",
+   "homeTeam": {
+    "id": "FRA",
+    "name": "France",
+    "eloRating": 2067.831513494851
+   },
+   "awayTeam": {
+    "id": "IRQ",
+    "name": "Iraq",
+    "eloRating": 1583.707701896733
+   },
+   "scheduledAt": "2026-06-22T21:00:00+00:00",
+   "venue": "Lincoln Financial Field",
+   "homeScore": 1,
+   "awayScore": 0,
+   "winnerId": "FRA",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_I2_2",
+   "round": "group",
+   "group": "I",
+   "homeTeam": {
+    "id": "NOR",
+    "name": "Norway",
+    "eloRating": 1946.4496775282155
+   },
+   "awayTeam": {
+    "id": "SEN",
+    "name": "Senegal",
+    "eloRating": 1854.1200263131739
+   },
+   "scheduledAt": "2026-06-23T00:00:00+00:00",
+   "venue": "MetLife Stadium",
+   "homeScore": 3,
+   "awayScore": 2,
+   "winnerId": "NOR",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_J2_2",
+   "round": "group",
+   "group": "J",
+   "homeTeam": {
+    "id": "JOR",
+    "name": "Jordan",
+    "eloRating": 1662.6397382152786
+   },
+   "awayTeam": {
+    "id": "ALG",
+    "name": "Algeria",
+    "eloRating": 1730.0128263163313
+   },
+   "scheduledAt": "2026-06-23T03:00:00+00:00",
+   "venue": "Levi's Stadium",
+   "homeScore": 1,
+   "awayScore": 2,
+   "winnerId": "ALG",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_K2_1",
+   "round": "group",
+   "group": "K",
+   "homeTeam": {
+    "id": "POR",
+    "name": "Portugal",
+    "eloRating": 1987.4333871801325
+   },
+   "awayTeam": {
+    "id": "UZB",
+    "name": "Uzbekistan",
+    "eloRating": 1716.38461463994
+   },
+   "scheduledAt": "2026-06-23T17:00:00+00:00",
+   "venue": "NRG Stadium",
+   "homeScore": 5,
+   "awayScore": 0,
+   "winnerId": "POR",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_L2_1",
+   "round": "group",
+   "group": "L",
+   "homeTeam": {
+    "id": "ENG",
+    "name": "England",
+    "eloRating": 2080.880834115544
+   },
+   "awayTeam": {
+    "id": "GHA",
+    "name": "Ghana",
+    "eloRating": 1637.496175359522
+   },
+   "scheduledAt": "2026-06-23T20:00:00+00:00",
+   "venue": "Gillette Stadium",
+   "homeScore": 0,
+   "awayScore": 0,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_L2_2",
+   "round": "group",
+   "group": "L",
+   "homeTeam": {
+    "id": "PAN",
+    "name": "Panama",
+    "eloRating": 1700.7867317854586
+   },
+   "awayTeam": {
+    "id": "CRO",
+    "name": "Croatia",
+    "eloRating": 1914.7499392063985
+   },
+   "scheduledAt": "2026-06-23T23:00:00+00:00",
+   "venue": "BMO Field",
+   "homeScore": 0,
+   "awayScore": 1,
+   "winnerId": "CRO",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_K2_2",
+   "round": "group",
+   "group": "K",
+   "homeTeam": {
+    "id": "COL",
+    "name": "Colombia",
+    "eloRating": 1987.0919399832474
+   },
+   "awayTeam": {
+    "id": "COD",
+    "name": "Congo DR",
+    "eloRating": 1550.0
+   },
+   "scheduledAt": "2026-06-24T02:00:00+00:00",
+   "venue": "Estadio Akron",
+   "homeScore": 1,
+   "awayScore": 0,
+   "winnerId": "COL",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_B3_1",
+   "round": "group",
+   "group": "B",
+   "homeTeam": {
+    "id": "SUI",
+    "name": "Switzerland",
+    "eloRating": 1929.7900289314853
+   },
+   "awayTeam": {
+    "id": "CAN",
+    "name": "Canada",
+    "eloRating": 1789.0709162562375
+   },
+   "scheduledAt": "2026-06-24T19:00:00+00:00",
+   "venue": "BC Place",
+   "homeScore": 2,
+   "awayScore": 1,
+   "winnerId": "SUI",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_B3_2",
+   "round": "group",
+   "group": "B",
+   "homeTeam": {
+    "id": "BIH",
+    "name": "Bosnia & Herzegovina",
+    "eloRating": 1580.0
+   },
+   "awayTeam": {
+    "id": "QAT",
+    "name": "Qatar",
+    "eloRating": 1544.007605812369
+   },
+   "scheduledAt": "2026-06-24T19:00:00+00:00",
+   "venue": "Lumen Field",
+   "homeScore": 3,
+   "awayScore": 1,
+   "winnerId": "BIH",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_C3_1",
+   "round": "group",
+   "group": "C",
+   "homeTeam": {
+    "id": "SCO",
+    "name": "Scotland",
+    "eloRating": 1643.111546369643
+   },
+   "awayTeam": {
+    "id": "BRA",
+    "name": "Brazil",
+    "eloRating": 1977.348151460816
+   },
+   "scheduledAt": "2026-06-24T22:00:00+00:00",
+   "venue": "Hard Rock Stadium",
+   "homeScore": 0,
+   "awayScore": 3,
+   "winnerId": "BRA",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_C3_2",
+   "round": "group",
+   "group": "C",
+   "homeTeam": {
+    "id": "MAR",
+    "name": "Morocco",
+    "eloRating": 1830.078625261493
+   },
+   "awayTeam": {
+    "id": "HAI",
+    "name": "Haiti",
+    "eloRating": 1530.5780658704373
+   },
+   "scheduledAt": "2026-06-24T22:00:00+00:00",
+   "venue": "Mercedes-Benz Stadium",
+   "homeScore": 4,
+   "awayScore": 2,
+   "winnerId": "MAR",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_A3_1",
+   "round": "group",
+   "group": "A",
+   "homeTeam": {
+    "id": "CZE",
+    "name": "Czechia",
+    "eloRating": 1708.1721023938833
+   },
+   "awayTeam": {
+    "id": "MEX",
+    "name": "Mexico",
+    "eloRating": 1891.5819757800175
+   },
+   "scheduledAt": "2026-06-25T01:00:00+00:00",
+   "venue": "Estadio Azteca",
+   "homeScore": 0,
+   "awayScore": 3,
+   "winnerId": "MEX",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_A3_2",
+   "round": "group",
+   "group": "A",
+   "homeTeam": {
+    "id": "RSA",
+    "name": "South Africa",
+    "eloRating": 1517.8116965637078
+   },
+   "awayTeam": {
+    "id": "KOR",
+    "name": "South Korea",
+    "eloRating": 1757.56986109966
+   },
+   "scheduledAt": "2026-06-25T01:00:00+00:00",
+   "venue": "Estadio BBVA",
+   "homeScore": 1,
+   "awayScore": 0,
+   "winnerId": "RSA",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_E3_1",
+   "round": "group",
+   "group": "E",
+   "homeTeam": {
+    "id": "CUW",
+    "name": "Cura\u00e7ao",
+    "eloRating": 1486.0249425989641
+   },
+   "awayTeam": {
+    "id": "CIV",
+    "name": "C\u00f4te d'Ivoire",
+    "eloRating": 1672.8078716058858
+   },
+   "scheduledAt": "2026-06-25T20:00:00+00:00",
+   "venue": "Lincoln Financial Field",
+   "homeScore": 0,
+   "awayScore": 2,
+   "winnerId": "CIV",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_E3_2",
+   "round": "group",
+   "group": "E",
+   "homeTeam": {
+    "id": "ECU",
+    "name": "Ecuador",
+    "eloRating": 1905.1352247208517
+   },
+   "awayTeam": {
+    "id": "GER",
+    "name": "Germany",
+    "eloRating": 1905.1842582283057
+   },
+   "scheduledAt": "2026-06-25T20:00:00+00:00",
+   "venue": "MetLife Stadium",
+   "homeScore": 2,
+   "awayScore": 1,
+   "winnerId": "ECU",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_F3_1",
+   "round": "group",
+   "group": "F",
+   "homeTeam": {
+    "id": "JPN",
+    "name": "Japan",
+    "eloRating": 1872.292396740045
+   },
+   "awayTeam": {
+    "id": "SWE",
+    "name": "Sweden",
+    "eloRating": 1661.8043136634994
+   },
+   "scheduledAt": "2026-06-25T23:00:00+00:00",
+   "venue": "AT&T Stadium",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_F3_2",
+   "round": "group",
+   "group": "F",
+   "homeTeam": {
+    "id": "TUN",
+    "name": "Tunisia",
+    "eloRating": 1609.5964899764697
+   },
+   "awayTeam": {
+    "id": "NED",
+    "name": "Netherlands",
+    "eloRating": 1969.167276277276
+   },
+   "scheduledAt": "2026-06-25T23:00:00+00:00",
+   "venue": "Arrowhead Stadium",
+   "homeScore": 1,
+   "awayScore": 3,
+   "winnerId": "NED",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_D3_1",
+   "round": "group",
+   "group": "D",
+   "homeTeam": {
+    "id": "TUR",
+    "name": "T\u00fcrkiye",
+    "eloRating": 1871.8588015641576
+   },
+   "awayTeam": {
+    "id": "USA",
+    "name": "United States",
+    "eloRating": 1759.2760234772973
+   },
+   "scheduledAt": "2026-06-26T02:00:00+00:00",
+   "venue": "SoFi Stadium",
+   "homeScore": 3,
+   "awayScore": 2,
+   "winnerId": "TUR",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_D3_2",
+   "round": "group",
+   "group": "D",
+   "homeTeam": {
+    "id": "PAR",
+    "name": "Paraguay",
+    "eloRating": 1807.580589318884
+   },
+   "awayTeam": {
+    "id": "AUS",
+    "name": "Australia",
+    "eloRating": 1777.4554751831097
+   },
+   "scheduledAt": "2026-06-26T02:00:00+00:00",
+   "venue": "Levi's Stadium",
+   "homeScore": 0,
+   "awayScore": 0,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_I3_1",
+   "round": "group",
+   "group": "I",
+   "homeTeam": {
+    "id": "NOR",
+    "name": "Norway",
+    "eloRating": 1946.4496775282155
+   },
+   "awayTeam": {
+    "id": "FRA",
+    "name": "France",
+    "eloRating": 2067.831513494851
+   },
+   "scheduledAt": "2026-06-26T19:00:00+00:00",
+   "venue": "Gillette Stadium",
+   "homeScore": 1,
+   "awayScore": 4,
+   "winnerId": "FRA",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_I3_2",
+   "round": "group",
+   "group": "I",
+   "homeTeam": {
+    "id": "SEN",
+    "name": "Senegal",
+    "eloRating": 1854.1200263131739
+   },
+   "awayTeam": {
+    "id": "IRQ",
+    "name": "Iraq",
+    "eloRating": 1583.707701896733
+   },
+   "scheduledAt": "2026-06-26T19:00:00+00:00",
+   "venue": "BMO Field",
+   "homeScore": 5,
+   "awayScore": 0,
+   "winnerId": "SEN",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_H3_1",
+   "round": "group",
+   "group": "H",
+   "homeTeam": {
+    "id": "CPV",
+    "name": "Cape Verde",
+    "eloRating": 1499.1395158520756
+   },
+   "awayTeam": {
+    "id": "KSA",
+    "name": "Saudi Arabia",
+    "eloRating": 1633.6089325628354
+   },
+   "scheduledAt": "2026-06-27T00:00:00+00:00",
+   "venue": "NRG Stadium",
+   "homeScore": 0,
+   "awayScore": 0,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_H3_2",
+   "round": "group",
+   "group": "H",
+   "homeTeam": {
+    "id": "URU",
+    "name": "Uruguay",
+    "eloRating": 1884.7632566463503
+   },
+   "awayTeam": {
+    "id": "ESP",
+    "name": "Spain",
+    "eloRating": 2206.302487129975
+   },
+   "scheduledAt": "2026-06-27T00:00:00+00:00",
+   "venue": "Estadio Akron",
+   "homeScore": 0,
+   "awayScore": 1,
+   "winnerId": "ESP",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_G3_1",
+   "round": "group",
+   "group": "G",
+   "homeTeam": {
+    "id": "EGY",
+    "name": "Egypt",
+    "eloRating": 1665.9894817813422
+   },
+   "awayTeam": {
+    "id": "IRN",
+    "name": "Iran",
+    "eloRating": 1755.0
+   },
+   "scheduledAt": "2026-06-27T03:00:00+00:00",
+   "venue": "Lumen Field",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_G3_2",
+   "round": "group",
+   "group": "G",
+   "homeTeam": {
+    "id": "NZL",
+    "name": "New Zealand",
+    "eloRating": 1487.2568310389338
+   },
+   "awayTeam": {
+    "id": "BEL",
+    "name": "Belgium",
+    "eloRating": 1861.6050867572494
+   },
+   "scheduledAt": "2026-06-27T03:00:00+00:00",
+   "venue": "BC Place",
+   "homeScore": 1,
+   "awayScore": 5,
+   "winnerId": "BEL",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_L3_1",
+   "round": "group",
+   "group": "L",
+   "homeTeam": {
+    "id": "PAN",
+    "name": "Panama",
+    "eloRating": 1700.7867317854586
+   },
+   "awayTeam": {
+    "id": "ENG",
+    "name": "England",
+    "eloRating": 2080.880834115544
+   },
+   "scheduledAt": "2026-06-27T21:00:00+00:00",
+   "venue": "MetLife Stadium",
+   "homeScore": 0,
+   "awayScore": 2,
+   "winnerId": "ENG",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_L3_2",
+   "round": "group",
+   "group": "L",
+   "homeTeam": {
+    "id": "CRO",
+    "name": "Croatia",
+    "eloRating": 1914.7499392063985
+   },
+   "awayTeam": {
+    "id": "GHA",
+    "name": "Ghana",
+    "eloRating": 1637.496175359522
+   },
+   "scheduledAt": "2026-06-27T21:00:00+00:00",
+   "venue": "Lincoln Financial Field",
+   "homeScore": 2,
+   "awayScore": 1,
+   "winnerId": "CRO",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_K3_1",
+   "round": "group",
+   "group": "K",
+   "homeTeam": {
+    "id": "COL",
+    "name": "Colombia",
+    "eloRating": 1987.0919399832474
+   },
+   "awayTeam": {
+    "id": "POR",
+    "name": "Portugal",
+    "eloRating": 1987.4333871801325
+   },
+   "scheduledAt": "2026-06-27T23:30:00+00:00",
+   "venue": "Hard Rock Stadium",
+   "homeScore": 0,
+   "awayScore": 0,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_K3_2",
+   "round": "group",
+   "group": "K",
+   "homeTeam": {
+    "id": "COD",
+    "name": "Congo DR",
+    "eloRating": 1550.0
+   },
+   "awayTeam": {
+    "id": "UZB",
+    "name": "Uzbekistan",
+    "eloRating": 1716.38461463994
+   },
+   "scheduledAt": "2026-06-27T23:30:00+00:00",
+   "venue": "Mercedes-Benz Stadium",
+   "homeScore": 3,
+   "awayScore": 1,
+   "winnerId": "COD",
+   "status": "completed"
+  },
+  {
+   "id": "wiki_J3_1",
+   "round": "group",
+   "group": "J",
+   "homeTeam": {
+    "id": "ALG",
+    "name": "Algeria",
+    "eloRating": 1730.0128263163313
+   },
+   "awayTeam": {
+    "id": "AUT",
+    "name": "Austria",
+    "eloRating": 1819.529750897177
+   },
+   "scheduledAt": "2026-06-28T02:00:00+00:00",
+   "venue": "Arrowhead Stadium",
+   "homeScore": 3,
+   "awayScore": 3,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "wiki_J3_2",
+   "round": "group",
+   "group": "J",
+   "homeTeam": {
+    "id": "JOR",
+    "name": "Jordan",
+    "eloRating": 1662.6397382152786
+   },
+   "awayTeam": {
+    "id": "ARG",
+    "name": "Argentina",
+    "eloRating": 2147.9153121447384
+   },
+   "scheduledAt": "2026-06-28T02:00:00+00:00",
+   "venue": "AT&T Stadium",
+   "homeScore": 1,
+   "awayScore": 3,
+   "winnerId": "ARG",
+   "status": "completed"
+  },
+  {
+   "id": "r32_73",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "RSA",
+    "name": "South Africa",
+    "eloRating": 1517.8116965637078
+   },
+   "awayTeam": {
+    "id": "CAN",
+    "name": "Canada",
+    "eloRating": 1789.0709162562375
+   },
+   "scheduledAt": "2026-06-28T19:00:00+00:00",
+   "venue": "SoFi Stadium, Inglewood",
+   "homeScore": 0,
+   "awayScore": 1,
+   "winnerId": "CAN",
+   "status": "completed"
+  },
+  {
+   "id": "r32_74",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "GER",
+    "name": "Germany",
+    "eloRating": 1905.1842582283057
+   },
+   "awayTeam": {
+    "id": "PAR",
+    "name": "Paraguay",
+    "eloRating": 1807.580589318884
+   },
+   "scheduledAt": "2026-06-29T20:30:00+00:00",
+   "venue": "Gillette Stadium, Foxborough",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": "PAR",
+   "status": "completed"
+  },
+  {
+   "id": "r32_76",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "BRA",
+    "name": "Brazil",
+    "eloRating": 1977.348151460816
+   },
+   "awayTeam": {
+    "id": "JPN",
+    "name": "Japan",
+    "eloRating": 1872.292396740045
+   },
+   "scheduledAt": "2026-06-29T20:30:00+00:00",
+   "venue": "NRG Stadium, Houston",
+   "homeScore": 2,
+   "awayScore": 1,
+   "winnerId": "BRA",
+   "status": "completed"
+  },
+  {
+   "id": "r32_75",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "NED",
+    "name": "Netherlands",
+    "eloRating": 1969.167276277276
+   },
+   "awayTeam": {
+    "id": "MAR",
+    "name": "Morocco",
+    "eloRating": 1830.078625261493
+   },
+   "scheduledAt": "2026-06-30T00:00:00+00:00",
+   "venue": "Estadio BBVA, Guadalupe",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": "MAR",
+   "status": "completed"
+  },
+  {
+   "id": "r32_78",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "CIV",
+    "name": "C\u00f4te d'Ivoire",
+    "eloRating": 1672.8078716058858
+   },
+   "awayTeam": {
+    "id": "NOR",
+    "name": "Norway",
+    "eloRating": 1946.4496775282155
+   },
+   "scheduledAt": "2026-06-30T17:00:00+00:00",
+   "venue": "AT&T Stadium, Arlington",
+   "homeScore": 1,
+   "awayScore": 2,
+   "winnerId": "NOR",
+   "status": "completed"
+  },
+  {
+   "id": "r32_77",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "FRA",
+    "name": "France",
+    "eloRating": 2067.831513494851
+   },
+   "awayTeam": {
+    "id": "SWE",
+    "name": "Sweden",
+    "eloRating": 1661.8043136634994
+   },
+   "scheduledAt": "2026-06-30T21:00:00+00:00",
+   "venue": "MetLife Stadium, East Rutherford",
+   "homeScore": 3,
+   "awayScore": 0,
+   "winnerId": "FRA",
+   "status": "completed"
+  },
+  {
+   "id": "r32_79",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "MEX",
+    "name": "Mexico",
+    "eloRating": 1891.5819757800175
+   },
+   "awayTeam": {
+    "id": "ECU",
+    "name": "Ecuador",
+    "eloRating": 1905.1352247208517
+   },
+   "scheduledAt": "2026-07-01T00:00:00+00:00",
+   "venue": "Estadio Azteca, Mexico City",
+   "homeScore": 2,
+   "awayScore": 0,
+   "winnerId": "MEX",
+   "status": "completed"
+  },
+  {
+   "id": "r32_80",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "ENG",
+    "name": "England",
+    "eloRating": 2080.880834115544
+   },
+   "awayTeam": {
+    "id": "COD",
+    "name": "Congo DR",
+    "eloRating": 1550.0
+   },
+   "scheduledAt": "2026-07-01T16:00:00+00:00",
+   "venue": "Mercedes-Benz Stadium, Atlanta",
+   "homeScore": 2,
+   "awayScore": 1,
+   "winnerId": "ENG",
+   "status": "completed"
+  },
+  {
+   "id": "r32_82",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "BEL",
+    "name": "Belgium",
+    "eloRating": 1861.6050867572494
+   },
+   "awayTeam": {
+    "id": "SEN",
+    "name": "Senegal",
+    "eloRating": 1854.1200263131739
+   },
+   "scheduledAt": "2026-07-01T20:00:00+00:00",
+   "venue": "Lumen Field, Seattle",
+   "homeScore": 3,
+   "awayScore": 2,
+   "winnerId": "BEL",
+   "status": "completed"
+  },
+  {
+   "id": "r32_81",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "USA",
+    "name": "United States",
+    "eloRating": 1759.2760234772973
+   },
+   "awayTeam": {
+    "id": "BIH",
+    "name": "Bosnia & Herzegovina",
+    "eloRating": 1580.0
+   },
+   "scheduledAt": "2026-07-02T00:00:00+00:00",
+   "venue": "Levi's Stadium, Santa Clara",
+   "homeScore": 2,
+   "awayScore": 0,
+   "winnerId": "USA",
+   "status": "completed"
+  },
+  {
+   "id": "r32_84",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "ESP",
+    "name": "Spain",
+    "eloRating": 2206.302487129975
+   },
+   "awayTeam": {
+    "id": "AUT",
+    "name": "Austria",
+    "eloRating": 1819.529750897177
+   },
+   "scheduledAt": "2026-07-02T19:00:00+00:00",
+   "venue": "SoFi Stadium, Inglewood",
+   "homeScore": 3,
+   "awayScore": 0,
+   "winnerId": "ESP",
+   "status": "completed"
+  },
+  {
+   "id": "r32_83",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "POR",
+    "name": "Portugal",
+    "eloRating": 1987.4333871801325
+   },
+   "awayTeam": {
+    "id": "CRO",
+    "name": "Croatia",
+    "eloRating": 1914.7499392063985
+   },
+   "scheduledAt": "2026-07-02T23:00:00+00:00",
+   "venue": "BMO Field, Toronto",
+   "homeScore": 2,
+   "awayScore": 1,
+   "winnerId": "POR",
+   "status": "completed"
+  },
+  {
+   "id": "r32_85",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "SUI",
+    "name": "Switzerland",
+    "eloRating": 1929.7900289314853
+   },
+   "awayTeam": {
+    "id": "ALG",
+    "name": "Algeria",
+    "eloRating": 1730.0128263163313
+   },
+   "scheduledAt": "2026-07-03T03:00:00+00:00",
+   "venue": "BC Place, Vancouver",
+   "homeScore": 2,
+   "awayScore": 0,
+   "winnerId": "SUI",
+   "status": "completed"
+  },
+  {
+   "id": "r32_88",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "AUS",
+    "name": "Australia",
+    "eloRating": 1777.4554751831097
+   },
+   "awayTeam": {
+    "id": "EGY",
+    "name": "Egypt",
+    "eloRating": 1665.9894817813422
+   },
+   "scheduledAt": "2026-07-03T18:00:00+00:00",
+   "venue": "AT&T Stadium, Arlington",
+   "homeScore": 1,
+   "awayScore": 1,
+   "winnerId": "EGY",
+   "status": "completed"
+  },
+  {
+   "id": "r32_86",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "ARG",
+    "name": "Argentina",
+    "eloRating": 2147.9153121447384
+   },
+   "awayTeam": {
+    "id": "CPV",
+    "name": "Cape Verde",
+    "eloRating": 1499.1395158520756
+   },
+   "scheduledAt": "2026-07-03T22:00:00+00:00",
+   "venue": "Hard Rock Stadium, Miami Gardens",
+   "homeScore": 3,
+   "awayScore": 2,
+   "winnerId": "ARG",
+   "status": "completed"
+  },
+  {
+   "id": "r32_87",
+   "round": "r32",
+   "group": null,
+   "homeTeam": {
+    "id": "COL",
+    "name": "Colombia",
+    "eloRating": 1987.0919399832474
+   },
+   "awayTeam": {
+    "id": "GHA",
+    "name": "Ghana",
+    "eloRating": 1637.496175359522
+   },
+   "scheduledAt": "2026-07-04T00:30:00+00:00",
+   "venue": "Arrowhead Stadium, Kansas City",
+   "homeScore": 1,
+   "awayScore": 0,
+   "winnerId": "COL",
+   "status": "completed"
+  },
+  {
+   "id": "r16_90",
+   "round": "r16",
+   "group": null,
+   "homeTeam": {
+    "id": "CAN",
+    "name": "Canada",
+    "eloRating": 1789.0709162562375
+   },
+   "awayTeam": {
+    "id": "MAR",
+    "name": "Morocco",
+    "eloRating": 1830.078625261493
+   },
+   "scheduledAt": "2026-07-04T17:00:00+00:00",
+   "venue": "NRG Stadium, Houston",
+   "homeScore": 0,
+   "awayScore": 3,
+   "winnerId": "MAR",
+   "status": "completed"
+  },
+  {
+   "id": "r16_89",
+   "round": "r16",
+   "group": null,
+   "homeTeam": {
+    "id": "PAR",
+    "name": "Paraguay",
+    "eloRating": 1807.580589318884
+   },
+   "awayTeam": {
+    "id": "FRA",
+    "name": "France",
+    "eloRating": 2067.831513494851
+   },
+   "scheduledAt": "2026-07-04T21:00:00+00:00",
+   "venue": "Lincoln Financial Field, Philadelphia",
+   "homeScore": 0,
+   "awayScore": 1,
+   "winnerId": "FRA",
+   "status": "completed"
+  },
+  {
+   "id": "r16_91",
+   "round": "r16",
+   "group": null,
+   "homeTeam": {
+    "id": "BRA",
+    "name": "Brazil",
+    "eloRating": 1977.348151460816
+   },
+   "awayTeam": {
+    "id": "NOR",
+    "name": "Norway",
+    "eloRating": 1946.4496775282155
+   },
+   "scheduledAt": "2026-07-05T20:00:00+00:00",
+   "venue": "MetLife Stadium, East Rutherford",
+   "homeScore": 1,
+   "awayScore": 2,
+   "winnerId": "NOR",
+   "status": "completed"
+  },
+  {
+   "id": "r16_92",
+   "round": "r16",
+   "group": null,
+   "homeTeam": {
+    "id": "MEX",
+    "name": "Mexico",
+    "eloRating": 1891.5819757800175
+   },
+   "awayTeam": {
+    "id": "ENG",
+    "name": "England",
+    "eloRating": 2080.880834115544
+   },
+   "scheduledAt": "2026-07-06T00:00:00+00:00",
+   "venue": "Estadio Azteca, Mexico City",
+   "homeScore": 2,
+   "awayScore": 3,
+   "winnerId": "ENG",
+   "status": "completed"
+  },
+  {
+   "id": "r16_93",
+   "round": "r16",
+   "group": null,
+   "homeTeam": {
+    "id": "POR",
+    "name": "Portugal",
+    "eloRating": 1987.4333871801325
+   },
+   "awayTeam": {
+    "id": "ESP",
+    "name": "Spain",
+    "eloRating": 2206.302487129975
+   },
+   "scheduledAt": "2026-07-06T19:00:00+00:00",
+   "venue": "AT&T Stadium, Arlington",
+   "homeScore": 0,
+   "awayScore": 1,
+   "winnerId": "ESP",
+   "status": "completed"
+  },
+  {
+   "id": "r16_94",
+   "round": "r16",
+   "group": null,
+   "homeTeam": {
+    "id": "USA",
+    "name": "United States",
+    "eloRating": 1759.2760234772973
+   },
+   "awayTeam": {
+    "id": "BEL",
+    "name": "Belgium",
+    "eloRating": 1861.6050867572494
+   },
+   "scheduledAt": "2026-07-07T00:00:00+00:00",
+   "venue": "Lumen Field, Seattle",
+   "homeScore": 1,
+   "awayScore": 4,
+   "winnerId": "BEL",
+   "status": "completed"
+  },
+  {
+   "id": "r16_95",
+   "round": "r16",
+   "group": null,
+   "homeTeam": {
+    "id": "ARG",
+    "name": "Argentina",
+    "eloRating": 2147.9153121447384
+   },
+   "awayTeam": {
+    "id": "EGY",
+    "name": "Egypt",
+    "eloRating": 1665.9894817813422
+   },
+   "scheduledAt": "2026-07-07T16:00:00+00:00",
+   "venue": "Mercedes-Benz Stadium, Atlanta",
+   "homeScore": 3,
+   "awayScore": 2,
+   "winnerId": "ARG",
+   "status": "completed"
+  },
+  {
+   "id": "r16_96",
+   "round": "r16",
+   "group": null,
+   "homeTeam": {
+    "id": "SUI",
+    "name": "Switzerland",
+    "eloRating": 1929.7900289314853
+   },
+   "awayTeam": {
+    "id": "COL",
+    "name": "Colombia",
+    "eloRating": 1987.0919399832474
+   },
+   "scheduledAt": "2026-07-07T20:00:00+00:00",
+   "venue": "BC Place, Vancouver",
+   "homeScore": 0,
+   "awayScore": 0,
+   "winnerId": null,
+   "status": "completed"
+  },
+  {
+   "id": "qf_97",
+   "round": "qf",
+   "group": null,
+   "homeTeam": {
+    "id": "FRA",
+    "name": "France",
+    "eloRating": 2067.831513494851
+   },
+   "awayTeam": {
+    "id": "MAR",
+    "name": "Morocco",
+    "eloRating": 1830.078625261493
+   },
+   "scheduledAt": "2026-07-09T20:00:00+00:00",
+   "venue": "Gillette Stadium, Foxborough",
+   "homeScore": 2,
+   "awayScore": 0,
+   "winnerId": "FRA",
+   "status": "completed"
+  },
+  {
+   "id": "qf_98",
+   "round": "qf",
+   "group": null,
+   "homeTeam": {
+    "id": "ESP",
+    "name": "Spain",
+    "eloRating": 2206.302487129975
+   },
+   "awayTeam": {
+    "id": "BEL",
+    "name": "Belgium",
+    "eloRating": 1861.6050867572494
+   },
+   "scheduledAt": "2026-07-10T19:00:00+00:00",
+   "venue": "SoFi Stadium, Inglewood",
+   "homeScore": 2,
+   "awayScore": 1,
+   "winnerId": "ESP",
+   "status": "completed"
+  },
+  {
+   "id": "qf_99",
+   "round": "qf",
+   "group": null,
+   "homeTeam": {
+    "id": "NOR",
+    "name": "Norway",
+    "eloRating": 1946.4496775282155
+   },
+   "awayTeam": {
+    "id": "ENG",
+    "name": "England",
+    "eloRating": 2080.880834115544
+   },
+   "scheduledAt": "2026-07-11T21:00:00+00:00",
+   "venue": "Hard Rock Stadium, Miami Gardens",
+   "homeScore": 1,
+   "awayScore": 2,
+   "winnerId": "ENG",
+   "status": "completed"
+  },
+  {
+   "id": "qf_100",
+   "round": "qf",
+   "group": null,
+   "homeTeam": {
+    "id": "ARG",
+    "name": "Argentina",
+    "eloRating": 2147.9153121447384
+   },
+   "awayTeam": {
+    "id": "SUI",
+    "name": "Switzerland",
+    "eloRating": 1929.7900289314853
+   },
+   "scheduledAt": "2026-07-12T01:00:00+00:00",
+   "venue": "Arrowhead Stadium, Kansas City",
+   "homeScore": 3,
+   "awayScore": 1,
+   "winnerId": "ARG",
+   "status": "completed"
+  },
+  {
+   "id": "sf_101",
+   "round": "sf",
+   "group": null,
+   "homeTeam": {
+    "id": "FRA",
+    "name": "France",
+    "eloRating": 2067.831513494851
+   },
+   "awayTeam": {
+    "id": "ESP",
+    "name": "Spain",
+    "eloRating": 2206.302487129975
+   },
+   "scheduledAt": "2026-07-14T20:00:00+00:00",
+   "venue": "AT&T Stadium, Arlington",
+   "homeScore": 0,
+   "awayScore": 2,
+   "winnerId": "ESP",
+   "status": "completed"
+  },
+  {
+   "id": "sf_102",
+   "round": "sf",
+   "group": null,
+   "homeTeam": {
+    "id": "ENG",
+    "name": "England",
+    "eloRating": 2080.880834115544
+   },
+   "awayTeam": {
+    "id": "ARG",
+    "name": "Argentina",
+    "eloRating": 2147.9153121447384
+   },
+   "scheduledAt": "2026-07-15T20:00:00+00:00",
+   "venue": "Rose Bowl, Pasadena",
+   "homeScore": 1,
+   "awayScore": 2,
+   "winnerId": "ARG",
+   "status": "completed"
+  },
+  {
+   "id": "tsdb_2533360",
+   "round": "group",
+   "group": null,
+   "homeTeam": {
+    "id": "FRA",
+    "name": "France",
+    "eloRating": 2067.831513494851
+   },
+   "awayTeam": {
+    "id": "ENG",
+    "name": "England",
+    "eloRating": 2080.880834115544
+   },
+   "scheduledAt": "2026-07-18T21:00:00+00:00",
+   "venue": "Hard Rock Stadium",
+   "homeScore": 4,
+   "awayScore": 6,
+   "winnerId": "ENG",
+   "status": "completed"
+  },
+  {
+   "id": "final_104",
+   "round": "final",
+   "group": null,
+   "homeTeam": {
+    "id": "ESP",
+    "name": "Spain",
+    "eloRating": 2206.302487129975
+   },
+   "awayTeam": {
+    "id": "ARG",
+    "name": "Argentina",
+    "eloRating": 2147.9153121447384
+   },
+   "scheduledAt": "2026-07-19T19:00:00+00:00",
+   "venue": "MetLife Stadium, East Rutherford",
+   "homeScore": 1,
+   "awayScore": 0,
+   "winnerId": "ESP",
+   "status": "completed"
+  }
+ ]
+}

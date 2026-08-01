@@ -2,6 +2,8 @@
 
 Tournament standings dashboard for the 2026 FIFA World Cup — tracks scores, team ownership, match schedule, and win probabilities for 5 participants.
 
+> 🏆 **Tournament over — Ricardo won the quiniela with 46 points.** Spain beat Argentina 1–0 in the final (July 19, 2026). The site is now a fully static archive: the final standings, matches, and simulation are baked in as JSON snapshots under `web/public/data/`, so the Azure backend (Functions + Cosmos DB) can be retired. See the in-app FAQ page for the full story.
+
 ## Stack
 
 | Layer | Technology |

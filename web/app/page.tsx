@@ -55,10 +55,34 @@ export default function StandingsPage() {
     return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-red-500">{t("standings.error")}</p>;
   }
 
+  const winner = standings![0];
+  const championTeam = winner?.teams.find((tm) => tm.status === "champion");
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
       <h1 className="text-2xl font-bold text-gray-900" data-cy="standings-heading">{t("standings.title")}</h1>
       <p className="mt-1 text-sm text-gray-500">{t("standings.subtitle")}</p>
+
+      {/* Champion banner */}
+      {winner && (
+        <div
+          className="mt-6 rounded-lg border border-amber-300 bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 px-6 py-8 text-center shadow-sm"
+          data-cy="champion-banner"
+        >
+          <div className="text-5xl">🏆</div>
+          <h2 className="mt-3 text-2xl font-bold text-gray-900">
+            {winner.participant.displayName} — {t("standings.championBanner")}
+          </h2>
+          <p className="mt-1 text-sm font-semibold text-amber-700">
+            {winner.score} {t("teams.pts")}
+          </p>
+          {championTeam && (
+            <p className="mt-2 text-sm text-gray-600">
+              ⚽ {championTeam.name} — {t("standings.worldChampion")}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Desktop table */}
       <div className="mt-6 hidden md:block rounded-lg border bg-white shadow-sm overflow-hidden" data-cy="standings-table">

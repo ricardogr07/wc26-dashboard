@@ -10,8 +10,6 @@ function toTeamStatus(raw: string): TeamStatus {
   return VALID_TEAM_STATUSES.has(raw as TeamStatus) ? (raw as TeamStatus) : "active";
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-
 // ── In-memory TTL cache with in-flight deduplication ────────────────────────
 
 const _cache = new Map<string, { data: unknown; expiresAt: number }>();
@@ -92,24 +90,23 @@ function toStandingsEntry(entry: ApiStandingEntry): StandingsEntry {
 }
 
 // ── Public fetch functions ──────────────────────────────────────────────────
+//
+// The tournament is over: the live Azure Functions API has been retired and
+// the final data is baked into the site as static JSON snapshots under
+// /public/data/. Same response shapes as the old API.
 
 export async function getStandings(): Promise<StandingsEntry[]> {
   return cached("standings", 60_000, async () => {
-    const res = await fetch(`${API_BASE}/api/standings`);
+    const res = await fetch("/data/standings.json");
     if (!res.ok) throw new Error(`standings: ${res.status}`);
     const data = (await res.json()) as { standings: ApiStandingEntry[] };
     return data.standings.map(toStandingsEntry);
   });
 }
 
-export async function getMatches(round?: MatchRound): Promise<ApiMatch[]> {
-  return cached(`matches:${round ?? "all"}`, 30_000, async () => {
-    const url = new URL(
-      `${API_BASE}/api/matches`,
-      typeof window !== "undefined" ? window.location.href : "http://localhost"
-    );
-    if (round) url.searchParams.set("round", round);
-    const res = await fetch(url.toString());
+export async function getMatches(): Promise<ApiMatch[]> {
+  return cached("matches", 60_000, async () => {
+    const res = await fetch("/data/matches.json");
     if (!res.ok) throw new Error(`matches: ${res.status}`);
     const data = (await res.json()) as { matches: ApiMatch[] };
     return data.matches;
@@ -117,11 +114,10 @@ export async function getMatches(round?: MatchRound): Promise<ApiMatch[]> {
 }
 
 export async function getSimulation(overrides?: object[]): Promise<SimulationRun> {
-  const res = await fetch(`${API_BASE}/api/simulate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(overrides ? { overrides } : {}),
-  });
+  // ponytail: overrides ignored — with every match completed the scenario
+  // builder is unreachable, and the archive always serves the final run.
+  void overrides;
+  const res = await fetch("/data/simulation.json");
   if (!res.ok) throw new Error(`simulate: ${res.status}`);
   return res.json() as Promise<SimulationRun>;
 }

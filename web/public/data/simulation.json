@@ -1,0 +1,17 @@
+{
+ "id": "simulationRun_latest",
+ "type": "simulationRun",
+ "runAt": "2026-08-01T06:22:50.802163Z",
+ "matchesCompletedAtRun": 103,
+ "nRuns": 10000,
+ "winProbabilities": {
+  "ricardo": 1.0,
+  "chuy": 0.0,
+  "jaime": 0.0,
+  "arnoldo": 0.0,
+  "jibran": 0.0
+ },
+ "teamWinProbabilities": {
+  "ESP": 1.0
+ }
+}
