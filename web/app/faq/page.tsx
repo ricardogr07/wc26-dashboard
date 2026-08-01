@@ -11,9 +11,11 @@ import type { Locale } from "@/lib/translations";
 
 // Long-form archive content lives here instead of translations.ts — it is
 // page copy, not UI chrome.
+const REPO_URL = "https://github.com/ricardogr07/wc26-dashboard";
+
 const FAQ: Record<
   Locale,
-  { title: string; subtitle: string; items: { q: string; a: string }[] }
+  { title: string; subtitle: string; items: { q: string; a: React.ReactNode }[] }
 > = {
   en: {
     title: "FAQ",
@@ -49,7 +51,14 @@ const FAQ: Record<
       },
       {
         q: "Where is the source code?",
-        a: "github.com/ricardogr07/wc26-dashboard — MIT licensed.",
+        a: (
+          <>
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+              github.com/ricardogr07/wc26-dashboard
+            </a>{" "}
+            — MIT licensed.
+          </>
+        ),
       },
     ],
   },
@@ -87,7 +96,14 @@ const FAQ: Record<
       },
       {
         q: "¿Dónde está el código fuente?",
-        a: "github.com/ricardogr07/wc26-dashboard — licencia MIT.",
+        a: (
+          <>
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+              github.com/ricardogr07/wc26-dashboard
+            </a>{" "}
+            — licencia MIT.
+          </>
+        ),
       },
     ],
   },
