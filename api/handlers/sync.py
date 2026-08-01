@@ -64,6 +64,19 @@ def _determine_winner(
     return None  # draw — no winner (group stage)
 
 
+def _side_effects_pending(existing: dict, status: str) -> bool:
+    """True when this update is the one that settles the match.
+
+    A knockout match can be patched to 'completed' with a tied score (end of
+    regulation) and only get its winner on a later sync (extra time/penalties),
+    so keying off the status transition alone would skip Elo/elimination/TBD
+    resolution for that later update.
+    """
+    return status == "completed" and (
+        existing.get("status") != "completed" or existing.get("winnerId") is None
+    )
+
+
 def _result_changed(
     existing: dict,
     status: str,
@@ -149,7 +162,7 @@ def _process_event(
                 {"op": "set", "path": "/lastUpdated", "value": now_iso},
             ],
         )
-        just_completed = existing.get("status") != "completed" and status == "completed"
+        just_completed = _side_effects_pending(existing, status)
 
     except CosmosResourceNotFoundError:
         home_name = event.get("strHomeTeam", "")
@@ -191,9 +204,7 @@ def _process_event(
                     {"op": "set", "path": "/lastUpdated", "value": now_iso},
                 ],
             )
-            just_completed = (
-                existing_by_teams.get("status") != "completed" and status == "completed"
-            )
+            just_completed = _side_effects_pending(existing_by_teams, status)
         else:
             current_round = parse_round(event.get("strRound"))
             scheduled_at = parse_scheduled_at(event.get("dateEvent"), event.get("strTime"))
