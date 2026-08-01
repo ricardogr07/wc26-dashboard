@@ -44,7 +44,7 @@ pnpm dev        # http://localhost:3000 — serves the archived final data
 
 ### Running the full stack (as it ran during the tournament)
 
-The retired backend still runs locally against the Cosmos DB emulator if you want to explore it:
+The retired backend still runs locally if you want to explore it. It needs a Cosmos DB to talk to — either a real account or the [Cosmos DB emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/emulator) started separately (`scripts/setup_emulator.py` creates the database and container); docker-compose only provides Azurite, the storage emulator:
 
 ```bash
 cp .env.local.example .env.local

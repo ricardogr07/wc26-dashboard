@@ -12,6 +12,23 @@ builds `web/` with pnpm, logs into Azure via OIDC, fetches the SWA deployment
 token at run time (`az staticwebapp secrets list` — no stored token secret), and
 uploads `web/out/`.
 
+## Retiring the backend
+
+The frontend no longer calls the API, so the backend can be stopped or deleted
+at any time without touching the site. The old on/off workflow is gone; this is
+a one-shot manual operation:
+
+```bash
+# Stop the Function App (reversible, no cost while stopped on Flex Consumption)
+az functionapp stop --name wc26-api --resource-group wc26-dashboard-rg
+
+# Optional, permanent: delete the Function App and Cosmos DB.
+# Do NOT run `terraform destroy` — that would also delete the Static Web App
+# that serves the archive.
+az functionapp delete --name wc26-api --resource-group wc26-dashboard-rg
+az cosmosdb delete --name wc26-cosmos --resource-group wc26-dashboard-rg
+```
+
 ## Historical: full pipeline overview
 
 ```
