@@ -30,8 +30,6 @@ runs:
       run: pnpm build
       shell: bash
       working-directory: web
-      env:
-        NEXT_PUBLIC_API_BASE_URL: ""
 
     - name: Start static server
       run: |

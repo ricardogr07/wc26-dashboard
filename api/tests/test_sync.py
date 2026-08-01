@@ -404,6 +404,38 @@ def test_sync_no_elo_update_if_already_completed(mock_gc: MagicMock, mock_fetch:
     assert len(elo_calls) == 0
 
 
+@patch("api.handlers.sync.fetch_live_and_recent_events")
+@patch("api.handlers.sync.get_container")
+def test_sync_elo_update_when_winner_arrives_after_completion(
+    mock_gc: MagicMock, mock_fetch: MagicMock
+) -> None:
+    # Knockout flow: match first synced as completed with a tied score (end of
+    # regulation, winnerId None), then a later sync delivers the decisive score.
+    # Side effects must fire on that later update.
+    mock_fetch.return_value = [_COMPLETED_EVENT]
+    completed_draw = {
+        **_EXISTING_SCHEDULED_DOC,
+        "status": "completed",
+        "homeScore": 1,
+        "awayScore": 1,
+        "winnerId": None,
+    }
+    winner_doc = {"id": "MEX", "eloRating": 1600.0}
+    loser_doc = {"id": "RSA", "eloRating": 1400.0}
+    container = _mock_container(query_side_effects=[[1], [0], _TEAM_QI])
+    container.read_item.side_effect = [completed_draw, winner_doc, loser_doc]
+    mock_gc.return_value = container
+
+    from api.handlers.sync import handle_sync
+
+    handle_sync(_timer())
+
+    elo_calls = [
+        c for c in container.patch_item.call_args_list if c.kwargs.get("partition_key") == "team"
+    ]
+    assert len(elo_calls) == 2
+
+
 # ---------------------------------------------------------------------------
 # handle_sync — idempotency
 # ---------------------------------------------------------------------------

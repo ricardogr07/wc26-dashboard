@@ -1,5 +1,9 @@
 # Simulation
 
+> 🏆 **The tournament is over.** The simulate page now shows the final archived
+> run (Ricardo 100% — Spain won), and the engine described here no longer runs
+> in production. This document describes how it worked during the tournament.
+
 The simulate page answers one question: **given all matches played so far, what is each participant's probability of having the overall tournament winner?**
 
 ## What "win probability" means
@@ -62,11 +66,11 @@ The result is stored as `simulationRun_latest` in Cosmos DB. On the next request
 
 ---
 
-## Scenario Builder
+## Scenario Builder (historical)
 
-The **Scenario Builder** on the simulate page lets you fix hypothetical match outcomes and re-run the simulation. For example: "what if Mexico wins Group A — how does that change Jaime's odds?"
+The **Scenario Builder** on the simulate page let you fix hypothetical match outcomes and re-run the simulation. For example: "what if Mexico wins Group A — how does that change Jaime's odds?" The card is still visible on the page as an artifact, but with every match completed there is nothing left to override.
 
-When you select a winner for one or more future matches, the frontend sends those overrides to `POST /api/simulate`:
+When you selected a winner for one or more future matches, the frontend sent those overrides to `POST /api/simulate`:
 
 ```json
 {

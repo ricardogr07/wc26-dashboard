@@ -1,8 +1,35 @@
 # Deployment
 
-Deployments run via GitHub Actions. The deploy pipeline (`deploy.yml`) runs manually from the Actions tab — only from the `main` branch.
+> 🏆 **The tournament is over and the backend infra has been retired.** The only
+> live deployment path is `deploy-site.yml` (below). Everything after that
+> section documents the full pipeline as it ran during the tournament.
 
-## Pipeline overview
+## Current: static site deploy (`deploy-site.yml`)
+
+The site is a static archive on Azure Static Web Apps. `deploy-site.yml` runs on
+pushes to `main` that touch `web/**` (or manually from the Actions tab): it
+builds `web/` with pnpm, logs into Azure via OIDC, fetches the SWA deployment
+token at run time (`az staticwebapp secrets list` — no stored token secret), and
+uploads `web/out/`.
+
+## Retiring the backend
+
+The frontend no longer calls the API, so the backend can be stopped or deleted
+at any time without touching the site. The old on/off workflow is gone; this is
+a one-shot manual operation:
+
+```bash
+# Stop the Function App (reversible, no cost while stopped on Flex Consumption)
+az functionapp stop --name wc26-api --resource-group wc26-dashboard-rg
+
+# Optional, permanent: delete the Function App and Cosmos DB.
+# Do NOT run `terraform destroy` — that would also delete the Static Web App
+# that serves the archive.
+az functionapp delete --name wc26-api --resource-group wc26-dashboard-rg
+az cosmosdb delete --name wc26-cosmos --resource-group wc26-dashboard-rg
+```
+
+## Historical: full pipeline overview
 
 ```
 deploy.yml (workflow_dispatch, main only)
@@ -52,9 +79,9 @@ Set these in **Settings → Secrets and variables → Actions**:
 | `AZURE_SUBSCRIPTION_ID` | Azure subscription ID |
 | `THESPORTSDB_API_KEY` | TheSportsDB API key (passed to Terraform as `TF_VAR_thesportsdb_api_key`) |
 
-`AZURE_STATIC_WEB_APPS_API_TOKEN` is **not** a secret — the deploy pipeline reads it directly from Terraform output. Terraform manages its lifecycle.
+`AZURE_STATIC_WEB_APPS_API_TOKEN` is **not** a stored secret — the historical pipeline read it from Terraform output, and `deploy-site.yml` fetches it at run time via `az staticwebapp secrets list`.
 
-## Running a deploy
+## Running a deploy (historical)
 
 1. Go to **Actions → Deploy** in the GitHub UI
 2. Click **Run workflow** → select `main` → confirm
@@ -103,9 +130,9 @@ az resource list -g wc26-dashboard-rg --query "[].id" -o tsv | xargs az resource
 terraform destroy
 ```
 
-## Seeding data after first deploy
+## Seeding data after first deploy (historical)
 
-After the first successful deploy, the Cosmos container is empty. Seed it from your local machine:
+During the tournament, after the first successful deploy the Cosmos container was empty and had to be seeded from a local machine:
 
 ```bash
 # Point at production (set COSMOS_CONNECTION_STRING to the prod value)
@@ -122,7 +149,7 @@ This uploads all documents from `shared/seed/` (teams, participants, and group-s
 
 | Job | What it checks |
 |---|---|
-| `ci-api` | `ruff` lint + `mypy` type-check + `pytest` (109 tests) |
+| `ci-api` | `ruff` lint + `mypy` type-check + `pytest` (138 tests) |
 | `ci-frontend` | `tsc --noEmit` + `eslint` |
 | `ci-e2e` | Cypress smoke suite against stubbed API |
 

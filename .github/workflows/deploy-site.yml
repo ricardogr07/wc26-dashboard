@@ -1,0 +1,65 @@
+name: Deploy Site
+
+# The tournament is over and the backend is retired — the site is a static
+# archive. This workflow builds web/ and uploads it to Azure Static Web Apps.
+# The deployment token is fetched at run time via OIDC; no long-lived secret.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["web/**"]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy Static Web App
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: Install and build
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Fetch deployment token
+        id: swa_token
+        working-directory: .
+        run: |
+          TOKEN=$(az staticwebapp secrets list \
+            --name wc26-dashboard \
+            --resource-group wc26-dashboard-rg \
+            --query "properties.apiKey" -o tsv)
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+
+      - uses: azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ steps.swa_token.outputs.token }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: web/out
+          skip_app_build: true
