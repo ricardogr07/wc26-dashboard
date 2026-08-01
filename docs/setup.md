@@ -16,17 +16,17 @@ Two paths: **Docker Compose** (recommended, one command) or **manual** (more con
 
 Both paths require:
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) — for Azurite and the containerized API
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/): for Azurite and the containerized API
 
 Manual path also requires:
 
-- Python 3.11+ and [uv](https://docs.astral.sh/uv/) — `pip install uv`
-- Node.js 20+ and [pnpm](https://pnpm.io/) — `npm install -g pnpm`
+- Python 3.11+ and [uv](https://docs.astral.sh/uv/): `pip install uv`
+- Node.js 20+ and [pnpm](https://pnpm.io/): `npm install -g pnpm`
 - [Azure Functions Core Tools v4](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local)
 
 ---
 
-## Option A — Docker Compose (recommended)
+## Option A: Docker Compose (recommended)
 
 Starts Azurite, the API, and the Next.js dev server in one step.
 
@@ -41,12 +41,12 @@ Fill in the real values:
 | Variable | Where to get it |
 |---|---|
 | `COSMOS_CONNECTION_STRING` | Azure portal → Cosmos DB → Keys → Primary Connection String |
-| `ADMIN_API_KEY` | Any strong random string — used to gate `POST /api/admin/override` |
-| `THESPORTSDB_API_KEY` | [thesportsdb.com](https://www.thesportsdb.com/) — free tier works |
+| `ADMIN_API_KEY` | Any strong random string, used to gate `POST /api/admin/override` |
+| `THESPORTSDB_API_KEY` | [thesportsdb.com](https://www.thesportsdb.com/); free tier works |
 
 The other variables (`COSMOS_DATABASE_NAME`, `COSMOS_CONTAINER_NAME`, `THESPORTSDB_LEAGUE_ID`, `THESPORTSDB_SEASON`, `TIMER_SCHEDULE`) have sensible defaults in `.env.local.example` and don't need to change.
 
-`AzureWebJobsStorage` is pre-filled with the Azurite emulator connection string — don't change it for local dev.
+`AzureWebJobsStorage` is pre-filled with the Azurite emulator connection string; don't change it for local dev.
 
 ### 2. Start the stack
 
@@ -55,9 +55,9 @@ docker compose up --build
 ```
 
 Services:
-- Azurite (Azure Storage emulator) — ports 10000–10002
-- API (Azure Functions) — `http://localhost:7071`
-- Web (Next.js) — `http://localhost:3000`
+- Azurite (Azure Storage emulator): ports 10000-10002
+- API (Azure Functions): `http://localhost:7071`
+- Web (Next.js): `http://localhost:3000`
 
 The API container has a healthcheck; Docker Compose waits for it to pass before the web container starts.
 
@@ -77,11 +77,11 @@ On subsequent runs `seed_cosmos.py` skips documents that already exist. Use `--f
 
 ### 4. Verify
 
-Open `http://localhost:3000` — you should see the standings page. Note that post-archive the frontend renders the baked snapshots in `web/public/data/`, not API responses — to exercise the API, hit it directly (`curl http://localhost:7071/api/standings`) or run `scripts/smoke_all.ps1`.
+Open `http://localhost:3000`; you should see the standings page. Note that post-archive the frontend renders the baked snapshots in `web/public/data/`, not API responses; to exercise the API, hit it directly (`curl http://localhost:7071/api/standings`) or run `scripts/smoke_all.ps1`.
 
 ---
 
-## Option B — Manual (API + Web separately)
+## Option B: Manual (API + Web separately)
 
 ### API (Azure Functions)
 
@@ -93,7 +93,7 @@ cp api/local.settings.json.example api/local.settings.json
 # Start Azurite (required by Functions runtime)
 docker compose up azurite -d
 
-# Run all checks — lint → type-check → tests
+# Run all checks: lint → type-check → tests
 uv tool run tox
 
 # Start the Functions host on http://localhost:7071
@@ -120,11 +120,11 @@ All API config flows through `local.settings.json` (manual path) or `.env.local`
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `COSMOS_CONNECTION_STRING` | Yes | — | Cosmos DB connection string |
+| `COSMOS_CONNECTION_STRING` | Yes | - | Cosmos DB connection string |
 | `COSMOS_DATABASE_NAME` | No | `wc26db` | Cosmos DB database name |
 | `COSMOS_CONTAINER_NAME` | No | `items` | Cosmos DB container name |
-| `ADMIN_API_KEY` | Yes | — | Bearer token for `POST /api/admin/override` |
-| `THESPORTSDB_API_KEY` | Yes | — | TheSportsDB API key |
+| `ADMIN_API_KEY` | Yes | - | Bearer token for `POST /api/admin/override` |
+| `THESPORTSDB_API_KEY` | Yes | - | TheSportsDB API key |
 | `THESPORTSDB_LEAGUE_ID` | No | `4429` | League ID for WC 2026 |
 | `THESPORTSDB_SEASON` | No | `2026-2027` | Season string |
 | `TIMER_SCHEDULE` | No | `0 */2 * * * *` | NCRONTAB for the sync timer |
@@ -136,7 +136,7 @@ All API config flows through `local.settings.json` (manual path) or `.env.local`
 ## Running Tests
 
 ```bash
-# Python — lint + type-check + unit tests
+# Python: lint + type-check + unit tests
 uv tool run tox
 
 # TypeScript
@@ -144,7 +144,7 @@ cd web
 pnpm type-check
 pnpm lint
 
-# Cypress E2E (uses stubbed API — no live backend needed for the tests themselves)
+# Cypress E2E (uses stubbed API; no live backend needed for the tests themselves)
 # From the web/ directory with the Docker stack running:
 pnpm e2e:docker   # runs inside the web container (Chromium + Xvfb pre-installed)
 

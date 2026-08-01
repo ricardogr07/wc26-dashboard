@@ -9,7 +9,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 
 export const metadata: Metadata = {
   title: "WC26 Quiniela",
-  description: "World Cup 2026 pool dashboard — standings, schedule, teams, and simulations",
+  description: "World Cup 2026 pool dashboard: standings, schedule, teams, and simulations",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

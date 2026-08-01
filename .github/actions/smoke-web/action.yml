@@ -1,4 +1,4 @@
-name: Smoke test — Web
+name: Smoke test - Web
 description: Verifies the Azure Static Web App is reachable and the API returns real data.
 
 inputs:
@@ -35,7 +35,7 @@ runs:
           "${{ inputs.function-app-url }}/api/standings")
         COUNT=$(echo "$RESP" | jq '.standings | length')
         if [ "$COUNT" -lt 1 ]; then
-          echo "::error::API returned 0 standings entries — end-to-end data flow broken"
+          echo "::error::API returned 0 standings entries; end-to-end data flow broken"
           exit 1
         fi
         echo "API data OK: $COUNT standings entries"

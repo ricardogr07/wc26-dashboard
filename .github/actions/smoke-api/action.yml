@@ -1,4 +1,4 @@
-name: Smoke test — API
+name: Smoke test - API
 description: Verifies the Azure Function App is Running and returns real data after deployment.
 
 inputs:
@@ -44,7 +44,7 @@ runs:
           "${{ inputs.function-app-url }}/api/standings")
         COUNT=$(echo "$RESP" | jq '.standings | length')
         if [ "$COUNT" -lt 1 ]; then
-          echo "::error::standings returned 0 entries — DB may not be seeded"
+          echo "::error::standings returned 0 entries; DB may not be seeded"
           exit 1
         fi
         echo "standings OK: $COUNT entries"

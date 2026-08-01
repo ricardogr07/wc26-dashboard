@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate shared/seed/fixtures.json — WC2026 group-stage fixtures.
+"""Generate shared/seed/fixtures.json; WC2026 group-stage fixtures.
 
 All 72 matches sourced from official schedule:
   - 15 matches: TheSportsDB (league 4429, season 2026, API key 123), IDs: tsdb_*

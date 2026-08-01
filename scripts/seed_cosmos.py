@@ -81,7 +81,7 @@ def main() -> None:
         total_written += written
         total_skipped += skipped
 
-    print(f"\nDone — {total_written} written, {total_skipped} skipped into {db_name}/{ctr_name}")
+    print(f"\nDone; {total_written} written, {total_skipped} skipped into {db_name}/{ctr_name}")
     if total_skipped and not args.force:
         print("Tip: use --force to overwrite existing documents.")
 

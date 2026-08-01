@@ -1,4 +1,4 @@
-name: "CI — E2E"
+name: "CI - E2E"
 description: "Build the static site, serve it, and run the Cypress smoke suite"
 
 runs:

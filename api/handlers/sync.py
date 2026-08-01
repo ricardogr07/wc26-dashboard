@@ -61,7 +61,7 @@ def _determine_winner(
         return home_id
     if away_score > home_score:
         return away_id
-    return None  # draw — no winner (group stage)
+    return None  # draw; no winner (group stage)
 
 
 def _side_effects_pending(existing: dict, status: str) -> bool:
@@ -384,7 +384,7 @@ def _backfill_stale_scheduled(
         return
 
     # Fast path: 'live' matches that already have scores in Cosmos can be promoted
-    # to 'completed' immediately without a TheSportsDB round-trip — they simply fell
+    # to 'completed' immediately without a TheSportsDB round-trip; they simply fell
     # off the eventspastleague.php window after the match ended.
     # ponytail: knockout draws (score tied) must go through TSDB to get strWinner from penalties
     needs_tsdb: list[dict] = []
@@ -533,7 +533,7 @@ def handle_sync(timer: func.TimerRequest) -> None:
     )
 
     if not has_active and not has_stale:
-        logger.info("No active or stale matches — sync skipped")
+        logger.info("No active or stale matches; sync skipped")
         return
 
     league_id = os.environ.get("THESPORTSDB_LEAGUE_ID", "4429")
@@ -566,7 +566,7 @@ def handle_sync(timer: func.TimerRequest) -> None:
         _backfill_stale_scheduled(container, league_id, api_key, team_id_by_name, now_iso, counts)
 
     logger.info(
-        "Sync complete — updated=%d skipped=%d elo_updated=%d errors=%d",
+        "Sync complete; updated=%d skipped=%d elo_updated=%d errors=%d",
         counts["updated"],
         counts["skipped"],
         counts["elo_updated"],

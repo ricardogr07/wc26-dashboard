@@ -1,4 +1,4 @@
-name: "CI — Frontend"
+name: "CI - Frontend"
 description: "Type-check and lint the Next.js frontend"
 
 runs:

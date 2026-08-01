@@ -107,7 +107,7 @@ const en: Translations = {
   standings: {
     title: "Standings",
     subtitle:
-      "Final standings after all matches — scored on tournament milestones reached by each participant's teams.",
+      "Final standings after all matches, scored on tournament milestones reached by each participant's teams.",
     championBanner: "Quiniela Champion",
     worldChampion: "World Cup 2026 Champion",
     rank: "RANK",
@@ -154,7 +154,7 @@ const en: Translations = {
       "Group-stage matches include a 25% draw probability; knockout rounds are winner-only. At the end of each run, the champion team's owner is credited. The final percentage is how often each participant held the winning team.",
     howSumTitle: "Why don't the percentages add up to 100%?",
     howSumBody:
-      "23 of the 48 WC2026 teams are unowned — no pool participant drafted them. When one of those teams wins the tournament in a simulation run, nobody gets credit. The missing percentage is the combined probability that an unowned team lifts the trophy.",
+      "23 of the 48 WC2026 teams are unowned; no pool participant drafted them. When one of those teams wins the tournament in a simulation run, nobody gets credit. The missing percentage is the combined probability that an unowned team lifts the trophy.",
     howScenarioTitle: "What does the Scenario Builder do?",
     howScenarioBody:
       "The Scenario Builder lets you force specific match outcomes before re-running the simulation. For example: \"What if Mexico wins Group A and the USA advances from the knockout round?\" Pick winners for any upcoming matches, then hit Run Scenario to see how the probabilities shift relative to the baseline.",
@@ -221,7 +221,7 @@ const es: Translations = {
   standings: {
     title: "Clasificación",
     subtitle:
-      "Clasificación final tras todos los partidos — puntuada según los hitos del torneo alcanzados por los equipos de cada participante.",
+      "Clasificación final tras todos los partidos, puntuada según los hitos del torneo alcanzados por los equipos de cada participante.",
     championBanner: "Campeón de la Quiniela",
     worldChampion: "Campeón del Mundial 2026",
     rank: "POS.",

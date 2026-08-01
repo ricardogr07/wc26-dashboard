@@ -168,7 +168,7 @@ export function BracketTree({ matchesByRound }: { matchesByRound: BracketMatches
 
   return (
     <div data-cy="bracket-tree" className="flex gap-2 w-full pb-2" style={{ minHeight: BRACKET_HEIGHT + 28 }}>
-      {/* Left half — converges toward center */}
+      {/* Left half; converges toward center */}
       <BracketColumn label={roundLabels.r32} matches={r32L} count={8} tbd={tbd} />
       <BracketColumn label={roundLabels.r16} matches={r16L} count={4} tbd={tbd} />
       <BracketColumn label={roundLabels.qf}  matches={qfL}  count={2} tbd={tbd} />
@@ -188,7 +188,7 @@ export function BracketTree({ matchesByRound }: { matchesByRound: BracketMatches
         </div>
       </div>
 
-      {/* Right half — diverges from center */}
+      {/* Right half; diverges from center */}
       <BracketColumn label={roundLabels.sf}  matches={sfR}  count={1} tbd={tbd} />
       <BracketColumn label={roundLabels.qf}  matches={qfR}  count={2} tbd={tbd} />
       <BracketColumn label={roundLabels.r16} matches={r16R} count={4} tbd={tbd} />

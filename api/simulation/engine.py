@@ -1,6 +1,6 @@
 """Monte Carlo simulation engine for WC2026.
 
-Pure function — no I/O, no Azure dependencies.
+Pure function; no I/O, no Azure dependencies.
 """
 
 from __future__ import annotations
@@ -213,7 +213,7 @@ def run_simulation(
             completed_match_count += 1
             completed_knockout[(m.home_team_id, m.away_team_id)] = m.winner_id
 
-    # Once the real R32 field is set, simulate from the actual bracket docs —
+    # Once the real R32 field is set, simulate from the actual bracket docs -
     # re-simulating the group stage lets eliminated teams re-qualify via random
     # tiebreaks and hands their owners phantom win probability.
     ko_by_round: dict[str, list[Match]] = defaultdict(list)

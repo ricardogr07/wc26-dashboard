@@ -88,7 +88,7 @@ def test_predictor_falls_back_to_elo_on_error() -> None:
             raise RuntimeError("boom")
 
     pred = Predictor(_BrokenModel())
-    # Should not raise — falls back to Elo
+    # Should not raise; falls back to Elo
     p = pred(1700.0, 1500.0, is_knockout=True)
     assert 0.0 < p < 1.0
 

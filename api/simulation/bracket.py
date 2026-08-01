@@ -68,13 +68,13 @@ _Pos = Literal["1st", "2nd", "3rd"]
 
 GROUPS: list[str] = list("ABCDEFGHIJKL")
 
-# Matchday 3 is the simultaneous final matchday — both group matches kick off
+# Matchday 3 is the simultaneous final matchday; both group matches kick off
 # at the same time. The simulation engine must process these as one atomic step.
 FINAL_MATCHDAY = 3
 
 
 # ---------------------------------------------------------------------------
-# R32 slot definitions — official FIFA WC2026 bracket
+# R32 slot definitions; official FIFA WC2026 bracket
 #
 # Each entry is (home_desc, away_desc) where desc = (group | None, position).
 # group=None means "best 3rd-place team", resolved sequentially from the
@@ -82,37 +82,37 @@ FINAL_MATCHDAY = 3
 # ---------------------------------------------------------------------------
 
 R32_SLOTS: list[tuple[tuple[str | None, _Pos], tuple[str | None, _Pos]]] = [
-    # slot 1  — m73
+    # slot 1 ; m73
     (("A", "2nd"), ("B", "2nd")),
-    # slot 2  — m74
+    # slot 2 ; m74
     (("E", "1st"), (None, "3rd")),
-    # slot 3  — m75
+    # slot 3 ; m75
     (("F", "1st"), ("C", "2nd")),
-    # slot 4  — m76
+    # slot 4 ; m76
     (("C", "1st"), ("F", "2nd")),
-    # slot 5  — m77
+    # slot 5 ; m77
     (("I", "1st"), (None, "3rd")),
-    # slot 6  — m78
+    # slot 6 ; m78
     (("E", "2nd"), ("I", "2nd")),
-    # slot 7  — m79
+    # slot 7 ; m79
     (("A", "1st"), (None, "3rd")),
-    # slot 8  — m80
+    # slot 8 ; m80
     (("L", "1st"), (None, "3rd")),
-    # slot 9  — m81
+    # slot 9 ; m81
     (("D", "1st"), (None, "3rd")),
-    # slot 10 — m82
+    # slot 10; m82
     (("G", "1st"), (None, "3rd")),
-    # slot 11 — m83
+    # slot 11; m83
     (("K", "2nd"), ("L", "2nd")),
-    # slot 12 — m84
+    # slot 12; m84
     (("H", "1st"), ("J", "2nd")),
-    # slot 13 — m85
+    # slot 13; m85
     (("B", "1st"), (None, "3rd")),
-    # slot 14 — m86
+    # slot 14; m86
     (("J", "1st"), ("H", "2nd")),
-    # slot 15 — m87
+    # slot 15; m87
     (("K", "1st"), (None, "3rd")),
-    # slot 16 — m88
+    # slot 16; m88
     (("D", "2nd"), ("G", "2nd")),
 ]
 
@@ -166,6 +166,6 @@ def elo_win_prob(elo_a: float, elo_b: float) -> float:
 #   3. Goals for (GF)
 #   4. Head-to-head points
 #   5. Head-to-head GD
-#   6. Drawing of lots (not modelled in simulation — use random tiebreak)
+#   6. Drawing of lots (not modelled in simulation; use random tiebreak)
 
 TIEBREAK_CRITERIA = ["points", "gd", "gf", "h2h_points", "h2h_gd", "random"]
