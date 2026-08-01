@@ -1,6 +1,26 @@
 # Architecture
 
-## System Overview
+> 🏆 **The tournament is over and the backend has been retired.** This document
+> describes the system as it ran during the tournament. The site now serves a
+> frozen snapshot — see [Static archive](#static-archive-current-state) below.
+
+## Static archive (current state)
+
+After the final, the last responses of `/api/standings`, `/api/matches`, and
+`/api/simulate` were saved as JSON snapshots under `web/public/data/`, and
+`web/lib/api.ts` was pointed at them:
+
+```
+  Browser ──► GET /data/standings.json ┐
+              GET /data/matches.json   ├─ static files, baked at freeze time
+              GET /data/simulation.json┘         (Azure Static Web Apps)
+```
+
+No Functions, no Cosmos, no environment variables — the pages render the final
+tournament state from those three files. Everything below this point is the
+historical architecture.
+
+## System Overview (as it ran during the tournament)
 
 ```
                         ┌─────────────────────┐
@@ -70,7 +90,7 @@ Indexing is scoped to `/type/?`, `/status/?`, `/round/?`, `/group/?`, and `/matc
 - **Build**: `pnpm build` produces a static export under `web/out/`
 - **Routing**: all navigations are client-side; the SWA serves the pre-rendered HTML shells
 
-The frontend calls the API via `NEXT_PUBLIC_API_BASE_URL`, which is baked into the static bundle at build time.
+During the tournament the frontend called the API via `NEXT_PUBLIC_API_BASE_URL`, baked into the static bundle at build time. Post-archive it fetches the `/data/*.json` snapshots instead and the variable is gone.
 
 ---
 
@@ -174,13 +194,12 @@ wc26-dashboard/
 │   │   └── smoke-web/    Post-deploy web health check
 │   └── workflows/
 │       ├── ci.yml        PR checks (api + frontend + e2e)
-│       ├── deploy.yml    Push-to-main deploy pipeline
-│       └── infra-toggle.yml  Manual infra on/off switch
+│       └── deploy-site.yml  Static site deploy to SWA (post-archive)
 ├── api/
 │   ├── handlers/         One module per endpoint
 │   ├── models/           Pydantic models
 │   ├── simulation/       Monte Carlo engine (engine.py) + bracket (bracket.py)
-│   ├── tests/            pytest suite (109 tests)
+│   ├── tests/            pytest suite (138 tests)
 │   └── cors.py / cosmos.py / scoring.py / seed.py
 ├── docs/                 This folder
 ├── infra/
@@ -191,7 +210,8 @@ wc26-dashboard/
 ├── web/
 │   ├── app/              Next.js App Router pages
 │   ├── components/       React components
-│   └── lib/              API client, types, translations, constants
+│   ├── lib/              API client, types, translations, constants
+│   └── public/data/      Final tournament data (the static archive)
 ├── docker-compose.yml
 ├── function_app.py       Azure Functions entry point
 └── pyproject.toml        Python project config + tox setup

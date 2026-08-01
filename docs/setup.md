@@ -1,5 +1,15 @@
 # Local Development Setup
 
+> 🏆 **The tournament is over and the site is a static archive.** To just run it,
+> all you need is Node:
+>
+> ```bash
+> cd web && pnpm install && pnpm dev   # http://localhost:3000
+> ```
+>
+> The rest of this guide runs the full (retired) backend stack, kept working for
+> anyone who wants to explore how the system operated during the tournament.
+
 Two paths: **Docker Compose** (recommended, one command) or **manual** (more control).
 
 ## Prerequisites
@@ -67,7 +77,7 @@ On subsequent runs `seed_cosmos.py` skips documents that already exist. Use `--f
 
 ### 4. Verify
 
-Open `http://localhost:3000` — you should see the standings page. The schedule page shows the 72 group-stage fixtures. The simulate page runs a Monte Carlo simulation on first load (≈ 2 s).
+Open `http://localhost:3000` — you should see the standings page. Note that post-archive the frontend renders the baked snapshots in `web/public/data/`, not API responses — to exercise the API, hit it directly (`curl http://localhost:7071/api/standings`) or run `scripts/smoke_all.ps1`.
 
 ---
 
@@ -97,12 +107,10 @@ func start
 ```bash
 cd web
 pnpm install
-
-# Dev server proxies /api/* to localhost:7071
 pnpm dev
 ```
 
-The Next.js dev server is at `http://localhost:3000`. API calls proxy to the Functions host.
+The Next.js dev server is at `http://localhost:3000`, rendering the archived data from `web/public/data/`. (A dev-only rewrite still proxies `/api/*` to the Functions host for direct API poking.)
 
 ---
 

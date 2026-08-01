@@ -36,9 +36,6 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile.dev
-    environment:
-      # Browser JS calls hit localhost:7071 (mapped from the api container's port 80).
-      NEXT_PUBLIC_API_BASE_URL: "http://localhost:7071"
     ports:
       - "3000:3000"
     volumes:
