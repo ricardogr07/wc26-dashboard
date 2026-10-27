@@ -9,7 +9,7 @@
 The site is a static archive on Azure Static Web Apps. `deploy-site.yml` runs on
 pushes to `main` that touch `web/**` (or manually from the Actions tab): it
 builds `web/` with pnpm, logs into Azure via OIDC, fetches the SWA deployment
-token at run time (`az staticwebapp secrets list` — no stored token secret), and
+token at run time (`az staticwebapp secrets list`; no stored token secret), and
 uploads `web/out/`.
 
 ## Retiring the backend
@@ -23,7 +23,7 @@ a one-shot manual operation:
 az functionapp stop --name wc26-api --resource-group wc26-dashboard-rg
 
 # Optional, permanent: delete the Function App and Cosmos DB.
-# Do NOT run `terraform destroy` — that would also delete the Static Web App
+# Do NOT run `terraform destroy`; that would also delete the Static Web App
 # that serves the archive.
 az functionapp delete --name wc26-api --resource-group wc26-dashboard-rg
 az cosmosdb delete --name wc26-cosmos --resource-group wc26-dashboard-rg
@@ -49,7 +49,7 @@ Terraform always runs first. Its outputs (function app name, URLs, SWA deploymen
 
 1. **Azure subscription** with Contributor access
 2. **Service principal** with federated OIDC credentials for GitHub Actions (no secret rotation needed)
-3. **Terraform state backend** — a storage account and container for the `prod.terraform.tfstate` file:
+3. **Terraform state backend**: a storage account and container for the `prod.terraform.tfstate` file:
 
 ```bash
 az group create -n wc26-tfstate-rg -l eastus2
@@ -59,14 +59,14 @@ az storage container create -n tfstate --account-name wc26tfstate
 
 These must exist before running `terraform init`. They are intentionally outside the Terraform-managed resource group.
 
-4. **`infra/terraform.tfvars`** — copy from the example and fill in secrets:
+4. **`infra/terraform.tfvars`**: copy from the example and fill in secrets:
 
 ```bash
 cd infra
 cp terraform.tfvars.example terraform.tfvars
 ```
 
-`terraform.tfvars` is gitignored — never commit it.
+`terraform.tfvars` is gitignored; never commit it.
 
 ### GitHub Secrets
 
@@ -79,7 +79,7 @@ Set these in **Settings → Secrets and variables → Actions**:
 | `AZURE_SUBSCRIPTION_ID` | Azure subscription ID |
 | `THESPORTSDB_API_KEY` | TheSportsDB API key (passed to Terraform as `TF_VAR_thesportsdb_api_key`) |
 
-`AZURE_STATIC_WEB_APPS_API_TOKEN` is **not** a stored secret — the historical pipeline read it from Terraform output, and `deploy-site.yml` fetches it at run time via `az staticwebapp secrets list`.
+`AZURE_STATIC_WEB_APPS_API_TOKEN` is **not** a stored secret; the historical pipeline read it from Terraform output, and `deploy-site.yml` fetches it at run time via `az staticwebapp secrets list`.
 
 ## Running a deploy (historical)
 
@@ -108,7 +108,7 @@ terraform apply -var="thesportsdb_api_key=YOUR_KEY"
 
 ### Single environment
 
-There is one environment: **production**. The Terraform state file is `prod.terraform.tfstate`. Running `terraform apply` always touches production — there is no staging environment.
+There is one environment: **production**. The Terraform state file is `prod.terraform.tfstate`. Running `terraform apply` always touches production; there is no staging environment.
 
 ### `cosmos_free_tier`
 

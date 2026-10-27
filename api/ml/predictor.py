@@ -28,7 +28,7 @@ class Predictor:
         try:
             return float(self._model.predict_proba(features)[0][1])  # type: ignore[attr-defined]
         except Exception:
-            logger.warning("Predictor inference failed — falling back to Elo", exc_info=True)
+            logger.warning("Predictor inference failed; falling back to Elo", exc_info=True)
             return elo_win_prob(home_elo, away_elo)
 
 
@@ -36,7 +36,7 @@ def load_predictor() -> Predictor | None:
     """Load model.joblib from MODEL_PATH (or default). Returns None if absent or broken."""
     path = get_model_path()
     if not path.exists():
-        logger.debug("No model at %s — using Elo only", path)
+        logger.debug("No model at %s; using Elo only", path)
         return None
     try:
         import joblib  # type: ignore[import-untyped]
@@ -45,5 +45,5 @@ def load_predictor() -> Predictor | None:
         logger.info("ML predictor loaded from %s", path)
         return Predictor(model)
     except Exception:
-        logger.warning("Failed to load model from %s — using Elo only", path, exc_info=True)
+        logger.warning("Failed to load model from %s; using Elo only", path, exc_info=True)
         return None

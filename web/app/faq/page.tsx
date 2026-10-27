@@ -9,11 +9,13 @@ import {
 import { useLocale } from "@/lib/locale-context";
 import type { Locale } from "@/lib/translations";
 
-// Long-form archive content lives here instead of translations.ts — it is
+// Long-form archive content lives here instead of translations.ts; it is
 // page copy, not UI chrome.
+const REPO_URL = "https://github.com/ricardogr07/wc26-dashboard";
+
 const FAQ: Record<
   Locale,
-  { title: string; subtitle: string; items: { q: string; a: string }[] }
+  { title: string; subtitle: string; items: { q: string; a: React.ReactNode }[] }
 > = {
   en: {
     title: "FAQ",
@@ -25,7 +27,7 @@ const FAQ: Record<
       },
       {
         q: "Who won?",
-        a: "Ricardo, with 46 points. His roster included Spain, who beat Argentina 1–0 in the final on July 19, 2026 — the championship win alone was worth 13 points. Final standings: Ricardo 46, Jaime 30, Chuy 20, Jibran 19, Arnoldo 7.",
+        a: "Ricardo, with 46 points. His roster included Spain, who beat Argentina 1-0 in the final on July 19, 2026; the championship win alone was worth 13 points. Final standings: Ricardo 46, Jaime 30, Chuy 20, Jibran 19, Arnoldo 7.",
       },
       {
         q: "How did the scoring work?",
@@ -45,11 +47,18 @@ const FAQ: Record<
       },
       {
         q: "Is the site still live?",
-        a: "It is now a static archive. After the final, the last API responses (standings, matches, simulation) were baked into the site as JSON snapshots and the Azure backend — Functions and Cosmos DB — was retired. Everything you see is the final state of the tournament, served as pure static files.",
+        a: "It is now a static archive. After the final, the last API responses (standings, matches, simulation) were baked into the site as JSON snapshots and the Azure backend (Functions and Cosmos DB) was retired. Everything you see is the final state of the tournament, served as pure static files.",
       },
       {
         q: "Where is the source code?",
-        a: "github.com/ricardogr07/wc26-dashboard — MIT licensed.",
+        a: (
+          <>
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+              github.com/ricardogr07/wc26-dashboard
+            </a>{" "}
+            (MIT licensed).
+          </>
+        ),
       },
     ],
   },
@@ -63,7 +72,7 @@ const FAQ: Record<
       },
       {
         q: "¿Quién ganó?",
-        a: "Ricardo, con 46 puntos. Su plantilla incluía a España, que venció 1–0 a Argentina en la final del 19 de julio de 2026 — solo la victoria en la final valía 13 puntos. Clasificación final: Ricardo 46, Jaime 30, Chuy 20, Jibran 19, Arnoldo 7.",
+        a: "Ricardo, con 46 puntos. Su plantilla incluía a España, que venció 1-0 a Argentina en la final del 19 de julio de 2026; solo la victoria en la final valía 13 puntos. Clasificación final: Ricardo 46, Jaime 30, Chuy 20, Jibran 19, Arnoldo 7.",
       },
       {
         q: "¿Cómo funcionaba la puntuación?",
@@ -83,11 +92,18 @@ const FAQ: Record<
       },
       {
         q: "¿El sitio sigue vivo?",
-        a: "Ahora es un archivo estático. Tras la final, las últimas respuestas del API (clasificación, partidos y simulación) se integraron al sitio como snapshots JSON y el backend de Azure — Functions y Cosmos DB — se retiró. Todo lo que ves es el estado final del torneo, servido como archivos estáticos.",
+        a: "Ahora es un archivo estático. Tras la final, las últimas respuestas del API (clasificación, partidos y simulación) se integraron al sitio como snapshots JSON y el backend de Azure (Functions y Cosmos DB) se retiró. Todo lo que ves es el estado final del torneo, servido como archivos estáticos.",
       },
       {
         q: "¿Dónde está el código fuente?",
-        a: "github.com/ricardogr07/wc26-dashboard — licencia MIT.",
+        a: (
+          <>
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+              github.com/ricardogr07/wc26-dashboard
+            </a>{" "}
+            (licencia MIT).
+          </>
+        ),
       },
     ],
   },

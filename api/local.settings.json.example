@@ -1,5 +1,5 @@
 {
-  "_note": "The AccountKey below is the Cosmos DB Emulator's well-known public key (documented by Microsoft) — it is not a secret.",
+  "_note": "The AccountKey below is the Cosmos DB Emulator's well-known public key (documented by Microsoft); it is not a secret.",
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",

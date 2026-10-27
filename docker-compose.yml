@@ -1,5 +1,5 @@
 services:
-  # Azure Storage emulator — required by the Functions runtime for internal state.
+  # Azure Storage emulator; required by the Functions runtime for internal state.
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
     command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0

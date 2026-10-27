@@ -191,7 +191,7 @@ def test_performance_10k_runs(
     start = time.monotonic()
     run_simulation([], real_participants, real_teams, n_runs=10_000, seed=0)
     elapsed = time.monotonic() - start
-    assert elapsed < 10.0, f"10k runs took {elapsed:.2f}s — must be < 10s"
+    assert elapsed < 10.0, f"10k runs took {elapsed:.2f}s; must be < 10s"
 
 
 # ---------------------------------------------------------------------------

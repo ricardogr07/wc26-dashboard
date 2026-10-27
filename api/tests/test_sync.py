@@ -214,12 +214,12 @@ def test_elo_update_sum_is_conserved() -> None:
 
 
 def test_elo_update_underdog_gains_more() -> None:
-    # Equal Elo — each side gains/loses the same amount (K/2 = 16)
+    # Equal Elo; each side gains/loses the same amount (K/2 = 16)
     w_eq, l_eq = compute_elo_update(1500.0, 1500.0)
     assert abs(w_eq - 1516.0) < 0.01
     assert abs(l_eq - 1484.0) < 0.01
 
-    # Weaker team wins — bigger gain than equal-match winner
+    # Weaker team wins; bigger gain than equal-match winner
     gain_equal = w_eq - 1500.0
     gain_upset = compute_elo_update(1400.0, 1600.0)[0] - 1400.0
     assert gain_upset > gain_equal
@@ -231,7 +231,7 @@ def test_elo_update_heavy_favourite_winning_gains_little() -> None:
 
 
 # ---------------------------------------------------------------------------
-# handle_sync — upsert new match
+# handle_sync; upsert new match
 # ---------------------------------------------------------------------------
 
 
@@ -282,7 +282,7 @@ def test_sync_upserted_new_match_writes_audit_log(
 
 
 # ---------------------------------------------------------------------------
-# handle_sync — update existing match
+# handle_sync; update existing match
 # ---------------------------------------------------------------------------
 
 
@@ -330,7 +330,7 @@ def test_sync_skips_unchanged_match(mock_gc: MagicMock, mock_fetch: MagicMock) -
 
 
 # ---------------------------------------------------------------------------
-# handle_sync — Elo update on completion
+# handle_sync; Elo update on completion
 # ---------------------------------------------------------------------------
 
 
@@ -437,7 +437,7 @@ def test_sync_elo_update_when_winner_arrives_after_completion(
 
 
 # ---------------------------------------------------------------------------
-# handle_sync — idempotency
+# handle_sync; idempotency
 # ---------------------------------------------------------------------------
 
 
@@ -468,7 +468,7 @@ def test_sync_idempotent_on_unchanged_data(mock_gc: MagicMock, mock_fetch: Magic
 
 
 # ---------------------------------------------------------------------------
-# handle_sync — skips unknown teams
+# handle_sync; skips unknown teams
 # ---------------------------------------------------------------------------
 
 
@@ -494,7 +494,7 @@ def test_sync_skips_event_with_unresolvable_teams(
 
 
 # ---------------------------------------------------------------------------
-# handle_sync — aborts gracefully when TheSportsDB returns nothing
+# handle_sync; aborts gracefully when TheSportsDB returns nothing
 # ---------------------------------------------------------------------------
 
 
@@ -517,7 +517,7 @@ def test_sync_aborts_when_no_events_returned(
 
 
 # ---------------------------------------------------------------------------
-# fetch_live_and_recent_events — season-year filter
+# fetch_live_and_recent_events; season-year filter
 # ---------------------------------------------------------------------------
 
 
@@ -564,7 +564,7 @@ def test_fetch_deduplicates_across_endpoints(mock_get: MagicMock) -> None:
 
 
 # ---------------------------------------------------------------------------
-# handle_sync — dedup: patch wiki_XXX doc when tsdb_XXX not found
+# handle_sync; dedup: patch wiki_XXX doc when tsdb_XXX not found
 # ---------------------------------------------------------------------------
 
 _WIKI_SCHEDULED_DOC: dict = {
@@ -619,7 +619,7 @@ def test_sync_patches_wiki_doc_instead_of_creating_tsdb_duplicate(
 
 
 # ---------------------------------------------------------------------------
-# handle_sync — stale "live" with scores promotes to completed
+# handle_sync; stale "live" with scores promotes to completed
 # ---------------------------------------------------------------------------
 
 
@@ -627,13 +627,13 @@ def test_sync_patches_wiki_doc_instead_of_creating_tsdb_duplicate(
 @patch("api.handlers.sync.get_container")
 def test_sync_promotes_stale_live_to_completed(mock_gc: MagicMock, mock_fetch: MagicMock) -> None:
     """A match reported as 'live' with scores set but started >3 hours ago must be
-    marked completed — TheSportsDB sometimes keeps returning an in-progress status
+    marked completed; TheSportsDB sometimes keeps returning an in-progress status
     after the final whistle."""
     old_dt = datetime.now(UTC) - timedelta(hours=4)
     stale_event = {
         **_SCHEDULED_EVENT,
         "dateEvent": old_dt.strftime("%Y-%m-%d"),
-        "strTime": old_dt.strftime("%H:%M:%S"),  # exactly 4 h ago — always passes the >3h gate
+        "strTime": old_dt.strftime("%H:%M:%S"),  # exactly 4 h ago; always passes the >3h gate
         "strStatus": "1H",
         "intHomeScore": "1",
         "intAwayScore": "1",

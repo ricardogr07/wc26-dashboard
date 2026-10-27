@@ -71,14 +71,14 @@ export default function StandingsPage() {
         >
           <div className="text-5xl">🏆</div>
           <h2 className="mt-3 text-2xl font-bold text-gray-900">
-            {winner.participant.displayName} — {t("standings.championBanner")}
+            {winner.participant.displayName} · {t("standings.championBanner")}
           </h2>
           <p className="mt-1 text-sm font-semibold text-amber-700">
             {winner.score} {t("teams.pts")}
           </p>
           {championTeam && (
             <p className="mt-2 text-sm text-gray-600">
-              ⚽ {championTeam.name} — {t("standings.worldChampion")}
+              ⚽ {championTeam.name} · {t("standings.worldChampion")}
             </p>
           )}
         </div>

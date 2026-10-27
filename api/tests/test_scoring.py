@@ -406,7 +406,7 @@ def test_unowned_team_ignored(two_participants: list[Participant], teams: list[T
 
 
 def test_draw_no_winner(two_participants: list[Participant], teams: list[Team]) -> None:
-    # Completed r32 match with no winner (data anomaly — knockouts always have a winner,
+    # Completed r32 match with no winner (data anomaly; knockouts always have a winner,
     # but the function must not crash and must not award points)
     matches = [
         _match("r1", "r32", "MEX", "GER"),

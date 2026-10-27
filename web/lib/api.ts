@@ -114,7 +114,7 @@ export async function getMatches(): Promise<ApiMatch[]> {
 }
 
 export async function getSimulation(overrides?: object[]): Promise<SimulationRun> {
-  // ponytail: overrides ignored — with every match completed the scenario
+  // ponytail: overrides ignored; with every match completed the scenario
   // builder is unreachable, and the archive always serves the final run.
   void overrides;
   const res = await fetch("/data/simulation.json");

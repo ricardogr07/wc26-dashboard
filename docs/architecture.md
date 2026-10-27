@@ -2,7 +2,7 @@
 
 > 🏆 **The tournament is over and the backend has been retired.** This document
 > describes the system as it ran during the tournament. The site now serves a
-> frozen snapshot — see [Static archive](#static-archive-current-state) below.
+> frozen snapshot; see [Static archive](#static-archive-current-state) below.
 
 ## Static archive (current state)
 
@@ -16,7 +16,7 @@ After the final, the last responses of `/api/standings`, `/api/matches`, and
               GET /data/simulation.json┘         (Azure Static Web Apps)
 ```
 
-No Functions, no Cosmos, no environment variables — the pages render the final
+No Functions, no Cosmos, no environment variables: the pages render the final
 tournament state from those three files. Everything below this point is the
 historical architecture.
 
@@ -51,7 +51,7 @@ historical architecture.
 ### Azure Functions (API)
 
 - **Runtime**: Python 3.11, Flex Consumption plan (FC1)
-- **Entry point**: `function_app.py` — registers all routes on a single `FunctionApp` instance
+- **Entry point**: `function_app.py`, which registers all routes on a single `FunctionApp` instance
 - **Handler pattern**: each route delegates to `api/handlers/<name>.py` which imports from `api/models/`, `api/cosmos.py`, and `api/scoring.py`
 
 | Route | Handler | Auth |
@@ -82,7 +82,7 @@ All documents live in one container, discriminated by the `type` field:
 | `simulationRun` | Latest cached Monte Carlo result | 1 |
 | `auditLog` | Admin override audit trail | varies |
 
-Indexing is scoped to `/type/?`, `/status/?`, `/round/?`, `/group/?`, and `/matchesCompletedAtRun/?` — everything else is excluded to minimize RU consumption.
+Indexing is scoped to `/type/?`, `/status/?`, `/round/?`, `/group/?`, and `/matchesCompletedAtRun/?`; everything else is excluded to minimize RU consumption.
 
 ### Azure Static Web App
 

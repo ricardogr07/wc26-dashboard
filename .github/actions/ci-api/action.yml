@@ -1,4 +1,4 @@
-name: "CI — API"
+name: "CI - API"
 description: "Lint, type-check, and test the Python API with tox"
 
 runs:

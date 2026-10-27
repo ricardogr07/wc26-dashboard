@@ -1,7 +1,7 @@
 [project]
 name = "wc26-api"
 version = "0.1.0"
-description = "Quiniela Mundial 2026 — Azure Functions API"
+description = "Quiniela Mundial 2026; Azure Functions API"
 requires-python = ">=3.11"
 dependencies = [
     "azure-functions>=1.21",

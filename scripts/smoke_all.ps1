@@ -14,7 +14,7 @@ $root = Split-Path -Parent $PSScriptRoot
 # Load .env.local into this process
 $envFile = Join-Path $root ".env.local"
 if (-not (Test-Path $envFile)) {
-    Write-Error ".env.local not found — copy .env.local.example and fill in credentials"
+    Write-Error ".env.local not found; copy .env.local.example and fill in credentials"
     exit 1
 }
 foreach ($line in Get-Content $envFile) {
@@ -43,7 +43,7 @@ Write-Host "`n=== Cypress e2e ===" -ForegroundColor Cyan
 try {
     $null = Invoke-WebRequest -Uri "http://localhost:3000" -UseBasicParsing -TimeoutSec 5
 } catch {
-    Write-Error "localhost:3000 is not reachable — is 'docker compose up' running?"
+    Write-Error "localhost:3000 is not reachable; is 'docker compose up' running?"
     exit 1
 }
 
